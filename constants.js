@@ -17,6 +17,9 @@ const HEARTS = 'HEARTS';
 const DIAMONDS = 'DIAMONDS';
 const CLUBS = 'CLUBS';
 
+const CARD_HEIGHT = 570;
+const CARD_WIDTH = 390;
+
 const IMAGE_OFFSETS = {
     'A-SPADES'       : {x : 0,  y: 0},
     'TWO-SPADES'     : {x : 1,  y: 0},

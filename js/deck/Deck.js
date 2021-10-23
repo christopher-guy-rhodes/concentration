@@ -1,3 +1,6 @@
+/**
+ * Class that models a deck of playing cards.
+ */
 class Deck {
     constructor() {
         this.suits = [SPADES, HEARTS, DIAMONDS, CLUBS];
@@ -22,10 +25,18 @@ class Deck {
         }
     }
 
+    /**
+     * Returns the cards sorted in the canonical order.
+     * @returns {[Card]} the deck of cards in order
+     */
     getSortedCards() {
         return this.cards;
     }
 
+    /**
+     * Returns the cards shuffled randomly
+     * @returns {[Card]} the shuffled deck of cards
+     */
     getShuffledCards() {
         let array = Array.from(this.cards);
         let currentIndex = array.length,  randomIndex;

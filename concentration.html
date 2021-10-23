@@ -14,10 +14,12 @@
         $.getScript('/js/deck/CardImageBuilder.js', function() {
         $.getScript('/js/deck/Deck.js', function() {
         $.getScript('/js/game/GameBoard.js', function() {
+        $.getScript('/js/game/GameBoardBuilder.js', function() {
 
-            let game = new GameBoard(4, 13);
-            game.renderGameBoard(document);
-        })})})})})})})});
+            new GameBoardBuilder()
+                .withNumberOfCardsPerRow(13)
+                .withNumberOfRows(4).build().renderGameBoard(document);
+        })})})})})})})})});
 </script>
 <body>
 </body>

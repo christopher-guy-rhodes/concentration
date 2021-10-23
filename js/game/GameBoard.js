@@ -1,7 +1,9 @@
-const CARD_HEIGHT = 570;
-const CARD_WIDTH = 390;
+
 const DECK_IMAGE = '\'../images/deck.png\'';
 
+/**
+ * Main class to render card game
+ */
 class GameBoard {
     constructor(numberOfRows, numberOfCardsPerRow) {
         this.deck = new Deck();
@@ -22,23 +24,19 @@ class GameBoard {
         }
     }
 
+    /**
+     * Renders the shuffled deck on the screen
+     * @param document the dom document
+     */
     renderGameBoard(document) {
+        validateRequiredParams(this.renderGameBoard, 'document');
         this.cards = this.deck.getShuffledCards();
 
         let gridPositionIndex = 0;
         for (let card of this.cards) {
-            this.cardImage = new CardImageBuilder()
-                .withId(card.getId())
-                .withWidth(CARD_WIDTH)
-                .withHeight(CARD_HEIGHT)
-                .withImage(DECK_IMAGE)
-                .withX(this.gridPositions[gridPositionIndex]['x'] * CARD_WIDTH)
-                .withY(this.gridPositions[gridPositionIndex]['y'] * CARD_HEIGHT)
-                .withImgOffsetX(-1 * IMAGE_OFFSETS[card.getId()]['x'] * CARD_WIDTH)
-                .withImgOffsetY(-1 * IMAGE_OFFSETS[card.getId()]['y'] * CARD_HEIGHT)
-                .build();
-
-            this.cardImage.renderCardCss(document);
+            let x = this.gridPositions[gridPositionIndex]['x'];
+            let y = this.gridPositions[gridPositionIndex]['y'];
+            card.render(document, x, y);
 
             gridPositionIndex++;
 
