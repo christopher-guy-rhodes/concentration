@@ -3,9 +3,13 @@
 <head>
     <link rel="stylesheet" href="css/concentration.css">
     <script src="js/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 </head>
 <script>
     $(document).ready(function(){
+
+
+
         // Classes
         $.getScript('/constants.js', function() {
         $.getScript('/js/util.js', function() {
@@ -16,9 +20,18 @@
         $.getScript('/js/game/GameBoard.js', function() {
         $.getScript('/js/game/GameBoardBuilder.js', function() {
 
+            // Set the scale for viewing in mobile browsers so it will fit on the screen
+            let viewportMeta = document.querySelector('meta[name="viewport"]');
+            let width = $(window).width();
+            let height = $(window).height();
+            let scalingDimension = width;
+            viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
+                'initial-scale=' + (scalingDimension / (NUMBER_OF_CARDS_PER_ROW * CARD_WIDTH)));
+
+
             new GameBoardBuilder()
-                .withNumberOfCardsPerRow(13)
-                .withNumberOfRows(4).build().renderGameBoard(document);
+                .withNumberOfCardsPerRow(NUMBER_OF_CARDS_PER_ROW)
+                .withNumberOfRows(NUMBER_OF_ROWS).build().renderGameBoard(document);
         })})})})})})})})});
 </script>
 <body>

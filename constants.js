@@ -17,6 +17,9 @@ const HEARTS = 'HEARTS';
 const DIAMONDS = 'DIAMONDS';
 const CLUBS = 'CLUBS';
 
+const NUMBER_OF_CARDS_PER_ROW = 13;
+const NUMBER_OF_ROWS = 4;
+
 const CARD_HEIGHT = 285;
 const CARD_WIDTH = 195;
 
