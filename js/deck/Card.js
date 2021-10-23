@@ -29,11 +29,6 @@ class Card {
             .build();
     }
 
-    setX(x) {
-        this.x = x;
-        this.cardImage.setX(x);
-    }
-
     getRank() {
         return this.rank;
     }
