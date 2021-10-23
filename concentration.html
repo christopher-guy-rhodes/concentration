@@ -5,11 +5,36 @@
     <script src="js/jquery.min.js"></script>
 </head>
 <script>
+    $(document).ready(function(){
+        const CARD_WIDTH = 390;
+        // Classes
+        $.getScript('/constants.js', function() {
+        $.getScript('/js/util.js', function() {
+        $.getScript('/js/deck/CardImage.js', function() {
+        $.getScript('/js/deck/Card.js', function() {
+        $.getScript('/js/deck/CardImageBuilder.js', function() {
+        $.getScript('/js/deck/Deck.js', function() {
+
+            let deck = new Deck();
+            //let cards = deck.getSortedDeck();
+            let cards = deck.getShuffledDeck();
+
+            for (card  of cards) {
+                console.log('==> seeing card' + card.getRank() + '-' + card.getSuit());
+                card.renderCard(document);
+            }
+
+            /*
+            let heightOffset = 0;
+            for (i = 0; i <= 12; i++) {
+                let cardImage = new CardImage('card' + i, 390, 570, '../images/deck.png', i * CARD_WIDTH, 0, -1*i*CARD_WIDTH, 0);
+                cardImage.renderCardCss(document);
+
+            }
+
+             */
+        })})})})})})});
 </script>
 <body>
-    <div class="aceOfSpades"></div>
-    <div class="twoOfSpades"></div>
-    <div class="jackOfHearts"></div>
-    <div class="back"></div>
 </body>
 </html>
