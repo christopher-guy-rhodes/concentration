@@ -19,7 +19,7 @@ class CardImage {
             '\tbackground-image: url(' + this.image + ')' + ";\n" +
             '\tbackground-position: ' + this.imgOffsetX + 'px ' + this.imgOffsetY + 'px' + ";\n" +
             '\tposition: absolute' + ";\n" +
-            '\ttop: ' + (this.y + 75) + 'px' + ";\n" +
+            '\ttop: ' + this.y + 'px' + ";\n" +
             '\tleft: ' + this.x + 'px' + ";\n" +
             '}' + "\n";
 

@@ -6,7 +6,6 @@
 </head>
 <script>
     $(document).ready(function(){
-        const CARD_WIDTH = 390;
         // Classes
         $.getScript('/constants.js', function() {
         $.getScript('/js/util.js', function() {
@@ -14,29 +13,12 @@
         $.getScript('/js/deck/Card.js', function() {
         $.getScript('/js/deck/CardImageBuilder.js', function() {
         $.getScript('/js/deck/Deck.js', function() {
+        $.getScript('/js/game/GameBoard.js', function() {
 
-            let deck = new Deck();
-            //let cards = deck.getSortedDeck();
-            let cards = deck.getShuffledDeck();
-
-            for (card  of cards) {
-                console.log('==> seeing card' + card.getRank() + '-' + card.getSuit());
-                card.renderCard(document);
-            }
-
-            /*
-            let heightOffset = 0;
-            for (i = 0; i <= 12; i++) {
-                let cardImage = new CardImage('card' + i, 390, 570, '../images/deck.png', i * CARD_WIDTH, 0, -1*i*CARD_WIDTH, 0);
-                cardImage.renderCardCss(document);
-
-            }
-
-             */
-        })})})})})})});
+            let game = new GameBoard(4, 13);
+            game.renderGameBoard(document);
+        })})})})})})})});
 </script>
 <body>
-<h2>See the github project at <a href="https://github.com/christopher-guy-rhodes/concentration"></a>https://github.com/christopher-guy-rhodes/concentration</h2>
-Shuffling support needs to be added. Cards are shown from a single image (see <a href="/images/deck.png">single image</a>. Any card can be shown in any position.
 </body>
 </html>

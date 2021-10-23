@@ -1,19 +1,15 @@
-const CARD_HEIGHT = 570;
-const CARD_WIDTH = 390;
-const DECK_IMAGE = '\'../images/deck.png\'';
-
-
-
 class Card {
 
-    constructor(rank, suit, x, y) {
+    constructor(rank, suit) {
         this.id = rank + '-' + suit;
         this.rank = rank;
         this.suit = suit;
-        this.x = x;
-        this.y = y;
+        //this.x = x;
+        //this.y = y;
 
-        if (IMAGE_OFFSETS[this.id] === undefined) {
+
+        /*
+            if (IMAGE_OFFSETS[this.id] === undefined) {
             throw new Error("Could not find image offset for card " + this.id);
         }
 
@@ -27,6 +23,12 @@ class Card {
             .withImgOffsetX(-1* IMAGE_OFFSETS[this.id]['x'] * CARD_WIDTH)
             .withImgOffsetY(-1 * IMAGE_OFFSETS[this.id]['y'] * CARD_HEIGHT)
             .build();
+
+         */
+    }
+
+    getId() {
+        return this.id;
     }
 
     getRank() {
@@ -37,7 +39,7 @@ class Card {
         return this.suit;
     }
 
-    renderCard(document) {
-        this.cardImage.renderCardCss(document);
-    }
+    //renderCard(document) {
+    //    this.cardImage.renderCardCss(document);
+    //}
 }
