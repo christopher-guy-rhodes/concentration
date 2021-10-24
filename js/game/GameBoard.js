@@ -31,7 +31,7 @@ class GameBoard {
      */
     renderGameBoard(document) {
         validateRequiredParams(this.renderGameBoard, 'document');
-        //this.deck.shuffleCards();
+        this.deck.shuffleCards();
         this.cards = this.deck.dealCards();
 
         let gridPositionIndex = 0;
