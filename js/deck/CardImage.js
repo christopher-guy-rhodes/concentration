@@ -2,15 +2,23 @@
  * Handles image rendering for a particular card using a single image that has all the cards
  */
 class CardImage {
-    constructor(id, width, height, image, imgOffsetX, imgOffsetY) {
+    constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY) {
         validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image', 'imgOffsetX',
             'imgOffsetY');
         this.id = id;
         this.height = height;
         this.width = width;
         this.image = image;
+        this.isFaceUp = isFaceUp;
         this.imgOffsetX = imgOffsetX;
         this.imgOffsetY = imgOffsetY;
+    }
+
+    /**
+     * Set the card image face down when rendering.
+     */
+    setFaceUp() {
+        this.isFaceUp = true;
     }
 
     /**
@@ -22,13 +30,15 @@ class CardImage {
      */
     renderCssAndHtml(document, xPixelOffset, yPixelOffset) {
         validateRequiredParams(this.renderCssAndHtml, arguments, 'document', 'xPixelOffset', 'yPixelOffset');
+        let imgOffsetX = this.isFaceUp ? this.imgOffsetX : FLIPPED_CARD_X_OFFSET;
+        let imgOffsetY = this.isFaceUp ? this.imgOffsetY : FLIPPED_CARD_Y_OFFSET;
         let css = '.' + this.id + ' {' + "\n" +
             '\theight: ' + this.height + 'px' + ";\n" +
             '\twidth: ' + this.width + 'px' + ";\n" +
             '\tbackground-image: url(' + this.image + ')' + ";\n" +
-            '\tbackground-position: ' + this.imgOffsetX + 'px ' + this.imgOffsetY + 'px' + ";\n" +
+            '\tbackground-position: ' + imgOffsetX + 'px ' + imgOffsetY + 'px' + ";\n" +
             '\tposition: absolute' + ";\n" +
-            '\ttop: ' + yPixelOffset + 'px' + ";\n" +
+            '\ttop: ' + (yPixelOffset + HEADER_HEIGHT) + 'px' + ";\n" +
             '\tleft: ' + xPixelOffset + 'px' + ";\n" +
             '}' + "\n";
 
@@ -40,7 +50,14 @@ class CardImage {
         document.head.appendChild(styleSheet);
 
         let myDiv = document.createElement("div");
-        myDiv.className = this.id;
+        myDiv.className = 'clickable ' + this.id;
         document.body.appendChild(myDiv);
+    }
+
+    flip() {
+        let imgOffsetX = this.isFaceUp ? FLIPPED_CARD_X_OFFSET : this.imgOffsetX;
+        let imgOffsetY = this.isFaceUp ? FLIPPED_CARD_Y_OFFSET : this.imgOffsetY;
+        $('.' + this.id).css('background-position', imgOffsetX + 'px ' + imgOffsetY + 'px');
+        this.isFaceUp = !this.isFaceUp;
     }
 }

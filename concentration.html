@@ -6,34 +6,43 @@
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 </head>
 <script>
-    $(document).ready(function(){
+$(document).ready(function(){
 
-
-
-        // Classes
-        $.getScript('/constants.js', function() {
-        $.getScript('/js/util.js', function() {
-        $.getScript('/js/deck/CardImage.js', function() {
-        $.getScript('/js/deck/Card.js', function() {
-        $.getScript('/js/deck/CardImageBuilder.js', function() {
-        $.getScript('/js/deck/Deck.js', function() {
-        $.getScript('/js/game/GameBoard.js', function() {
-        $.getScript('/js/game/GameBoardBuilder.js', function() {
-
-            // Set the scale for viewing in mobile browsers so it will fit on the screen
-            let viewportMeta = document.querySelector('meta[name="viewport"]');
-            let width = $(window).width();
-            let height = $(window).height();
-            let scalingDimension = width;
-            viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
-                'initial-scale=' + (scalingDimension / (NUMBER_OF_CARDS_PER_ROW * CARD_WIDTH)));
-
-
-            new GameBoardBuilder()
-                .withNumberOfCardsPerRow(NUMBER_OF_CARDS_PER_ROW)
-                .withNumberOfRows(NUMBER_OF_ROWS).build().renderGameBoard(document);
-        })})})})})})})})});
+// Classes
+$.getScript('/constants.js', function() {
+$.getScript('/js/util.js', function() {
+$.getScript('/js/deck/CardImage.js', function() {
+$.getScript('/js/deck/Card.js', function() {
+$.getScript('/js/deck/CardImageBuilder.js', function() {
+$.getScript('/js/deck/Deck.js', function() {
+$.getScript('/js/game/GameBoard.js', function() {
+$.getScript('/js/game/GameBoardBuilder.js', function() {
+$.getScript('/js/game/Player.js', function() {
+$.getScript('/js/game/Game.js', function() {
+$.getScript('/js/viewport.js', function() {
+$.getScript('/js/events.js', function() {
+})})})})})})})})})})})})});
 </script>
 <body>
 </body>
+<h2>Classic Concentration Memory Game</h2>
+<div class="player1">Player 1: 0 matches</div>
+<div class="player2">Player 2: 0 matches</div>
+<div class="player3">Player 3: 0 matches</div>
+<div class="player4">Player 4: 0 matches</div>
+<div class="gameOver">
+    <a href="#">Click to play again</a>
+</div>
+<div class="playerForm">
+    <form method="GET" action="./">
+    How many players?
+    <select class="numPlayers">
+        <option value="">select option</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+</form>
+</div>
 </html>

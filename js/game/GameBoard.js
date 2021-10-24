@@ -30,10 +30,13 @@ class GameBoard {
      */
     renderGameBoard(document) {
         validateRequiredParams(this.renderGameBoard, 'document');
-        this.cards = this.deck.getShuffledCards();
+        this.deck.shuffleCards();
+        this.cards = this.deck.dealCards();
 
         let gridPositionIndex = 0;
         for (let card of this.cards) {
+            card.setFaceDown();
+            $('.' + card.getId()).css('display', 'block');
             let x = this.gridPositions[gridPositionIndex]['x'];
             let y = this.gridPositions[gridPositionIndex]['y'];
             card.render(document, x, y);
@@ -41,5 +44,13 @@ class GameBoard {
             gridPositionIndex++;
 
         }
+    }
+
+    /**
+     * Get the deck used for the game board.
+     * @returns {Deck}
+     */
+    getDeck() {
+        return this.deck;
     }
 }

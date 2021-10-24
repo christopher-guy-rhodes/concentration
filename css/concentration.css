@@ -1,44 +1,23 @@
-/* 390 x 570 */
-
-/*
-.aceOfSpades {
-    height: 570px;
-    width: 390px;
-    background-image: url(../images/deck.png);
-    background-position: 0px -0px;
-    position: absolute;
-    top: 0px;
-    left: 0px;
+.playerForm {
+    display: none;
 }
 
- */
-
-.twoOfSpades {
-    height: 570px;
-    width: 390px;
-    background-image: url(../images/deck.png);
-    background-position: -390px 0px;
-    position: absolute;
-    top: 0px;
-    left: 390px;
+.player1 {
+    display: none;
 }
 
-.jackOfHearts {
-    height: 570px;
-    width: 390px;
-    background-image: url(../images/deck.png);
-    background-position: -3900px -570px; /* 390 * 10 = 39000 */
-    position: absolute;
-    top: 570px;
-    left: 390px;
+.player2 {
+    display: none;
 }
 
-.back {
-    height: 570px;
-    width: 390px;
-    background-image: url(../images/deck.png);
-    background-position: -1560px -2280px;
-    position: absolute;
-    top: 570px;
-    left: 0px;
+.player3 {
+    display: none;
+}
+
+.player4 {
+    display: none;
+}
+
+.gameOver {
+    display: none;
 }

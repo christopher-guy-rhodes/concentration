@@ -7,6 +7,7 @@ class CardImageBuilder {
         this.height = undefined;
         this.width = undefined;
         this.image = undefined;
+        this.isFaceUp = false;
         this.imgOffsetX = undefined;
         this.imgOffsetY = undefined;
     }
@@ -48,7 +49,7 @@ class CardImageBuilder {
     }
 
     build() {
-        return new CardImage(this.id, this.width, this.height, this.image, this.imgOffsetX,
+        return new CardImage(this.id, this.width, this.height, this.image, this.isFaceUp, this.imgOffsetX,
             this.imgOffsetY);
     }
 }

@@ -22,13 +22,17 @@ const NUMBER_OF_ROWS = 4;
 
 const CARD_HEIGHT = 285;
 const CARD_WIDTH = 195;
+const HEADER_HEIGHT = 160;
+const FLIPPED_CARD_X_OFFSET = -1 * (4 * CARD_WIDTH);
+const FLIPPED_CARD_Y_OFFSET = -1 * (4 * CARD_HEIGHT);
+const CARD_FLIP_DELAY_MS = 2000;
 
 const IMAGE_OFFSETS = {
     'A-SPADES'       : {x : 0,  y: 0},
     'TWO-SPADES'     : {x : 1,  y: 0},
     'THREE-SPADES'   : {x : 2,  y: 0},
     'FOUR-SPADES'    : {x : 3,  y: 0},
-    'FIVE-SPADES'    : {x: 4,   y: 0},
+    'FIVE-SPADES'    : {x:  4,  y: 0},
     'SIX-SPADES'     : {x : 5,  y: 0},
     'SEVEN-SPADES'   : {x : 6,  y: 0},
     'EIGHT-SPADES'   : {x : 7,  y: 0},
@@ -78,5 +82,5 @@ const IMAGE_OFFSETS = {
     'TEN-CLUBS'      : {x : 9,  y: 3},
     'J-CLUBS'        : {x : 10, y: 3},
     'Q-CLUBS'        : {x : 11, y: 3},
-    'K-CLUBS'        : {x : 12, y: 3}
+    'K-CLUBS'        : {x : 12, y: 3},
 };
