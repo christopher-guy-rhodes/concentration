@@ -15,7 +15,8 @@ class ScoreBoard {
             } else {
                 scoreBoardEntry = player.getPlayerName();
             }
-            scoreBoardEntry = scoreBoardEntry + ' ' + player.getScore() + ' matches';
+            scoreBoardEntry = scoreBoardEntry + ' ' + player.getScore() + ' matches in ' + player.getNumberOfTries()
+                + ' turns';
             $('.player' + player.getPlayerNumber()).html(scoreBoardEntry);
         }
     }
@@ -27,7 +28,7 @@ class ScoreBoard {
     displayWinners(winningPlayers) {
         for (let winningPlayer of winningPlayers) {
             let scoreBoardEntry = winningPlayer.getPlayerName() + ' <strong class="winner"> is the winner!</strong> ' +
-                winningPlayer.getScore() + ' matches';
+                winningPlayer.getScore() + ' matches in ' + winningPlayer.getNumberOfTries() + ' turns';
             $('.player' + winningPlayer.getPlayerNumber()).html(scoreBoardEntry);
         }
     }

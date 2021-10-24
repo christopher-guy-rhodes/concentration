@@ -9,6 +9,7 @@ class Player {
         this.firstCard = undefined;
         this.playerName = playerName;
         this.playerNumber = playerNumber;
+        this.numberOfTries = 0;
     }
 
     /**
@@ -25,6 +26,7 @@ class Player {
     reset() {
         this.matches = [];
         this.firstCard = undefined;
+        this.numberOfTries = 0;
     }
 
     /**
@@ -51,6 +53,10 @@ class Player {
         return this.matches.length / 2;
     }
 
+    getNumberOfTries() {
+        return this.numberOfTries;
+    }
+
     /**
      * Takes a turn for the player. Returns the set of cards they have flipped in this turn.
      * @param card the card the player has flipped
@@ -62,6 +68,7 @@ class Player {
             this.firstCard = card;
             selections = [card];
         } else {
+            this.numberOfTries++;
             selections = [this.firstCard, card];
 
             if (this.firstCard.isMatch(card)) {

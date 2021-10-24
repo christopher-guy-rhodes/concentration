@@ -41,9 +41,7 @@ class GameBoard {
             let x = this.gridPositions[gridPositionIndex]['x'];
             let y = this.gridPositions[gridPositionIndex]['y'];
             card.render(document, x, y);
-
             gridPositionIndex++;
-
         }
     }
 
