@@ -28,9 +28,8 @@ class Deck {
         }
     }
 
-
     /**
-     * Get a card by the id.
+     * Get a card by id.
      * @param id the unique id for the card
      * @returns {Card} the card with the specified id
      */
@@ -47,20 +46,19 @@ class Deck {
     }
 
     /**
-     * Randomly order the deck of cards.
+     * Shuffle the deck of cards.
      */
     shuffleCards() {
-        //let array = Array.from(this.cards);
-        let currentIndex = this.cards.length,  randomIndex;
+        let currentIndex = this.cards.length;//,  randomIndex;
 
-        // While there remain elements to shuffle...
+        // while there remain cards to shuffle
         while (currentIndex != 0) {
 
-            // Pick a remaining element...
-            randomIndex = Math.floor(Math.random() * currentIndex);
+            // Pick a remaining card
+            let randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
 
-            // And swap it with the current element.
+            // And swap it with the current card.
             [this.cards[currentIndex], this.cards[randomIndex]] = [this.cards[randomIndex], this.cards[currentIndex]];
         }
     }

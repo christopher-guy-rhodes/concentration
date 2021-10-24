@@ -22,11 +22,12 @@ class Game {
         this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
         this.resetPlayers();
         this.getGameBoard().renderGameBoard(document);
+        // Hide the player selection form
         $('.playerForm').css('display', 'none');
     }
 
     /**
-     * Handle the attempted flip of a card.
+     * Handle the attempted flip of a card by a player.
      * @param card the card that a player attempted to flip
      */
     takePlayerTurn(card) {
@@ -35,20 +36,9 @@ class Game {
         }
         card.flip();
         let chosenCards = this.getCurrentPlayer().takeTurn(card);
-        if (chosenCards.length > 1) {
-            // Player has selected two cards
-            let card1 = chosenCards[0];
-            let card2 = chosenCards[1];
-            if (card1.isMatch(card2)) {
-                // Cards match, remove then and update the score
-                this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
-                this.removeSelectionsFromGameBoard(card1, card2);
-            } else {
-                // Cards do not match, flip them back over
-                this.flipSelectionsFaceDown(card1, card2);
-            }
-        }
+        this.doCardsMatch(chosenCards) ? this.handleMatch(chosenCards) : this.handleFailedMatch(chosenCards);
     }
+
 
     /**
      * Gets the game board used by this game.
@@ -98,21 +88,16 @@ class Game {
 
     /* private */
     nextTurn() {
-        if (this.playerTurnIndex >= this.players.length -1) {
-            this.playerTurnIndex = 0;
-        } else {
-            this.playerTurnIndex++;
-        }
+        let isLastPlayer = this.playerTurnIndex >= this.players.length - 1;
+        this.playerTurnIndex = isLastPlayer ? 0 : this.playerTurnIndex + 1;
         this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
     }
 
     /* private */
     isGameOver() {
-        let totalMatches = 0;
-        for (let player of this.players) {
-            totalMatches += player.getNumberOfMatches();
-        }
-        return totalMatches >= this.gameBoard.getDeck().getNumberOfCards();
+        return this.players.reduce(function(a, b) {
+            return a + b.getNumberOfMatches();
+        }, 0) >= this.gameBoard.getDeck().getNumberOfCards();
     }
 
     /* private */
@@ -144,12 +129,16 @@ class Game {
     }
 
     /* private */
-    flipSelectionsFaceDown(card1, card2) {
+    handleFailedMatch(cards) {
+        if (cards.length < 2) {
+            return;
+        }
         this.isFlippingLocked = true;
         let self = this;
+        console.log("flipping cards %o", cards);
         setTimeout(function() {
-            card1.flip();
-            card2.flip();
+            cards[0].flip();
+            cards[1].flip();
             self.isFlippingLocked = false;
             self.nextTurn();
         }, CARD_FLIP_DELAY_MS)
@@ -157,16 +146,22 @@ class Game {
     }
 
     /* private */
-    removeSelectionsFromGameBoard(card1, card2) {
+    handleMatch(cards) {
+        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
         this.isFlippingLocked = true;
         let self = this;
         setTimeout(function () {
-            $('.' + card1.getId()).css('display', 'none');
-            $('.' + card2.getId()).css('display', 'none');
-            self.isFlippingLocked = false;
+            self.getGameBoard().removeCards(cards);
             if (self.isGameOver()) {
                 self.handleGameOver();
             }
+            self.isFlippingLocked = false;
         }, CARD_FLIP_DELAY_MS);
     }
+
+    /* private */
+    doCardsMatch(cards) {
+        return cards.length > 1 && cards[0].isMatch(cards[1]);
+    }
+
 }

@@ -22,16 +22,20 @@ class CardImage {
     }
 
     /**
-     * Creates the css  and html needed to display a single card from the image with all the cards given a particular x
-     * and y offset into the image.
-     * @param document the dom document
+     * Creates the css  and html needed to display a single card from the big image with all the cards given a
+     * particular x and y offset into the image.
+     * @param document the DOM document
      * @param xPixelOffset the number of pixels to offset horizontally to find the card
      * @param yPixelOffset the number of pixels to offset vertically to find the card
      */
     renderCssAndHtml(document, xPixelOffset, yPixelOffset) {
         validateRequiredParams(this.renderCssAndHtml, arguments, 'document', 'xPixelOffset', 'yPixelOffset');
-        let imgOffsetX = this.isFaceUp ? this.imgOffsetX : FLIPPED_CARD_X_OFFSET;
-        let imgOffsetY = this.isFaceUp ? this.imgOffsetY : FLIPPED_CARD_Y_OFFSET;
+
+        // Override the offsets to the single face down card image if the card is face down
+        let imgOffsetX = this.isFaceUp ? this.imgOffsetX : FACE_DOWN_CARD_X_OFFSET;
+        let imgOffsetY = this.isFaceUp ? this.imgOffsetY : FACE_DOWN_CARD_Y_OFFSET;
+
+        // Generate the css to render a the cared with the given dimensions and offset
         let css = '.' + this.id + ' {' + "\n" +
             '\theight: ' + this.height + 'px' + ";\n" +
             '\twidth: ' + this.width + 'px' + ";\n" +
@@ -42,13 +46,12 @@ class CardImage {
             '\tleft: ' + xPixelOffset + 'px' + ";\n" +
             '}' + "\n";
 
-        let html = '<div class="' + this.id + '"/>';
-
         let styleSheet = document.createElement("style");
         styleSheet.type = "text/css";
         styleSheet.innerText = css;
         document.head.appendChild(styleSheet);
 
+        // Create a div in the body with the class name and a "clickable" class to handle on click events
         let myDiv = document.createElement("div");
         myDiv.className = 'clickable ' + this.id;
         document.body.appendChild(myDiv);
@@ -58,8 +61,8 @@ class CardImage {
      * Fips a card over.
      */
     flip() {
-        let imgOffsetX = this.isFaceUp ? FLIPPED_CARD_X_OFFSET : this.imgOffsetX;
-        let imgOffsetY = this.isFaceUp ? FLIPPED_CARD_Y_OFFSET : this.imgOffsetY;
+        let imgOffsetX = this.isFaceUp ? FACE_DOWN_CARD_X_OFFSET : this.imgOffsetX;
+        let imgOffsetY = this.isFaceUp ? FACE_DOWN_CARD_Y_OFFSET : this.imgOffsetY;
         $('.' + this.id).css('background-position', imgOffsetX + 'px ' + imgOffsetY + 'px');
         this.isFaceUp = !this.isFaceUp;
     }

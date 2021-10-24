@@ -16,7 +16,6 @@ class ScoreBoard {
                 scoreBoardEntry = player.getPlayerName();
             }
             scoreBoardEntry = scoreBoardEntry + ' ' + player.getScore() + ' matches';
-            console.log('updating ' + player.getPlayerNumber() + ' with ' + scoreBoardEntry);
             $('.player' + player.getPlayerNumber()).html(scoreBoardEntry);
         }
     }

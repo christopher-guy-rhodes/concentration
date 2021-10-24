@@ -31,7 +31,7 @@ class GameBoard {
      */
     renderGameBoard(document) {
         validateRequiredParams(this.renderGameBoard, 'document');
-        this.deck.shuffleCards();
+        //this.deck.shuffleCards();
         this.cards = this.deck.dealCards();
 
         let gridPositionIndex = 0;
@@ -44,6 +44,17 @@ class GameBoard {
 
             gridPositionIndex++;
 
+        }
+    }
+
+    /**
+     * Remove a set of cards from the game board.
+     * @param card1 the fist card
+     * @param card2 the second matching card
+     */
+    removeCards(cards) {
+        for (let card of cards) {
+            $('.' + card.getId()).css('display', 'none');
         }
     }
 
