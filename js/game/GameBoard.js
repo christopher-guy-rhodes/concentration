@@ -16,6 +16,7 @@ class GameBoard {
                 + this.deck.getNumberOfCards());
         }
 
+        // Setup an grid that the cards will be dealt to
         this.gridPositions = [];
         for (let y = 0; y < this.numberOfRows; y++) {
             for (let x = 0; x < this.numberOfCardsPerRow; x++) {

@@ -1,5 +1,5 @@
 /**
- * Handles image rendering for a particular card using a single image that has all the cards
+ * Handles image rendering for a particular card using a single image that has all the cards.
  */
 class CardImage {
     constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY) {
@@ -54,6 +54,9 @@ class CardImage {
         document.body.appendChild(myDiv);
     }
 
+    /**
+     * Fips a card over.
+     */
     flip() {
         let imgOffsetX = this.isFaceUp ? FLIPPED_CARD_X_OFFSET : this.imgOffsetX;
         let imgOffsetY = this.isFaceUp ? FLIPPED_CARD_Y_OFFSET : this.imgOffsetY;

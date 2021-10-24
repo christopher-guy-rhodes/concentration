@@ -1,3 +1,6 @@
+/**
+ * Class that handles a player in the game.
+ */
 class Player {
     constructor(playerName, playerNumber) {
         validateRequiredParams(this.constructor, 'playerName', 'playerNumber');
@@ -54,20 +57,20 @@ class Player {
      * @returns {[String]} all of the cards the player has flipped in this turn
      */
     takeTurn(card) {
-        let selections = [];
-        let ret = undefined;
+        let selections = undefined;
         if (this.firstCard === undefined) {
             this.firstCard = card;
-            ret = [card];
+            selections = [card];
         } else {
-            ret = [this.firstCard, card];
+            selections = [this.firstCard, card];
+
+            if (this.firstCard.isMatch(card)) {
+                this.matches = this.matches.concat([this.firstCard.getId(), card.getId()]);
+            }
+
             // Player has selected two cards, clear state
             this.firstCard = undefined;
         }
-        return ret;
-    }
-
-    addMatches(id1, id2) {
-        this.matches = this.matches.concat([id1, id2]);
+        return selections;
     }
 }

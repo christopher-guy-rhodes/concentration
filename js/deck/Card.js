@@ -19,17 +19,8 @@ class Card {
     }
 
     /**
-     * Sets a card face down
-     */
-    setFaceDown() {
-        this.cardImage.setFaceUp();
-        this.isFaceUp = true;
-        this.flip();
-    }
-
-    /**
-     * Renders the card on the screen at grid position x, y
-     * @param document the dom document
+     * Renders the card on the screen at grid position x, y.
+     * @param document the DOM document
      * @param x the x coordinate in the grid to render the card at
      * @param y the y coordinate in the grid to render the card at
      */
@@ -63,6 +54,16 @@ class Card {
     }
 
     /**
+     * Sets a card face down
+     */
+    setFaceDown() {
+        // Set the card face up and then flip it
+        this.cardImage.setFaceUp();
+        this.isFaceUp = true;
+        this.flip();
+    }
+
+    /**
      * Get the id of the card.
      * @returns {string} the card id
      */
@@ -86,6 +87,10 @@ class Card {
         return this.suit;
     }
 
+    /**
+     * Determines if the card is face up.
+     * @returns {boolean} true if the card is face up, false otherwise
+     */
     getIsFaceUp() {
         return this.isFaceUp;
     }

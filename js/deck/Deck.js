@@ -5,7 +5,7 @@ class Deck {
     constructor() {
         this.suits = [SPADES, HEARTS, DIAMONDS, CLUBS];
 
-        // Keep index from card name to card to random access card lookup by id
+        // Keep index from card id to card for random access card lookup by id
         this.cardIndex = {};
 
         this.cards = [];
@@ -39,16 +39,15 @@ class Deck {
     }
 
     /**
-     * Returns the cards sorted in the canonical order.
-     * @returns {[Card]} the deck of cards in order
+     * Deal the cards.
+     * @returns {[Card]} the deck of cards
      */
     dealCards() {
         return this.cards;
     }
 
     /**
-     * Returns the cards shuffled randomly
-     * @returns {[Card]} the shuffled deck of cards
+     * Randomly order the deck of cards.
      */
     shuffleCards() {
         //let array = Array.from(this.cards);

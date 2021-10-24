@@ -8,19 +8,9 @@ class Game {
             .withNumberOfRows(NUMBER_OF_ROWS).build();
 
         this.players = [];
-
         this.playerTurnIndex = 0;
-
+        this.scoreBoard = undefined;
         this.isFlippingLocked = false;
-    }
-
-    /**
-     * Renders the game board with a newly shuffled deck.
-     * @param document the dom document
-     */
-    renderGameBoard(document) {
-        validateRequiredParams(this.renderGameBoard, arguments, 'document');
-        this.gameBoard.renderGameBoard(document);
     }
 
     /**
@@ -29,56 +19,51 @@ class Game {
      */
     play(document) {
         validateRequiredParams(this.play, arguments, 'document');
-        this.highlightPlayer(this.getCurrentPlayer().getPlayerNumber());
-
+        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
         this.resetPlayers();
-        this.renderGameBoard(document);
+        this.getGameBoard().renderGameBoard(document);
         $('.playerForm').css('display', 'none');
-
-        $('.turn').css('display', 'block');
     }
 
     /**
      * Handle the attempted flip of a card.
-     * TODO: clean up this code, it is messy
      * @param card the card that a player attempted to flip
      */
-    handleFlipAttempt(card) {
-        if (!card.getIsFaceUp()) {
-            card.flip();
-            let chosenCards = this.getCurrentPlayer().takeTurn(card);
-            if (chosenCards.length > 1) {
-                // Player has selected two cards
-                if (chosenCards[0].isMatch(chosenCards[1])) {
-                    this.getCurrentPlayer().addMatches();
-                    this.updatePlayerStats(this.getCurrentPlayer().getPlayerNumber());
-
-                    this.isFlippingLocked = true;
-                    let self = this;
-                    setTimeout(function () {
-                        $('.' + chosenCards[0].getId()).css('display', 'none');
-                        $('.' + chosenCards[1].getId()).css('display', 'none');
-                        self.isFlippingLocked = false;
-                        if (self.isGameOver()) {
-                            self.handleGameOver();
-                        }
-                    }, CARD_FLIP_DELAY_MS)
-
-                    // give player points and leave cards flipped
-                } else {
-                    this.isFlippingLocked = true;
-                    this.nextTurn();
-                    let self = this;
-                    setTimeout(function() {
-                        chosenCards[0].flip();
-                        chosenCards[1].flip();
-                        self.isFlippingLocked = false;
-                    }, CARD_FLIP_DELAY_MS)
-                }
-
-
+    takePlayerTurn(card) {
+        if (card.getIsFaceUp()) {
+            return;
+        }
+        card.flip();
+        let chosenCards = this.getCurrentPlayer().takeTurn(card);
+        if (chosenCards.length > 1) {
+            // Player has selected two cards
+            let card1 = chosenCards[0];
+            let card2 = chosenCards[1];
+            if (card1.isMatch(card2)) {
+                // Cards match, remove then and update the score
+                this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
+                this.removeSelectionsFromGameBoard(card1, card2);
+            } else {
+                // Cards do not match, flip them back over
+                this.flipSelectionsFaceDown(card1, card2);
             }
         }
+    }
+
+    /**
+     * Gets the game board used by this game.
+     * @returns {GameBoard} the game board
+     */
+    getGameBoard() {
+        return this.gameBoard;
+    }
+
+    /**
+     * Gets the score board used by this game.
+     * @returns {ScoreBoard} the score board
+     */
+    getScoreBoard() {
+        return this.scoreBoard;
     }
 
     /**
@@ -95,15 +80,7 @@ class Game {
     addPlayers(players) {
         validateRequiredParams(this.addPlayers, arguments, 'players');
         this.players = this.players.concat(players);
-    }
-
-    /**
-     * Get a card by id.
-     * @param id the id of the card to get
-     * @returns {Card}
-     */
-    getCardById(id) {
-        return this.gameBoard.getDeck().getCardById(id);
+        this.scoreBoard = new ScoreBoard(this.players);
     }
 
     /**
@@ -120,50 +97,13 @@ class Game {
     }
 
     /* private */
-    // TODO: clean up this code
-    unhighlightPlayer(playerNumber) {
-        let text = $('.player' + playerNumber).html();
-        text = text.replace(/<strong>&gt;&gt;/, '');
-        text = text.replace('&lt;&lt;</strong>', '');
-        $('.player' + playerNumber).html(text);
-    }
-
-    /* private */
-    // TODO: clean up this code
-    highlightPlayer(currentPlayerNumber) {
-        for (let playerNumber = 1; playerNumber <= this.players.length; playerNumber++) {
-            if (currentPlayerNumber === playerNumber) {
-                let text = $('.player' + playerNumber).html();
-                text = text.replace(/Player [0-9]+/,'<strong>&gt;&gt;Player ' + playerNumber + '&lt;&lt;</strong>');
-                $('.player' + playerNumber).html(text);
-            } else {
-                this.unhighlightPlayer(playerNumber);
-            }
-        }
-    }
-
-    /**
-     * private
-     * TODO: clean up this code, it is messy
-     */
-    updatePlayerStats(playerNumber) {
-        let text = $('.player' + playerNumber).html();
-        let score = this.getCurrentPlayer().getScore();
-        text = text.replace(/[0-9]+ matches/,score + ' matches');
-
-        $('.player' + playerNumber).html(text);
-    }
-
-    /**
-     * private
-     */
     nextTurn() {
         if (this.playerTurnIndex >= this.players.length -1) {
             this.playerTurnIndex = 0;
         } else {
             this.playerTurnIndex++;
         }
-        this.highlightPlayer(this.getCurrentPlayer().getPlayerNumber());
+        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
     }
 
     /* private */
@@ -176,34 +116,57 @@ class Game {
     }
 
     /* private */
-    // TODO: clean up this code
     handleGameOver() {
-        let maxScore = 0;
-        let winningPlayerNumber = undefined;
-        for (let player of this.players) {
-            if (player.getScore() > maxScore) {
-                winningPlayerNumber = player.getPlayerNumber();
-                maxScore = player.getScore();
-            }
-        }
-
-        let text = $('.player' + winningPlayerNumber).html();
-        text = text.replace('<strong>&gt;&gt;', '');
-        text = text.replace('&lt;&lt;</strong>', '');
-        text = text.replace(/Player [0-9]+/, 'Player ' + winningPlayerNumber + '<strong style="color: #ff0000;"> is the winner!</strong>');
-
-        $('.player' + winningPlayerNumber).html(text);
+        this.scoreBoard.displayWinner(this.getWinningPlayer());
         $('.gameOver').css('display', 'block');
     }
 
+    /* private */
+    getWinningPlayer() {
+        let maxScore = 0;
+        let winningPlayer = undefined;
+        for (let player of this.players) {
+            if (player.getScore() > maxScore) {
+                winningPlayer = player;
+                maxScore = player.getScore();
+            }
+        }
+        return winningPlayer;
+    }
+
+    /* private */
     resetPlayers() {
         for (let player of this.players) {
             player.reset();
-            let playerNumber = player.getPlayerNumber();
-            let text = $('.player' + playerNumber).html();
-            text = text.replace('<strong style="color: #ff0000;"> is the winner!</strong>', '');
-            $('.player' + playerNumber).html(text);
-            this.updatePlayerStats(player.getPlayerNumber());
         }
+        this.playerTurnIndex = 0;
+        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
+    }
+
+    /* private */
+    flipSelectionsFaceDown(card1, card2) {
+        this.isFlippingLocked = true;
+        let self = this;
+        setTimeout(function() {
+            card1.flip();
+            card2.flip();
+            self.isFlippingLocked = false;
+            self.nextTurn();
+        }, CARD_FLIP_DELAY_MS)
+
+    }
+
+    /* private */
+    removeSelectionsFromGameBoard(card1, card2) {
+        this.isFlippingLocked = true;
+        let self = this;
+        setTimeout(function () {
+            $('.' + card1.getId()).css('display', 'none');
+            $('.' + card2.getId()).css('display', 'none');
+            self.isFlippingLocked = false;
+            if (self.isGameOver()) {
+                self.handleGameOver();
+            }
+        }, CARD_FLIP_DELAY_MS);
     }
 }

@@ -13,13 +13,16 @@ $('.numPlayers').change(function() {
 $(document).on('click', '.clickable', function (e) {
     if (!game.getIsFlippingLocked()) {
         let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
-        game.handleFlipAttempt(game.getCardById(clickedCardId));
+        game.takePlayerTurn(game.getGameBoard().getDeck().getCardById(clickedCardId));
     }
 });
 
 $('.gameOver').click(function() {
     if (!game.getIsFlippingLocked()) {
-        game.play(document);
+        game.getScoreBoard().hideScoreboard();
+        $('.gameOver').css('display', 'none');
+        $('.numPlayers').val("");
+        game.selectPlayers();
     }
 });
 

@@ -25,7 +25,7 @@ const CARD_WIDTH = 195;
 const HEADER_HEIGHT = 160;
 const FLIPPED_CARD_X_OFFSET = -1 * (4 * CARD_WIDTH);
 const FLIPPED_CARD_Y_OFFSET = -1 * (4 * CARD_HEIGHT);
-const CARD_FLIP_DELAY_MS = 2000;
+const CARD_FLIP_DELAY_MS = 1500;
 
 const IMAGE_OFFSETS = {
     'A-SPADES'       : {x : 0,  y: 0},
