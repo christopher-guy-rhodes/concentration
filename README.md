@@ -4,6 +4,8 @@ Javascript/JQuery based implementation of the classic concentration card game
 
 Author: Christopher Rhodes (chrisguyrhodes@gmail.com)
 
+![Concentration Screenshot](/images/screenshot.png?raw=true "Concentration Game")
+
 ## Rules
 
 https://en.wikipedia.org/wiki/Concentration_(card_game)
