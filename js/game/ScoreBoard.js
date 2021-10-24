@@ -22,11 +22,14 @@ class ScoreBoard {
 
     /**
      * Display the winning player on the scoreboard.
-     * @param winningPlayer the winning player
+     * @param winningPlayers the array of winning player
      */
-    displayWinner(winningPlayer) {
-        let scoreBoardEntry = winningPlayer.getPlayerName() + ' <strong class="winner"> is the winner!</strong>';
-        $('.player' + winningPlayer.getPlayerNumber()).html(scoreBoardEntry);
+    displayWinners(winningPlayers) {
+        for (let winningPlayer of winningPlayers) {
+            let scoreBoardEntry = winningPlayer.getPlayerName() + ' <strong class="winner"> is the winner!</strong> ' +
+                winningPlayer.getScore() + ' matches';
+            $('.player' + winningPlayer.getPlayerNumber()).html(scoreBoardEntry);
+        }
     }
 
     /**

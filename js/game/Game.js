@@ -102,21 +102,14 @@ class Game {
 
     /* private */
     handleGameOver() {
-        this.scoreBoard.displayWinner(this.getWinningPlayer());
+        this.scoreBoard.displayWinners(this.getWinningPlayers());
         $('.gameOver').css('display', 'block');
     }
 
     /* private */
-    getWinningPlayer() {
-        let maxScore = 0;
-        let winningPlayer = undefined;
-        for (let player of this.players) {
-            if (player.getScore() > maxScore) {
-                winningPlayer = player;
-                maxScore = player.getScore();
-            }
-        }
-        return winningPlayer;
+    getWinningPlayers() {
+        let maxScore = Math.max.apply(Math,this.players.map(function(p){return p.getScore();}));
+        return this.players.filter(player => player.getScore() === maxScore);
     }
 
     /* private */
@@ -135,7 +128,6 @@ class Game {
         }
         this.isFlippingLocked = true;
         let self = this;
-        console.log("flipping cards %o", cards);
         setTimeout(function() {
             cards[0].flip();
             cards[1].flip();
