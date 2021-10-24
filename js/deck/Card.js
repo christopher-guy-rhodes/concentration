@@ -2,7 +2,6 @@
  * Class that represents a playing card.
  */
 class Card {
-
     constructor(rank, suit) {
         this.id = rank + '-' + suit;
         this.rank = rank;
@@ -38,7 +37,7 @@ class Card {
     }
 
     /**
-     * Determine if the suit of the card is black (CLUB or SPADE)
+     * Determine if the suit of the card is black (CLUB or SPADE).
      * @returns {boolean} true if the suit is black, false otherwise
      */
     isBlackSuit() {
@@ -54,7 +53,7 @@ class Card {
     }
 
     /**
-     * Sets a card face down
+     * Sets a card face down.
      */
     setFaceDown() {
         // Set the card face up and then flip it

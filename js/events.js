@@ -10,6 +10,7 @@ $('.numPlayers').change(function() {
     game.play(document);
 });
 
+// Handle a card click
 $(document).on('click', '.clickable', function (e) {
     if (!game.getIsFlippingLocked()) {
         let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
@@ -17,6 +18,7 @@ $(document).on('click', '.clickable', function (e) {
     }
 });
 
+// Handle a game restart click
 $('.gameOver').click(function() {
     if (!game.getIsFlippingLocked()) {
         game.getScoreBoard().hideScoreboard();
