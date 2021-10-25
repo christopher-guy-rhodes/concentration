@@ -41,7 +41,7 @@ $('.gameOver').click(function() {
     game.getScoreBoard().hideScoreboard();
     $('.gameOver').css('display', 'none');
     $('.numPlayers').val("");
-    game.selectPlayers();
+    $('.playerForm').css('display','block');
 });
 
-game.selectPlayers();
+$('.playerForm').css('display','block');

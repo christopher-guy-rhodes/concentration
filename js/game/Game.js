@@ -31,15 +31,7 @@ class Game {
      * @param card the card that a player attempted to flip
      */
     takePlayerTurn(card) {
-        if (this.pendingFlipOrRemovel.size > 0) {
-            for (let pendingMatches of this.pendingFlipOrRemovel) {
-                if (this.doCardsMatch(pendingMatches)) {
-                    this.getGameBoard().removeCards(pendingMatches);
-                } else {
-                    this.setSelectionFaceDown(pendingMatches);
-                }
-            }
-        }
+        this.handlePendingFlipsOrRemovals();
         if (card.getIsFaceUp()) {
             return;
         }
@@ -50,7 +42,6 @@ class Game {
         }
         this.doCardsMatch(chosenCards) ? this.handleMatch(chosenCards) : this.handleFailedMatch(chosenCards);
     }
-
 
     /**
      * Gets the game board used by this game.
@@ -69,13 +60,6 @@ class Game {
     }
 
     /**
-     * Show the form to select the players.
-     */
-    selectPlayers() {
-        $('.playerForm').css('display','block');
-    }
-
-    /**
      * Adds players to the game.
      * @param players array of Player objects to add
      */
@@ -83,14 +67,6 @@ class Game {
         validateRequiredParams(this.addPlayers, arguments, 'players');
         this.players = this.players.concat(players);
         this.scoreBoard = new ScoreBoard(this.players);
-    }
-
-    /**
-     * Determine if card flipping is locked.
-     * @returns {boolean} True if card flipping is locked in the ui, false otherwise.
-     */
-    getIsFlippingLocked() {
-        return this.isFlippingLocked;
     }
 
     /* private */
@@ -130,15 +106,25 @@ class Game {
         if (cards.length < 2) {
             return;
         }
-        this.isFlippingLocked = true;
         let self = this;
         setTimeout(function() {;
             self.setSelectionFaceDown(cards)
-            self.isFlippingLocked = false;
             self.nextTurn();
             self.pendingFlipOrRemovel.delete(cards);
         }, CARD_FLIP_DELAY_MS)
 
+    }
+
+    /* private */
+    handleMatch(cards) {
+        this.scoreBoard.updateStats(this.getCurrentPlayer());
+        let self = this;
+        setTimeout(function () {
+            self.getGameBoard().removeCards(cards);
+            if (self.isGameOver()) {
+                self.handleGameOver();
+            }
+        }, CARD_FLIP_DELAY_MS);
     }
 
     /* private */
@@ -149,22 +135,20 @@ class Game {
     }
 
     /* private */
-    handleMatch(cards) {
-        this.scoreBoard.updateStats(this.getCurrentPlayer());
-        this.isFlippingLocked = true;
-        let self = this;
-        setTimeout(function () {
-            self.getGameBoard().removeCards(cards);
-            if (self.isGameOver()) {
-                self.handleGameOver();
-            }
-            self.isFlippingLocked = false;
-        }, CARD_FLIP_DELAY_MS);
-    }
-
-    /* private */
     doCardsMatch(cards) {
         return cards.length > 1 && cards[0].isMatch(cards[1]);
     }
 
+    /* private */
+    handlePendingFlipsOrRemovals() {
+        if (this.pendingFlipOrRemovel.size > 0) {
+            for (let pendingMatches of this.pendingFlipOrRemovel) {
+                if (this.doCardsMatch(pendingMatches)) {
+                    this.getGameBoard().removeCards(pendingMatches);
+                } else {
+                    this.setSelectionFaceDown(pendingMatches);
+                }
+            }
+        }
+    }
 }

@@ -55,10 +55,11 @@ class Player {
      */
     takeTurn(card) {
         let selections = undefined;
-        if (this.firstCard === undefined) {
+        if (this.firstCard === undefined || this.firstCard.getId() === card.getId()) {
             this.firstCard = card;
             selections = [card];
         } else {
+            console.log('turn with ' + this.firstCard.getId() + ' and ' + card.getId());
             this.numberOfTries++;
             selections = [this.firstCard, card];
 
