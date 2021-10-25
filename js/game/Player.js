@@ -21,15 +21,6 @@ class Player {
     }
 
     /**
-     * Reset a player state
-     */
-    reset() {
-        this.matches = [];
-        this.firstCard = undefined;
-        this.numberOfTries = 0;
-    }
-
-    /**
      * Gets the players name.
      * @returns {String}
      */

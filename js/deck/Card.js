@@ -48,21 +48,19 @@ class Card {
     }
 
     /**
-     * Flip a card over.
-     */
-    flip() {
-        this.cardImage.flip();
-        this.isFaceUp = !this.isFaceUp;
-    }
-
-    /**
      * Sets a card face down.
      */
     setFaceDown() {
-        // Set the card face up and then flip it
+        this.cardImage.setFaceDown();
+        this.isFaceUp = false;
+    }
+
+    /**
+     * Sets a card face up.
+     */
+    setFaceUp() {
         this.cardImage.setFaceUp();
         this.isFaceUp = true;
-        this.flip();
     }
 
     /**

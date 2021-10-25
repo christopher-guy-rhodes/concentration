@@ -10,19 +10,19 @@ class Game {
         this.players = [];
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
-        // Keep track of the turns that are waiting on to flip cards back over or remove cards after a match attempt.
-        // This way if the player makes a new selection before the time delay they can proceed without having to wait.
+        // Keep track of the card pair selection that are waiting to be flipped back over or removed after a match
+        // attempt. This way if the player makes a new selection before the time delay they can proceed without having
+        // to wait and the actions that would happen after the timeout will happen immediately.
         this.pendingFlipOrRemovel = new Set();
     }
 
     /**
      * Play the game.
-     * @param document the dom document
+     * @param document the DOM document
      */
     play(document) {
         validateRequiredParams(this.play, arguments, 'document');
-        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
-        this.resetPlayers();
+        this.getScoreBoard().updateStats(this.getCurrentPlayer());
         this.getGameBoard().renderGameBoard(document);
     }
 
@@ -43,7 +43,7 @@ class Game {
         if (card.getIsFaceUp()) {
             return;
         }
-        card.flip();
+        card.setFaceUp();
         let chosenCards = this.getCurrentPlayer().takeTurn(card);
         if (chosenCards.length > 1) {
             this.pendingFlipOrRemovel.add(chosenCards);
@@ -102,7 +102,7 @@ class Game {
     nextTurn() {
         let isLastPlayer = this.playerTurnIndex >= this.players.length - 1;
         this.playerTurnIndex = isLastPlayer ? 0 : this.playerTurnIndex + 1;
-        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
+        this.scoreBoard.updateStats(this.getCurrentPlayer());
     }
 
     /* private */
@@ -123,15 +123,6 @@ class Game {
     getWinningPlayers() {
         let maxScore = Math.max.apply(Math,this.players.map(function(p){return p.getScore();}));
         return this.players.filter(player => player.getScore() === maxScore);
-    }
-
-    /* private */
-    resetPlayers() {
-        for (let player of this.players) {
-            player.reset();
-        }
-        this.playerTurnIndex = 0;
-        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
     }
 
     /* private */
@@ -159,7 +150,7 @@ class Game {
 
     /* private */
     handleMatch(cards) {
-        this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
+        this.scoreBoard.updateStats(this.getCurrentPlayer());
         this.isFlippingLocked = true;
         let self = this;
         setTimeout(function () {

@@ -15,15 +15,8 @@ class CardImage {
     }
 
     /**
-     * Set the card image face down when rendering.
-     */
-    setFaceUp() {
-        this.isFaceUp = true;
-    }
-
-    /**
-     * Creates the css  and html needed to display a single card from the big image with all the cards given a
-     * particular x and y offset into the image.
+     * Creates the css and html needed to display a single card from the big image with all the cards given a particular
+     * x and y offset into the image.
      * @param document the DOM document
      * @param xPixelOffset the number of pixels to offset horizontally to find the card
      * @param yPixelOffset the number of pixels to offset vertically to find the card
@@ -47,7 +40,6 @@ class CardImage {
             '}' + "\n";
 
         let styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
         styleSheet.innerText = css;
         document.head.appendChild(styleSheet);
 
@@ -58,12 +50,23 @@ class CardImage {
     }
 
     /**
-     * Fips a card over.
+     * Sets the card face down.
      */
-    flip() {
-        let imgOffsetX = this.isFaceUp ? FACE_DOWN_CARD_X_OFFSET : this.imgOffsetX;
-        let imgOffsetY = this.isFaceUp ? FACE_DOWN_CARD_Y_OFFSET : this.imgOffsetY;
-        $('.' + this.id).css('background-position', imgOffsetX + 'px ' + imgOffsetY + 'px');
-        this.isFaceUp = !this.isFaceUp;
+    setFaceDown() {
+        this.setOffset(FACE_DOWN_CARD_X_OFFSET, FACE_DOWN_CARD_Y_OFFSET);
+        this.isFaceUp = false;
+    }
+
+    /**
+     * Sets the card face up.
+     */
+    setFaceUp() {
+        this.setOffset(this.imgOffsetX, this.imgOffsetY);
+        this.isFaceUp = true;
+    }
+
+    /* private */
+    setOffset(xOffset, yOffset) {
+        $('.' + this.id).css('background-position', xOffset + 'px ' + yOffset + 'px');
     }
 }

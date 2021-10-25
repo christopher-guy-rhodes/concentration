@@ -5,12 +5,12 @@ class ScoreBoard {
 
     /**
      * Highlights the player name of the current player.
-     * @param playerNumber the player number to highlight
+     * @param player the player that should be highlighted in the score board
      */
-    updateStats(playerNumber) {
+    updateStats(highlightedPlayer) {
         for (let player of this.players) {
             let scoreBoardEntry = undefined;
-            if (player.getPlayerNumber() === playerNumber) {
+            if (player.getPlayerNumber() === highlightedPlayer.getPlayerNumber()) {
                 scoreBoardEntry = '<strong>&gt;&gt;' + player.getPlayerName() + '&lt;&lt;   </strong>';
             } else {
                 scoreBoardEntry = player.getPlayerName();
