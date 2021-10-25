@@ -1,5 +1,5 @@
 
-const DECK_IMAGE = '\'../images/deck.png\'';
+const DECK_IMAGE = '../images/deck.png';
 
 /**
  * Main class to render card game
