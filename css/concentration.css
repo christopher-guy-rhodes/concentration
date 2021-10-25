@@ -18,6 +18,26 @@
     display: none;
 }
 
+.playerName1 {
+    display: none;
+}
+
+.playerName2 {
+    display: none;
+}
+
+.playerName3 {
+    display: none;
+}
+
+.playerName4 {
+    display: none;
+}
+
+.playerNameSubmit {
+    display: none;
+}
+
 .gameOver {
     display: none;
 }

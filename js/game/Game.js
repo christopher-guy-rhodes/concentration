@@ -22,8 +22,6 @@ class Game {
         this.scoreBoard.updateStats(this.getCurrentPlayer().getPlayerNumber());
         this.resetPlayers();
         this.getGameBoard().renderGameBoard(document);
-        // Hide the player selection form
-        $('.playerForm').css('display', 'none');
     }
 
     /**
