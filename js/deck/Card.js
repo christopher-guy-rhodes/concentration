@@ -33,7 +33,10 @@ class Card {
      * @param otherCard the other card to compare to this card for a match
      */
     isMatch(otherCard) {
-        return this.getRank() === otherCard.getRank() && this.isBlackSuit() === otherCard.isBlackSuit();
+        // if it is the same card it is not a match
+        return this.getId() !== otherCard.getId() &&
+            // if it has the same color and rank it is a match
+            this.getRank() === otherCard.getRank() && this.isBlackSuit() === otherCard.isBlackSuit();
     }
 
     /**
