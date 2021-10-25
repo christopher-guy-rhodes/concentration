@@ -2,16 +2,11 @@
 let game = new Game();
 $('.numPlayers').change(function() {
     $('.numPlayersSelected').val(this.value);
-    //let players = [];
     for (let i = 0; i < this.value; i++) {
-        //players.push(new Player('Player ' + (i + 1), (i + 1)));
-        //$('.player' + (i + 1)).css('display', 'block')
         $('.playerName' + (i + 1)).css('display', 'block');
     }
     $('.playerForm').css('display', 'none');
     $('.playerNameSubmit').css('display', 'block');
-    //game.addPlayers(players);
-    //game.play(document);
 });
 
 // Add players and start the game
@@ -43,12 +38,10 @@ $(document).on('click', '.clickable', function (e) {
 
 // Handle a game restart click
 $('.gameOver').click(function() {
-    if (!game.getIsFlippingLocked()) {
-        game.getScoreBoard().hideScoreboard();
-        $('.gameOver').css('display', 'none');
-        $('.numPlayers').val("");
-        game.selectPlayers();
-    }
+    game.getScoreBoard().hideScoreboard();
+    $('.gameOver').css('display', 'none');
+    $('.numPlayers').val("");
+    game.selectPlayers();
 });
 
 game.selectPlayers();

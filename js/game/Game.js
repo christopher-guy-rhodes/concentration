@@ -10,7 +10,6 @@ class Game {
         this.players = [];
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
-        this.isFlippingLocked = false;
         // Keep track of the turns that are waiting on to flip cards back over or remove cards after a match attempt.
         // This way if the player makes a new selection before the time delay they can proceed without having to wait.
         this.pendingFlipOrRemovel = new Set();
@@ -115,6 +114,7 @@ class Game {
 
     /* private */
     handleGameOver() {
+        this.pendingFlipOrRemovel = new Set();
         this.scoreBoard.displayWinners(this.getWinningPlayers());
         $('.gameOver').css('display', 'block');
     }
