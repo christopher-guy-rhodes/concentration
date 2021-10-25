@@ -37,10 +37,8 @@ $('.playerNameSubmit').click(function(e) {
 
 // Handle a card click
 $(document).on('click', '.clickable', function (e) {
-    if (!game.getIsFlippingLocked()) {
-        let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
-        game.takePlayerTurn(game.getGameBoard().getDeck().getCardById(clickedCardId));
-    }
+    let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
+    game.takePlayerTurn(game.getGameBoard().getDeck().getCardById(clickedCardId));
 });
 
 // Handle a game restart click

@@ -11,6 +11,9 @@ class Game {
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
         this.isFlippingLocked = false;
+        // Keep track of the turns that are waiting on to flip cards back over or remove cards after a match attempt.
+        // This way if the player makes a new selection before the time delay they can proceed without having to wait.
+        this.pendingFlipOrRemovel = new Set();
     }
 
     /**
@@ -29,11 +32,23 @@ class Game {
      * @param card the card that a player attempted to flip
      */
     takePlayerTurn(card) {
+        if (this.pendingFlipOrRemovel.size > 0) {
+            for (let pendingMatches of this.pendingFlipOrRemovel) {
+                if (this.doCardsMatch(pendingMatches)) {
+                    this.getGameBoard().removeCards(pendingMatches);
+                } else {
+                    this.setSelectionFaceDown(pendingMatches);
+                }
+            }
+        }
         if (card.getIsFaceUp()) {
             return;
         }
         card.flip();
         let chosenCards = this.getCurrentPlayer().takeTurn(card);
+        if (chosenCards.length > 1) {
+            this.pendingFlipOrRemovel.add(chosenCards);
+        }
         this.doCardsMatch(chosenCards) ? this.handleMatch(chosenCards) : this.handleFailedMatch(chosenCards);
     }
 
@@ -126,13 +141,20 @@ class Game {
         }
         this.isFlippingLocked = true;
         let self = this;
-        setTimeout(function() {
-            cards[0].flip();
-            cards[1].flip();
+        setTimeout(function() {;
+            self.setSelectionFaceDown(cards)
             self.isFlippingLocked = false;
             self.nextTurn();
+            self.pendingFlipOrRemovel.delete(cards);
         }, CARD_FLIP_DELAY_MS)
 
+    }
+
+    /* private */
+    setSelectionFaceDown(cards) {
+        for (let card of cards) {
+            card.setFaceDown();
+        }
     }
 
     /* private */
