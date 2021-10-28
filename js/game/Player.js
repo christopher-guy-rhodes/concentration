@@ -59,7 +59,6 @@ class Player {
             this.firstCard = card;
             selections = [card];
         } else {
-            console.log('turn with ' + this.firstCard.getId() + ' and ' + card.getId());
             this.numberOfTries++;
             selections = [this.firstCard, card];
 

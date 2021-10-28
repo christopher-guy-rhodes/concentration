@@ -53,7 +53,7 @@ class CardImage {
      * Sets the card face down.
      */
     setFaceDown() {
-        this.setOffset(FACE_DOWN_CARD_X_OFFSET, FACE_DOWN_CARD_Y_OFFSET);
+        this.renderNewOffset(FACE_DOWN_CARD_X_OFFSET, FACE_DOWN_CARD_Y_OFFSET);
         this.isFaceUp = false;
     }
 
@@ -61,12 +61,12 @@ class CardImage {
      * Sets the card face up.
      */
     setFaceUp() {
-        this.setOffset(this.imgOffsetX, this.imgOffsetY);
+        this.renderNewOffset(this.imgOffsetX, this.imgOffsetY);
         this.isFaceUp = true;
     }
 
     /* private */
-    setOffset(xOffset, yOffset) {
+    renderNewOffset(xOffset, yOffset) {
         $('.' + this.id).css('background-position', xOffset + 'px ' + yOffset + 'px');
     }
 }

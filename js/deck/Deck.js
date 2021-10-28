@@ -4,27 +4,16 @@
 class Deck {
     constructor() {
         this.suits = [SPADES, HEARTS, DIAMONDS, CLUBS];
+        this.ranks = [TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, K, Q, J, A];
 
         // Keep index from card id to card for random access card lookup by id
         this.cardIndex = {};
 
         this.cards = [];
         for (let suit of this.suits) {
-            this.cards = this.cards.concat([
-                this.indexCard(A, suit),
-                this.indexCard(TWO, suit),
-                this.indexCard(THREE, suit),
-                this.indexCard(FOUR, suit),
-                this.indexCard(FIVE, suit),
-                this.indexCard(SIX, suit),
-                this.indexCard(SEVEN, suit),
-                this.indexCard(EIGHT, suit),
-                this.indexCard(NINE, suit),
-                this.indexCard(TEN, suit),
-                this.indexCard(J, suit),
-                this.indexCard(Q, suit),
-                this.indexCard(K, suit),
-            ]);
+            for (let rank of this.ranks) {
+                this.cards.push(this.indexCard(rank, suit));
+            }
         }
     }
 
@@ -49,14 +38,13 @@ class Deck {
      * Shuffle the deck of cards.
      */
     shuffleCards() {
-        let currentIndex = this.cards.length;//,  randomIndex;
+        let currentIndex = this.cards.length;
 
         // while there remain cards to shuffle
         while (currentIndex != 0) {
 
             // Pick a remaining card
-            let randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
+            let randomIndex = Math.floor(Math.random() * currentIndex--);
 
             // And swap it with the current card.
             [this.cards[currentIndex], this.cards[randomIndex]] = [this.cards[randomIndex], this.cards[currentIndex]];
