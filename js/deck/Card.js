@@ -18,6 +18,14 @@ class Card {
     }
 
     /**
+     * Get the id of the card.
+     * @returns {string} the card id
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
      * Renders the card on the screen at grid position x, y.
      * @param document the DOM document
      * @param x the x coordinate in the grid to render the card at
@@ -33,18 +41,7 @@ class Card {
      * @param otherCard the other card to compare to this card for a match
      */
     isMatch(otherCard) {
-        // if it is the same card it is not a match
-        return this.getId() !== otherCard.getId() &&
-            // if it has the same color and rank it is a match
-            this.getRank() === otherCard.getRank() && this.isBlackSuit() === otherCard.isBlackSuit();
-    }
-
-    /**
-     * Determine if the suit of the card is black (CLUB or SPADE).
-     * @returns {boolean} true if the suit is black, false otherwise
-     */
-    isBlackSuit() {
-        return this.suit === CLUBS || this.suit === SPADES;
+        return this.getRank() === otherCard.getRank() && this.isBlackSuit() === otherCard.isBlackSuit();
     }
 
     /**
@@ -62,13 +59,22 @@ class Card {
         this.cardImage.setFaceUp();
         this.isFaceUp = true;
     }
+    /**
+     * Determines if the card is face up.
+     * @returns {boolean} true if the card is face up, false otherwise
+     */
+    getIsFaceUp() {
+        return this.isFaceUp;
+    }
+
+    // === Methods specific to a deck of playing cards === //
 
     /**
-     * Get the id of the card.
-     * @returns {string} the card id
+     * Determine if the suit of the card is black (CLUB or SPADE).
+     * @returns {boolean} true if the suit is black, false otherwise
      */
-    getId() {
-        return this.id;
+    isBlackSuit() {
+        return this.suit === CLUBS || this.suit === SPADES;
     }
 
     /**
@@ -87,11 +93,4 @@ class Card {
         return this.suit;
     }
 
-    /**
-     * Determines if the card is face up.
-     * @returns {boolean} true if the card is face up, false otherwise
-     */
-    getIsFaceUp() {
-        return this.isFaceUp;
-    }
 }
