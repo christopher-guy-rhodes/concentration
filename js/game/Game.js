@@ -38,9 +38,6 @@ class Game {
         card.setFaceUp();
         let chosenCards = this.getCurrentPlayer().takeTurn(card);
         if (chosenCards.length > 1) {
-            if (chosenCards.length > 2) {
-                alert('fatal');
-            }
             this.pendingFlipOrRemovel.add(chosenCards);
         }
         this.doCardsMatch(chosenCards) ? this.handleMatch(chosenCards) : this.handleFailedMatch(chosenCards);
@@ -110,9 +107,9 @@ class Game {
             return;
         }
         let self = this;
-        self.nextTurn();
-        self.pendingFlipOrRemovel.delete(cards);
+        this.nextTurn();
         setTimeout(function() {
+            self.pendingFlipOrRemovel.delete(cards);
             self.setSelectionFaceDown(cards);
         }, CARD_FLIP_DELAY_MS)
 
