@@ -3,7 +3,7 @@
  */
 class GameBoard {
     constructor(numberOfRows, numberOfCardsPerRow) {
-        this.deck = new Deck();
+        this.deck = new PlayingCardDeck('../images/decks/playing_cards.png');
 
         this.numberOfRows = numberOfRows;
         this.numberOfCardsPerRow = numberOfCardsPerRow;
@@ -37,9 +37,14 @@ class GameBoard {
             $('.' + card.getId()).css('display', 'block');
             let x = this.gridPositions[gridPositionIndex]['x'];
             let y = this.gridPositions[gridPositionIndex]['y'];
-            card.render(document, x, y);
+            this.renderCard(document, card, x, y);
             gridPositionIndex++;
         }
+    }
+
+    renderCard(document, card, x, y) {
+        validateRequiredParams(this.renderCard, arguments, 'document', 'card', 'x', 'y');
+        card.getCardImage().renderCssAndHtml(document, x * CARD_WIDTH, y * CARD_HEIGHT);
     }
 
     /**

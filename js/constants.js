@@ -27,8 +27,6 @@ const FACE_DOWN_CARD_X_OFFSET = -1 * (0 * CARD_WIDTH);
 const FACE_DOWN_CARD_Y_OFFSET = -1 * (4 * CARD_HEIGHT);
 const CARD_FLIP_DELAY_MS = 1500;
 
-const DECK_IMAGE = '../images/deck.png';
-
 const IMAGE_OFFSETS = {
     'A-SPADES'       : {x : 0,  y: 0},
     'TWO-SPADES'     : {x : 1,  y: 0},
@@ -86,3 +84,5 @@ const IMAGE_OFFSETS = {
     'Q-CLUBS'        : {x : 11, y: 3},
     'K-CLUBS'        : {x : 12, y: 3},
 };
+
+

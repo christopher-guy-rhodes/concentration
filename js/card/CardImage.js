@@ -3,8 +3,8 @@
  */
 class CardImage {
     constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY) {
-        validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image', 'imgOffsetX',
-            'imgOffsetY');
+        validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image'/*, 'imgOffsetX',
+            'imgOffsetY'*/);
         this.id = id;
         this.height = height;
         this.width = width;

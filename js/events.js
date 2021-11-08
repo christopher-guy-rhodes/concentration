@@ -33,7 +33,6 @@ $('.playerNameSubmit').click(function(e) {
 // Handle a card click
 $(document).on('click', '.clickable', function (e) {
     let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
-    console.log('is this card face up?');
     let card = game.getGameBoard().getDeck().getCardById(clickedCardId);
     if (!card.getIsFaceUp()) {
         game.takePlayerTurn(card);
