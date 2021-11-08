@@ -6,10 +6,11 @@ const PLAYING_CARD_DECK_SUITS = [SPADES, HEARTS, DIAMONDS, CLUBS];
 // MuST match order of rank columns in PLAYING_CARD_IMAGE
 const PLAYING_CARD_RANKS = [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
 
+const PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
+
 class PlayingCardDeck extends Deck {
-    constructor(image) {
-        super(PlayingCardDeck.getCards(), image);
-        this.image = image;
+    constructor() {
+        super(PlayingCardDeck.getCards(), PLAYING_CARD_IMAGE);
     }
 
     static getCards() {
