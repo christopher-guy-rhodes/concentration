@@ -4,10 +4,9 @@ class Deck {
         // Keep index from card id to card for random access card lookup by id
         this.cardIndex = {};
 
-        for (let card of PLAYING_CARDS) {
+        for (let card of cards) {
             this.indexCard(card);
         }
-        this.cards = PLAYING_CARDS;
 
         this.image = image;
     }
