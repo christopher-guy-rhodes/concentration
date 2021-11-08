@@ -7,7 +7,8 @@ const PLAYING_CARD_DECK_SUITS = [SPADES, HEARTS, DIAMONDS, CLUBS];
 const PLAYING_CARD_RANKS = [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
 
 let cards = [];
-let i, j = 0;
+let i = 0;
+let j = 0;
 for (let suit of PLAYING_CARD_DECK_SUITS) {
     for (let rank of PLAYING_CARD_RANKS) {
         let id = rank + '-' + suit;
