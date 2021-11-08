@@ -1,33 +1,26 @@
 /**
  * Class that models a deck of playing cards.
  */
-// Must match order of suit rows in PLAYING_CARD_IMAGE
-const PLAYING_CARD_DECK_SUITS = [SPADES, HEARTS, DIAMONDS, CLUBS];
-// MuST match order of rank columns in PLAYING_CARD_IMAGE
-const PLAYING_CARD_RANKS = [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
-
-const PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
-
 class PlayingCardDeck extends Deck {
+    static PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
+
     constructor() {
-        super(PlayingCardDeck.getCards(), PLAYING_CARD_IMAGE);
+        super(PlayingCardDeck.getCards(), PlayingCardDeck.PLAYING_CARD_IMAGE);
     }
 
     static getCards() {
         let cards = [];
-        let i = 0;
-        let j = 0;
-        for (let suit of PLAYING_CARD_DECK_SUITS) {
-            for (let rank of PLAYING_CARD_RANKS) {
-                let id = rank + '-' + suit;
-                let xImageOffset = -1 * i * CARD_WIDTH;
-                let yImageOffset = -1 * j * CARD_HEIGHT;
-                let card = new PlayingCard(rank, suit, xImageOffset, yImageOffset, PLAYING_CARD_IMAGE);
+        const suits = [SPADES, HEARTS, DIAMONDS, CLUBS];
+        const ranks = [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
+        for (let y = 0; y < suits.length; y++) {
+            let suit = suits[y];
+            for (let x = 0; x < ranks.length; x++) {
+                let rank = ranks[x];
+                let xImageOffset = -1 * x * CARD_WIDTH;
+                let yImageOffset = -1 * y * CARD_HEIGHT;
+                let card = new PlayingCard(rank, suit, xImageOffset, yImageOffset, PlayingCardDeck.PLAYING_CARD_IMAGE);
                 cards.push(card);
-                i++;
             }
-            i = 0;
-            j++;
         }
         return cards;
     }
