@@ -3,7 +3,7 @@
  */
 class GameBoard {
     constructor(numberOfRows, numberOfCardsPerRow) {
-        this.deck = new PlayingCardDeck('../images/decks/playing_cards.png');
+        this.deck = new PlayingCardDeck(PLAYING_CARD_IMAGE);
 
         this.numberOfRows = numberOfRows;
         this.numberOfCardsPerRow = numberOfCardsPerRow;
