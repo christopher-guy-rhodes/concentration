@@ -5,12 +5,10 @@ class PlayingCardDeck extends Deck {
     static PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
 
     constructor(numberOfCards) {
-        super(PlayingCardDeck.getCards(numberOfCards), PlayingCardDeck.PLAYING_CARD_IMAGE);
+        super(PlayingCardDeck.getCards(numberOfCards),
+            PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length,
+            PlayingCardDeck.PLAYING_CARD_IMAGE);
         this.numberOfCards = numberOfCards;
-    }
-
-    getMaxCardsAvailable() {
-        return PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length;
     }
 
     static getSuits() {

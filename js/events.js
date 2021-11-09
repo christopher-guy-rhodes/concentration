@@ -1,12 +1,30 @@
 // Choose player names
-let game = new Game();
-$('.numPlayers').change(function() {
-    $('.numPlayersSelected').val(this.value);
-    for (let i = 0; i < this.value; i++) {
+let game = undefined;
+$('.numPlayersSub').click(function(e) {
+
+    let value = $('.numPlayers').val();
+    $('.numPlayersSelected').val(value);
+    for (let i = 0; i < value; i++) {
         $('.playerName' + (i + 1)).css('display', 'block');
     }
+
+    let numCards = $('input[name="numberOfCardsToUse"]').val();
+
+
     $('.playerForm').css('display', 'none');
     $('.playerNameSubmit').css('display', 'block');
+
+
+    try {
+        game = new Game(numCards);
+    } catch (error) {
+        alert(error.message);
+        $('.playerForm').css('display', 'block');
+        $('.playerNameSubmit').css('display', 'none');
+        for (let i = 0; i < value; i++) {
+            $('.playerName' + (i + 1)).css('display', 'none');
+        }
+    }
 });
 
 // Add players and start the game
@@ -48,3 +66,4 @@ $('.gameOver').click(function() {
 });
 
 $('.playerForm').css('display','block');
+$('input[name="numberOfCardsToUse"]').val('52');

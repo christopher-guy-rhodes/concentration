@@ -2,9 +2,10 @@
  * Class for playing classic concentration game.
  */
 class Game {
-    constructor() {
+    constructor(numberOfCards) {
+
         this.gameBoard = new GameBoardBuilder()
-            .withNumberOfCardsPerRow(NUMBER_OF_CARDS_PER_ROW)
+            .withNumberOfCardsPerRow(numberOfCards / NUMBER_OF_ROWS)
             .withNumberOfRows(NUMBER_OF_ROWS).build();
 
         this.players = [];

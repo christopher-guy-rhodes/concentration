@@ -14,8 +14,8 @@ class GameBoard {
         if (this.numberOfRows * this.numberOfCardsPerRow % 2 !== 0 ||
             numberOfCards < 4 ||
             numberOfCards > this.deck.getMaxCardsAvailable()) {
-            throw new Error('There are ' + numberOfCards + 'cards. That is odd, < 4 or > '
-                + this.deck.getMaxCardsAvailable());
+            let msg = 'There must be an even number of cards. Greater than 4 and less than 52';
+            throw new Error(msg);
         }
 
 

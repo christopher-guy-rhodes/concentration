@@ -1,3 +1,6 @@
+const FACE_DOWN_CARD_X_OFFSET = -1 * (0 * CARD_WIDTH);
+const FACE_DOWN_CARD_Y_OFFSET = -1 * (4 * CARD_HEIGHT);
+
 /**
  * Handles image rendering for a particular card using a single image that has all the cards.
  */
