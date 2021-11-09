@@ -1,3 +1,5 @@
+// TODO: this is a mess, clean it up
+
 // Choose player names
 let game = undefined;
 $('.numPlayersSub').click(function(e) {
@@ -61,7 +63,7 @@ $(document).on('click', '.clickable', function (e) {
 $('.gameOver').click(function() {
     game.getScoreBoard().hideScoreboard();
     $('.gameOver').css('display', 'none');
-    $('.numPlayers').val("");
+    $('.numPlayers option[value="1"]').attr('selected','selected')
     $('.playerForm').css('display','block');
 });
 
