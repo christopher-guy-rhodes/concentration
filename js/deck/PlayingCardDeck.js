@@ -4,14 +4,27 @@
 class PlayingCardDeck extends Deck {
     static PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
 
-    constructor() {
-        super(PlayingCardDeck.getCards(), PlayingCardDeck.PLAYING_CARD_IMAGE);
+    constructor(numberOfCards) {
+        super(PlayingCardDeck.getCards(numberOfCards), PlayingCardDeck.PLAYING_CARD_IMAGE);
+        this.numberOfCards = numberOfCards;
     }
 
-    static getCards() {
+    getMaxCardsAvailable() {
+        return PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length;
+    }
+
+    static getSuits() {
+        return [SPADES, HEARTS, DIAMONDS, CLUBS];
+    }
+
+    static getRanks() {
+        return [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
+    }
+
+    static getCards(numberOfCards) {
         let cards = [];
-        const suits = [SPADES, HEARTS, DIAMONDS, CLUBS];
-        const ranks = [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
+        const suits = this.getSuits();
+        const ranks = this.getRanks();
         for (let y = 0; y < suits.length; y++) {
             let suit = suits[y];
             for (let x = 0; x < ranks.length; x++) {
@@ -20,6 +33,13 @@ class PlayingCardDeck extends Deck {
                 let yImageOffset = -1 * y * CARD_HEIGHT;
                 let card = new PlayingCard(rank, suit, xImageOffset, yImageOffset, PlayingCardDeck.PLAYING_CARD_IMAGE);
                 cards.push(card);
+
+                // We may not be playing with a full deck. Make sure we only use 1/4 the number of cards from each suit
+                // so that there will be matches. For example if there are 4 cards we want to grab two aces and two
+                // twos.
+                if ((x + 1) * 4 >= numberOfCards) {
+                    break;
+                }
             }
         }
         return cards;

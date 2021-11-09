@@ -3,15 +3,21 @@
  */
 class GameBoard {
     constructor(numberOfRows, numberOfCardsPerRow) {
-        this.deck = new PlayingCardDeck();
 
         this.numberOfRows = numberOfRows;
         this.numberOfCardsPerRow = numberOfCardsPerRow;
 
-        if (this.numberOfRows * this.numberOfCardsPerRow !== this.deck.getNumberOfCards()) {
-            throw new Error("Found " + this.numberOfRows * this.numberOfCardsPerRow + ' cards but was expecting '
-                + this.deck.getNumberOfCards());
+        let numberOfCards = this.numberOfRows * this.numberOfCardsPerRow;
+
+        this.deck = new PlayingCardDeck(numberOfCards);
+
+        if (this.numberOfRows * this.numberOfCardsPerRow % 2 !== 0 ||
+            numberOfCards < 4 ||
+            numberOfCards > this.deck.getMaxCardsAvailable()) {
+            throw new Error('There are ' + numberOfCards + 'cards. That is odd, < 4 or > '
+                + this.deck.getMaxCardsAvailable());
         }
+
 
         // Setup an grid that the cards will be dealt to
         this.gridPositions = [];
