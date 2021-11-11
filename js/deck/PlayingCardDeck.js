@@ -1,3 +1,22 @@
+const A = 'A';
+const TWO = 'TWO';
+const THREE = 'THREE';
+const FOUR = 'FOUR';
+const FIVE = 'FIVE';
+const SIX = 'SIX';
+const SEVEN = 'SEVEN';
+const EIGHT = 'EIGHT';
+const NINE = 'NINE';
+const TEN = 'TEN';
+const J = 'J';
+const K = 'K';
+const Q = 'Q';
+
+const SPADES = 'SPADES';
+const HEARTS = 'HEARTS';
+const DIAMONDS = 'DIAMONDS';
+const CLUBS = 'CLUBS';
+
 /**
  * Class that models a deck of playing cards.
  */
@@ -9,6 +28,13 @@ class PlayingCardDeck extends Deck {
             PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length,
             PlayingCardDeck.PLAYING_CARD_IMAGE);
         this.numberOfCards = numberOfCards;
+    }
+
+    /**
+     * Get the maximum number of cards in the deck
+     */
+    getMaxNumberOfCards() {
+        return PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length;
     }
 
     static getSuits() {
@@ -23,19 +49,25 @@ class PlayingCardDeck extends Deck {
         let cards = [];
         const suits = this.getSuits();
         const ranks = this.getRanks();
+
+        main_loop:
         for (let y = 0; y < suits.length; y++) {
             let suit = suits[y];
             for (let x = 0; x < ranks.length; x++) {
                 let rank = ranks[x];
-                let xImageOffset = -1 * x * CARD_WIDTH;
-                let yImageOffset = -1 * y * CARD_HEIGHT;
-                let card = new PlayingCard(rank, suit, xImageOffset, yImageOffset, PlayingCardDeck.PLAYING_CARD_IMAGE);
+                let card = new PlayingCard(rank, suit, x, y);
                 cards.push(card);
 
-                // We may not be playing with a full deck. Make sure we only use 1/4 the number of cards from each suit
-                // so that there will be matches. For example if there are 4 cards we want to grab two aces and two
-                // twos.
-                if ((x + 1) * 4 >= numberOfCards) {
+                // We may not be using a full deck
+
+                // Are there any cards left
+                if (cards.length >= numberOfCards) {
+                    break main_loop;
+                }
+
+                // Make sure we only use 1/4 the number of cards from each suit so that there will be matches. For
+                // example if there are 4 cards we want to grab two aces and two twos.
+                if ((x + 1) * suits.length >= numberOfCards) {
                     break;
                 }
             }

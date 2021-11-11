@@ -2,19 +2,29 @@
  * Main class to render card game
  */
 class GameBoard {
-    constructor(numberOfRows, numberOfCardsPerRow) {
+    constructor(deckType, numberOfRows, numberOfCardsPerRow) {
 
+        this.deckType = deckType;
         this.numberOfRows = numberOfRows;
         this.numberOfCardsPerRow = numberOfCardsPerRow;
 
         let numberOfCards = this.numberOfRows * this.numberOfCardsPerRow;
 
-        this.deck = new PlayingCardDeck(numberOfCards);
+        this.deck = undefined;
+        switch(this.deckType) {
+            case 'picture':
+                this.deck = new PictureCardDeck(numberOfCards);
+                break;
+            case 'playing':
+            default :
+                this.deck = new PlayingCardDeck(numberOfCards);
+        }
 
         if (this.numberOfRows * this.numberOfCardsPerRow % 2 !== 0 ||
-            numberOfCards < 4 ||
-            numberOfCards > this.deck.getMaxCardsAvailable()) {
-            let msg = 'There must be an even number of cards. Greater than 4 and less than 52';
+            numberOfCards < 2 ||
+            numberOfCards > this.deck.getMaxNumberOfCards()) {
+            let msg = 'There must be an even number of cards. Greater than 1 and less than '
+                + this.deck.getMaxNumberOfCards();
             throw new Error(msg);
         }
 
@@ -33,6 +43,7 @@ class GameBoard {
      * @param document the dom document
      */
     renderGameBoard(document) {
+        this.setViewPort();
         validateRequiredParams(this.renderGameBoard, 'document');
         this.deck.shuffleCards();
         this.cards = this.deck.dealCards();
@@ -41,8 +52,14 @@ class GameBoard {
         for (let card of this.cards) {
             card.setFaceDown();
             $('.' + card.getId()).css('display', 'block');
-            let x = this.gridPositions[gridPositionIndex]['x'];
-            let y = this.gridPositions[gridPositionIndex]['y'];
+            let x = undefined;
+            let y = undefined;
+            try {
+                x = this.gridPositions[gridPositionIndex]['x'];
+                y = this.gridPositions[gridPositionIndex]['y'];
+            } catch (error) {
+                console.log('could not find x or y for index %s grid %o cards %o',gridPositionIndex, this.gridPositions, this.cards);
+            }
             this.renderCard(document, card, x, y);
             gridPositionIndex++;
         }
@@ -50,7 +67,20 @@ class GameBoard {
 
     renderCard(document, card, x, y) {
         validateRequiredParams(this.renderCard, arguments, 'document', 'card', 'x', 'y');
-        card.getCardImage().renderCssAndHtml(document, x * CARD_WIDTH, y * CARD_HEIGHT);
+        card.getCardImage().renderCssAndHtml(document,
+            x * card.getCardImage().getWidth(),
+            y * card.getCardImage().getHeight());
+    }
+
+    setViewPort() {
+        let viewportMeta = document.querySelector('meta[name="viewport"]');
+        let width = $(window).width();
+        let height = $(window).height();
+        let scalingDimension = width;
+        let card = this.deck.dealTopCard();
+        viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
+            'initial-scale=' + (scalingDimension / (this.numberOfRows * card.getCardImage().getWidth())));
+
     }
 
     /**

@@ -2,7 +2,7 @@
  * Class that represents any game card.
  */
 class Card {
-    constructor(id, x, y, image) {
+    constructor(id, x, y, faceDownX, faceDownY, width, height, image) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -11,11 +11,13 @@ class Card {
 
         this.cardImage = new CardImageBuilder()
             .withId(this.id)
-            .withWidth(CARD_WIDTH)
-            .withHeight(CARD_HEIGHT)
+            .withWidth(width)
+            .withHeight(height)
             .withImage(image)
-            .withImgOffsetX(x)
-            .withImgOffsetY(y)
+            .withImgOffsetX(-1 * x * width)
+            .withImgOffsetY(-1 * y * height)
+            .withFaceDownOffsetX(faceDownX)
+            .withFaceDownOffsetY(faceDownY)
             .build();
     }
 

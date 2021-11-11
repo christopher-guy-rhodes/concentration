@@ -1,7 +1,7 @@
 class Deck {
-    constructor(cards, maxCardsAvailable, image) {
+    constructor(cards, numberOfCards, image) {
         this.cards = cards;
-        this.maxCardsAvailable = maxCardsAvailable;
+        this.numberOfCards = numberOfCards;
         // Keep index from card id to card for random access card lookup by id
         this.cardIndex = {};
 
@@ -22,19 +22,15 @@ class Deck {
     }
 
     /**
-     * Get the maximum number of cards available in the deck
-     * @returns {number}
-     */
-    getMaxCardsAvailable() {
-        return this.maxCardsAvailable;
-    }
-
-    /**
      * Deal the cards.
      * @returns {[PlayingCard]} the deck of cards
      */
     dealCards() {
         return this.cards;
+    }
+
+    dealTopCard() {
+        return this.cards[0];
     }
 
     /**

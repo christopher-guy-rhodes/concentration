@@ -14,17 +14,18 @@ $.getScript('/js/util.js', function() {
 $.getScript('/js/card/CardImage.js', function() {
 $.getScript('/js/card/Card.js', function() {
 $.getScript('/js/card/PlayingCard.js', function() {
+$.getScript('/js/card/PictureCard.js', function() {
 $.getScript('/js/card/CardImageBuilder.js', function() {
 $.getScript('/js/deck/Deck.js', function() {
 $.getScript('/js/deck/PlayingCardDeck.js', function() {
+$.getScript('/js/deck/PictureCardDeck.js', function() {
 $.getScript('/js/game/GameBoard.js', function() {
 $.getScript('/js/game/GameBoardBuilder.js', function() {
 $.getScript('/js/game/Player.js', function() {
 $.getScript('/js/game/Game.js', function() {
 $.getScript('/js/game/ScoreBoard.js', function() {
-$.getScript('/js/viewport.js', function() {
 $.getScript('/js/events.js', function() {
-})})})})})})})})})})})})})})})});
+})})})})})})})})})})})})})})})})});
 </script>
 <body>
 </body>
@@ -64,7 +65,13 @@ $.getScript('/js/events.js', function() {
         <option value="3">3</option>
         <option value="4">4</option>
     </select>
-    <br/>How many cards? <input type="text" name="numberOfCardsToUse" size="4"/>
+    <br/><br/>What type of deck?
+    <select class="deckType">
+        <option name="picture" value="picture">Picture Cards</option>
+        <option name="playing" value="playing">Playing Cards</option>
+    </select>
+    <br/><br/>How many cards? <input type="text" name="numberOfCardsToUse" size="4"/>
+    <br/><br/>
     <div class="numPlayersSub">
         <input type="button" name="sub" value="submit"/>
     </div>

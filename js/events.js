@@ -1,4 +1,4 @@
-// TODO: this is a mess, clean it up
+// TODO: this is a mess, clean it up and add validation
 
 // Choose player names
 let game = undefined;
@@ -18,15 +18,26 @@ $('.numPlayersSub').click(function(e) {
 
 
     try {
-        game = new Game(numCards);
+        let type = $('.deckType').val();
+        game = new Game(type, numCards);
     } catch (error) {
         alert(error.message);
+        console.log("%o", error);
         $('.playerForm').css('display', 'block');
         $('.playerNameSubmit').css('display', 'none');
         for (let i = 0; i < value; i++) {
             $('.playerName' + (i + 1)).css('display', 'none');
         }
     }
+});
+
+$('.deckType').change(function(e) {
+   let type = $(this).find("option:selected").attr('name');
+   if (type === 'picture') {
+       $('input[name="numberOfCardsToUse"]').val(72);
+   } else {
+       $('input[name="numberOfCardsToUse"]').val(52);
+   }
 });
 
 // Add players and start the game
@@ -53,6 +64,7 @@ $('.playerNameSubmit').click(function(e) {
 // Handle a card click
 $(document).on('click', '.clickable', function (e) {
     let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
+    console.log('cardId ' + clickedCardId);
     let card = game.getGameBoard().getDeck().getCardById(clickedCardId);
     if (!card.getIsFaceUp()) {
         game.takePlayerTurn(card);
@@ -68,4 +80,4 @@ $('.gameOver').click(function() {
 });
 
 $('.playerForm').css('display','block');
-$('input[name="numberOfCardsToUse"]').val('52');
+$('input[name="numberOfCardsToUse"]').val('72');

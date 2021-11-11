@@ -5,6 +5,12 @@ class GameBoardBuilder {
     constructor() {
         this.numberOfRows = undefined;
         this.numberOfCardsPerRow = undefined;
+        this.deckType = undefined;
+    }
+
+    withDeckType(type) {
+        this.deckType = type;
+        return this;
     }
 
     withNumberOfRows(numberOfRows) {
@@ -23,6 +29,6 @@ class GameBoardBuilder {
         if (this.numberOfRows === undefined || this.numberOfCardsPerRow === undefined) {
             throw new Error("GameBoardBuilder: numberOfRows and numberOfCardsPerRow are required arguments");
         }
-        return new GameBoard(this.numberOfRows, this.numberOfCardsPerRow);
+        return new GameBoard(this.deckType, this.numberOfRows, this.numberOfCardsPerRow);
     }
 }

@@ -10,6 +10,8 @@ class CardImageBuilder {
         this.isFaceUp = false;
         this.imgOffsetX = undefined;
         this.imgOffsetY = undefined;
+        this.faceDownOffsetX = undefined;
+        this.faceDownOffsetY = undefined;
     }
 
     withId(id) {
@@ -48,8 +50,18 @@ class CardImageBuilder {
         return this;
     }
 
+    withFaceDownOffsetX(x) {
+        this.faceDownOffsetX = x;
+        return this;
+    }
+
+    withFaceDownOffsetY(y) {
+        this.faceDownOffsetY = y;
+        return this;
+    }
+
     build() {
         return new CardImage(this.id, this.width, this.height, this.image, this.isFaceUp, this.imgOffsetX,
-            this.imgOffsetY);
+            this.imgOffsetY, this.faceDownOffsetX, this.faceDownOffsetY);
     }
 }
