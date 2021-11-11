@@ -38,7 +38,7 @@ class PlayingCardDeck extends Deck {
     }
 
     static getSuits() {
-        return [SPADES, HEARTS, DIAMONDS, CLUBS];
+        return [SPADES, CLUBS, DIAMONDS, HEARTS];
     }
 
     static getRanks() {
