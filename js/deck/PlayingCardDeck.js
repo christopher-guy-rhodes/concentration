@@ -25,8 +25,15 @@ class PlayingCardDeck extends Deck {
 
     constructor(numberOfCards) {
         super(PlayingCardDeck.dealCards(numberOfCards),
-            PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length,
+            PlayingCardDeck.getNumberOfCardsInDeck(),
             PlayingCardDeck.PLAYING_CARD_IMAGE);
+    }
+
+    /**
+     * Get the maximum number of cards in the deck.
+     */
+    static getNumberOfCardsInDeck() {
+        return PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length;
     }
 
     static getSuits() {
