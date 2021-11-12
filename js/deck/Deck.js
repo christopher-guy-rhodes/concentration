@@ -1,7 +1,7 @@
 class Deck {
-    constructor(cards, numberOfCards, image) {
+    constructor(cards, numberOfCardsInDeck, image) {
         this.cards = cards;
-        this.numberOfCards = numberOfCards;
+        this.numberOfCardsInDeck = numberOfCardsInDeck;
         // Keep index from card id to card for random access card lookup by id
         this.cardIndex = {};
 
@@ -51,13 +51,20 @@ class Deck {
     }
 
     /**
-     * Get the number of cards in the deck.
-     * @returns {number} the number of cards in the deck
+     * Get the number of cards being used.
+     * @returns {number} the number of cards being used
      */
     getNumberOfCards() {
         return this.cards.length;
     }
 
+    /**
+     * Get the number of cards in the deck.
+     * @returns {number} the number of cards in the deck
+     */
+    getNumberOfCardsInDeck() {
+        return this.numberOfCardsInDeck;
+    }
 
     /* private */
     indexCard(card) {

@@ -76,7 +76,7 @@ class GameBoard {
             numberOfCards < 2 ||
             numberOfCards > this.deck.getNumberOfCards()) {
             let msg = 'There must be an even number of cards. Greater than 1 and less than '
-                + this.deck.getNumberOfCards();
+                + this.deck.getNumberOfCardsInDeck();
             throw new Error(msg);
         }
     }

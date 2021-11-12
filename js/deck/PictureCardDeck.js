@@ -43,15 +43,14 @@ class PictureCardDeck extends Deck {
 
     constructor(numberOfCards) {
         super(PictureCardDeck.dealCards(numberOfCards),
-            PictureCardDeck.getNumberOfCards(),
+            PictureCardDeck.getNumberOfCardsInDeck(),
             PlayingCardDeck.PLAYING_CARD_IMAGE);
-        this.numberOfCards = numberOfCards;
     }
 
     /**
      * Get the maximum number of cards in the deck
      */
-    static getNumberOfCards() {
+    static getNumberOfCardsInDeck() {
         let cardRows = PictureCardDeck.getAnimals();
         return 2 * cardRows.reduce(function(count, row) {
             return count + row.length;

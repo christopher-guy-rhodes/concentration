@@ -86,6 +86,7 @@ class Game {
     }
 
     /* private */
+    // TODO: keep state about remaining cards so that this is O(1) instead of O(p) where p is players
     isGameOver() {
         return this.players.reduce(function(a, b) {
             return a + b.getNumberOfMatches();

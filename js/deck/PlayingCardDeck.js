@@ -27,7 +27,6 @@ class PlayingCardDeck extends Deck {
         super(PlayingCardDeck.dealCards(numberOfCards),
             PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length,
             PlayingCardDeck.PLAYING_CARD_IMAGE);
-        this.numberOfCards = numberOfCards;
     }
 
     static getSuits() {
