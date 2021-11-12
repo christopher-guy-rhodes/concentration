@@ -24,17 +24,10 @@ class PlayingCardDeck extends Deck {
     static PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
 
     constructor(numberOfCards) {
-        super(PlayingCardDeck.getCards(numberOfCards),
+        super(PlayingCardDeck.dealCards(numberOfCards),
             PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length,
             PlayingCardDeck.PLAYING_CARD_IMAGE);
         this.numberOfCards = numberOfCards;
-    }
-
-    /**
-     * Get the maximum number of cards in the deck
-     */
-    getMaxNumberOfCards() {
-        return PlayingCardDeck.getSuits().length * PlayingCardDeck.getRanks().length;
     }
 
     static getSuits() {
@@ -45,7 +38,7 @@ class PlayingCardDeck extends Deck {
         return [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
     }
 
-    static getCards(numberOfCards) {
+    static dealCards(numberOfCards) {
         let cards = [];
         const suits = this.getSuits();
         const ranks = this.getRanks();

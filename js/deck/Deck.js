@@ -25,7 +25,7 @@ class Deck {
      * Deal the cards.
      * @returns {[PlayingCard]} the deck of cards
      */
-    dealCards() {
+    getCards() {
         return this.cards;
     }
 

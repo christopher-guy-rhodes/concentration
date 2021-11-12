@@ -42,8 +42,8 @@ class PictureCardDeck extends Deck {
     static PICTURE_CARD_IMAGE = '../images/decks/picture_cards.png';
 
     constructor(numberOfCards) {
-        super(PictureCardDeck.getCards(numberOfCards),
-            PictureCardDeck.getCardRows().length * PictureCardDeck.getCardRows()[0].length,
+        super(PictureCardDeck.dealCards(numberOfCards),
+            PictureCardDeck.getNumberOfCards(),
             PlayingCardDeck.PLAYING_CARD_IMAGE);
         this.numberOfCards = numberOfCards;
     }
@@ -51,14 +51,14 @@ class PictureCardDeck extends Deck {
     /**
      * Get the maximum number of cards in the deck
      */
-    getMaxNumberOfCards() {
-        let cardRows = PictureCardDeck.getCardRows();
+    static getNumberOfCards() {
+        let cardRows = PictureCardDeck.getAnimals();
         return 2 * cardRows.reduce(function(count, row) {
             return count + row.length;
         }, 0);
     }
 
-    static getCardRows() {
+    static getAnimals() {
         return [
             [BIRD, PENGUIN, HORSE, PANDA, DOG, TORTOISE],
             [BEE, MONKEY, SQUIRREL, PIG, DRAGONFLY, COCK],
@@ -69,8 +69,8 @@ class PictureCardDeck extends Deck {
         ];
     }
 
-    static getCards(numberOfCards) {
-        let cardRows = this.getCardRows();
+    static dealCards(numberOfCards) {
+        let cardRows = this.getAnimals();
         let cards = [];
         main_loop:
         for (let y = 0; y < cardRows.length; y++) {
