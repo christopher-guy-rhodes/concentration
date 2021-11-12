@@ -23,8 +23,12 @@
             $.getScript('/js/game/GameBoardBuilder.js', function() {
             $.getScript('/js/game/Player.js', function() {
             $.getScript('/js/game/Game.js', function() {
+            $.getScript('/js/game/GameEventsHandler.js', function() {
             $.getScript('/js/game/ScoreBoard.js', function() {
-            $.getScript('/js/events.js', function() {
+
+                // Call the main event handler
+                new GameEventsHandler().handleEvents();
+
         })})})})})})})})})})})})})})})})});
     </script>
     <body>
@@ -42,7 +46,7 @@
             <div class="playerName4">
                 Player 4 name: <input class="name4" type="text" name="playerName1"/>
             </div>
-                <input class="playerNameSubmit" type="button" name="playerNames" value="submit"/>
+            <input class="playerNameSubmit" type="button" name="playerNames" value="submit"/>
         </form>
 
         <form class="gameOptionsForm" method="GET" action="./">
