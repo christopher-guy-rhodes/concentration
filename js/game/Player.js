@@ -29,7 +29,7 @@ class Player {
     }
 
     /**
-     * Get the number of matches a player has made.
+     * Get the number of matches a player has.
      * @returns {number}
      */
     getNumberOfMatches() {
@@ -37,13 +37,17 @@ class Player {
     }
 
     /**
-     * Gets the player's current score
+     * Gets the player's current score.
      * @returns {number} the current score
      */
     getScore() {
         return this.matches.length / 2;
     }
 
+    /**
+     * Get the number of attempts the player has made.
+     * @returns {number} the number of tries
+     */
     getNumberOfTries() {
         return this.numberOfTries;
     }
@@ -66,7 +70,7 @@ class Player {
                 this.matches = this.matches.concat([this.firstCard.getId(), card.getId()]);
             }
 
-            // Player has selected two cards, clear state
+            // Player has selected two cards, clear state since the turn is over
             this.firstCard = undefined;
         }
         return selections;

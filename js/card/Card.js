@@ -53,6 +53,19 @@ class Card {
         return this.isFaceUp;
     }
 
+    /**
+     * Render this card at a particular position on the screen.
+     * @param document the DOM document
+     * @param x the x position to render the card
+     * @param y the y position to render the card.
+     */
+    renderCard(document, x, y) {
+        validateRequiredParams(this.renderCard, 'document', 'x', 'y');
+        this.getCardImage().renderCssAndHtml(document,
+            x * this.getCardImage().getWidth(),
+            y * this.getCardImage().getHeight());
+    }
+
     /* friend of GameBoard */
     getCardImage() {
         return this.cardImage;

@@ -14,7 +14,7 @@ class Game {
         this.players = [];
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
-        // Keep track of the card pair selection that are waiting to be flipped back over or removed after a match
+        // Keep track of the card pair selections that are waiting to be flipped back over or removed after a match
         // attempt. This way if the player makes a new selection before the time delay they can proceed without having
         // to wait and the actions that would happen after the timeout will happen immediately.
         this.pendingFlipOrRemovel = new Set();

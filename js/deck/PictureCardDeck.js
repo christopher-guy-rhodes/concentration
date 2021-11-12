@@ -81,10 +81,13 @@ class PictureCardDeck extends Deck {
                 cards.push(card1);
                 cards.push(card2);
 
+                // Are there any cards left
                 if (cards.length >= numberOfCards) {
                     break main_loop;
                 }
 
+                // Make sure we only use 1/6 the number of cards from each row so that there will be matches. For
+                // example if there are 4 cards we want to grab two birds and two penguins.
                 if ((x + 1) * 2 * cardRows.length >= numberOfCards) {
                     break;
                 }

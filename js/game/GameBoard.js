@@ -9,78 +9,31 @@ class GameBoard {
         this.numberOfCardsPerRow = numberOfCardsPerRow;
 
         let numberOfCards = this.numberOfRows * this.numberOfCardsPerRow;
-
-        this.deck = undefined;
-        switch(this.deckType) {
-            case 'picture':
-                this.deck = new PictureCardDeck(numberOfCards);
-                break;
-            case 'playing':
-            default :
-                this.deck = new PlayingCardDeck(numberOfCards);
-        }
-
-        if (this.numberOfRows * this.numberOfCardsPerRow % 2 !== 0 ||
-            numberOfCards < 2 ||
-            numberOfCards > this.deck.getNumberOfCards()) {
-            let msg = 'There must be an even number of cards. Greater than 1 and less than '
-                + this.deck.getNumberOfCards();
-            throw new Error(msg);
-        }
-
-
-        // Setup an grid that the cards will be dealt to
-        this.gridPositions = [];
-        for (let y = 0; y < this.numberOfRows; y++) {
-            for (let x = 0; x < this.numberOfCardsPerRow; x++) {
-                this.gridPositions.push({x : x, y : y});
-            }
-        }
+        this.deck = this.getDeckByType(deckType, numberOfCards);
+        this.validateNumberOfCards(numberOfCards);
     }
 
     /**
-     * Renders the shuffled deck on the screen
+     * Renders the shuffled deck on the grid.
      * @param document the dom document
      */
     renderGameBoard(document) {
-        this.setViewPort();
         validateRequiredParams(this.renderGameBoard, 'document');
+
+        this.setViewPort();
         this.deck.shuffleCards();
-        this.cards = this.deck.getCards();
+        let cards = this.deck.getCards();
+        let gridPositions = this.buildGrid();
 
         let gridPositionIndex = 0;
-        for (let card of this.cards) {
+        for (let card of cards) {
             card.setFaceDown();
             $('.' + card.getId()).css('display', 'block');
-            let x = undefined;
-            let y = undefined;
-            try {
-                x = this.gridPositions[gridPositionIndex]['x'];
-                y = this.gridPositions[gridPositionIndex]['y'];
-            } catch (error) {
-                console.log('could not find x or y for index %s grid %o cards %o',gridPositionIndex, this.gridPositions, this.cards);
-            }
-            this.renderCard(document, card, x, y);
+            let x = gridPositions[gridPositionIndex]['x'];
+            let y = gridPositions[gridPositionIndex]['y'];
+            card.renderCard(document, x, y);
             gridPositionIndex++;
         }
-    }
-
-    renderCard(document, card, x, y) {
-        validateRequiredParams(this.renderCard, arguments, 'document', 'card', 'x', 'y');
-        card.getCardImage().renderCssAndHtml(document,
-            x * card.getCardImage().getWidth(),
-            y * card.getCardImage().getHeight());
-    }
-
-    setViewPort() {
-        let viewportMeta = document.querySelector('meta[name="viewport"]');
-        let width = $(window).width();
-        let height = $(window).height();
-        let scalingDimension = width;
-        let card = this.deck.dealTopCard();
-        viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
-            'initial-scale=' + (scalingDimension / (this.numberOfRows * card.getCardImage().getWidth())));
-
     }
 
     /**
@@ -100,5 +53,58 @@ class GameBoard {
      */
     getDeck() {
         return this.deck;
+    }
+
+    /* private */
+    getDeckByType(deckType, numberOfCards) {
+        let deck = undefined;
+        switch(deckType) {
+            case 'picture':
+                deck = new PictureCardDeck(numberOfCards);
+                break;
+            case 'playing':
+            default :
+                deck = new PlayingCardDeck(numberOfCards);
+        }
+
+        return deck;
+    }
+
+    /* private */
+    validateNumberOfCards(numberOfCards) {
+        if (this.numberOfRows * this.numberOfCardsPerRow % 2 !== 0 ||
+            numberOfCards < 2 ||
+            numberOfCards > this.deck.getNumberOfCards()) {
+            let msg = 'There must be an even number of cards. Greater than 1 and less than '
+                + this.deck.getNumberOfCards();
+            throw new Error(msg);
+        }
+    }
+
+    /* private */
+    buildGrid() {
+        let gridPositions = [];
+        for (let y = 0; y < this.numberOfRows; y++) {
+            for (let x = 0; x < this.numberOfCardsPerRow; x++) {
+                gridPositions.push({x : x, y : y});
+            }
+        }
+        return gridPositions;
+    }
+
+    /**
+     * private
+     *
+     * Set the scale of the screen for mobile browsers.
+     */
+    setViewPort() {
+        let viewportMeta = document.querySelector('meta[name="viewport"]');
+        let width = $(window).width();
+        let height = $(window).height();
+        let scalingDimension = width;
+        let card = this.deck.dealTopCard();
+        viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
+            'initial-scale=' + (scalingDimension / (this.numberOfRows * card.getCardImage().getWidth())));
+
     }
 }
