@@ -3,7 +3,7 @@
  */
 class PictureCard extends Card {
     constructor(animal, number, x, y) {
-        super(animal + '-' + number, x, y, 0, 6, 167, 164, PictureCardDeck.PICTURE_CARD_IMAGE);
+        super(animal + '-' + number, x, y, 0, 6, 116, 114, PictureCardDeck.PICTURE_CARD_IMAGE);
         this.animal = animal;
         this.number = number;
     }
