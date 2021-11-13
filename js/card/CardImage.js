@@ -2,9 +2,9 @@
  * Handles image rendering for a particular card using a single image that has all the cards.
  */
 class CardImage {
-    constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY, faceDownOffsetX, faceDownOffsetY) {
-        validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image'/*, 'imgOffsetX',
-            'imgOffsetY'*/, 'faceDownOffsetX', 'faceDownOffsetY');
+    constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY, faceDownOffsetX, faceDownOffsetY, clickableClass) {
+        validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image', 'imgOffsetY',
+            'faceDownOffsetX', 'faceDownOffsetY', 'clickableClass');
         this.id = id;
         this.height = height;
         this.width = width;
@@ -14,6 +14,7 @@ class CardImage {
         this.imgOffsetY = imgOffsetY;
         this.faceDownCardXOffset = -1 * (faceDownOffsetX * width);
         this.faceDownCardYOffset = -1 * (faceDownOffsetY * height);
+        this.clickableClass = clickableClass;
     }
 
     /**
@@ -47,7 +48,7 @@ class CardImage {
 
         // Create a div in the body with the class name and a "clickable" class to handle on click events
         let myDiv = document.createElement("div");
-        myDiv.className = 'clickable ' + this.id;
+        myDiv.className = this.clickableClass + ' ' + this.id;
         document.body.appendChild(myDiv);
     }
 

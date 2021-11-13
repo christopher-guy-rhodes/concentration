@@ -2,8 +2,15 @@
  * Class that represents a playing card.
  */
 class PictureCard extends Card {
-    constructor(animal, number, x, y) {
-        super(animal + '-' + number, x, y, 0, 6, 116, 114, PictureCardDeck.PICTURE_CARD_IMAGE);
+    constructor(animal, number, x, y, clickableClass) {
+        super(animal + '-' + number,
+            x,
+            y,
+            0,
+            6,
+            116,
+            114,
+            PictureCardDeck.PICTURE_CARD_IMAGE, clickableClass);
         this.animal = animal;
         this.number = number;
     }

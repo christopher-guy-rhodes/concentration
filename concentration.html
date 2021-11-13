@@ -25,6 +25,7 @@
             $.getScript('/js/game/Game.js'                     , function() {
             $.getScript('/js/control/GameControlController.js' , function() {
             $.getScript('/js/view/GameControlView.js'          , function() {
+            $.getScript('/js/view/GameControlViewBuilder.js'   , function() {
             $.getScript('/js/game/ScoreBoard.js'               , function() {
 
             // Call the main event handler
@@ -32,7 +33,7 @@
             gameController.renderForms(document);
             gameController.handleEvents(document);
 
-        })})})})})})})})})})})})})})})})})});
+        })})})})})})})})})})})})})})})})})})});
     </script>
     <body>
         <!-- body will be rendered dynamically -->

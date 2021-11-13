@@ -41,10 +41,11 @@ const OWL = 'OWL';
 class PictureCardDeck extends Deck {
     static PICTURE_CARD_IMAGE = '../images/decks/picture_cards.png';
 
-    constructor(numberOfCards) {
-        super(PictureCardDeck.dealCards(numberOfCards),
+    constructor(numberOfCards, clickableClass) {
+        super(PictureCardDeck.dealCards(numberOfCards, clickableClass),
             PictureCardDeck.getNumberOfCardsInDeck(),
             PlayingCardDeck.PLAYING_CARD_IMAGE);
+        console.log('yolo');
     }
 
     /**
@@ -68,15 +69,15 @@ class PictureCardDeck extends Deck {
         ];
     }
 
-    static dealCards(numberOfCards) {
+    static dealCards(numberOfCards, clickableClass) {
         let cardRows = this.getAnimals();
         let cards = [];
         main_loop:
         for (let y = 0; y < cardRows.length; y++) {
             for (let x = 0; x < cardRows[y].length; x++) {
                 let animal = cardRows[y][x];
-                let card1 = new PictureCard(animal, "ONE", x, y);
-                let card2 = new PictureCard(animal, "TWO", x, y);
+                let card1 = new PictureCard(animal, "ONE", x, y, clickableClass);
+                let card2 = new PictureCard(animal, "TWO", x, y, clickableClass);
                 cards.push(card1);
                 cards.push(card2);
 

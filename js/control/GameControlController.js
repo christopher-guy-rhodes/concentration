@@ -1,11 +1,33 @@
+const MAX_PLAYERS = 4;
+
 class GameControlController {
     constructor() {
         this.numberOfPlayers = undefined;
         this.deckType = undefined;
         this.game = undefined;
-        this.nameClassInputPrefix = 'name';
+        this.nameInputPrefixClass = 'name';
+        this.gamOptionsSubmitClass = 'gameOptionsSubmitClass';
+        this.deckType = 'deckType';
+        this.playerNameSubmitClass = 'playerNameSubmit';
+        this.clickableClass = 'clickable';
+        this.gameResetClass = 'gameOver';
+        this.numPlayersClass = 'numPlayers';
+        this.numberOfCardsToUseName = 'numberOfCardsToUse';
+        this.playerPrefixClass = 'player';
+        this.playerNamePrefixClass = 'playerName';
 
-        this.view = new GameControlView(this.nameClassInputPrefix);
+        this.view = new GameControlViewBuilder()
+            .withMaxPlayers(MAX_PLAYERS)
+            .withNameInputPrefixClass(this.nameInputPrefixClass)
+            .withGameOptionsSubmitClass(this.gamOptionsSubmitClass)
+            .withDeckTypeClass(this.deckType)
+            .withPlayerNameSubmitClass(this.playerNameSubmitClass)
+            .withGameResetClass(this.gameResetClass)
+            .withNumPlayersClass(this.numPlayersClass)
+            .withNumberOfCardsToUseName(this.numberOfCardsToUseName)
+            .withPlayerPrefixClass(this.playerPrefixClass)
+            .withPlayerNamePrefixClass(this.playerNamePrefixClass)
+            .build();
     }
 
 
@@ -14,8 +36,6 @@ class GameControlController {
      * @param document the DOM document
      */
     handleEvents(document) {
-        // Render for forms
-        this.renderForms(document);
 
         // Handle number of players, deck type and number of cards selections
         this.handleGameOptionsEvent();
@@ -37,6 +57,10 @@ class GameControlController {
 
     }
 
+    /**
+     * Render the forms used to control the game settings.
+     * @param document the DOM dodument
+     */
     renderForms(document) {
         this.view.renderForms(document);
     }
@@ -45,7 +69,7 @@ class GameControlController {
     /* private */
     handleGameOptionsEvent() {
         let self = this;
-        $('.gameOptionsSubmit').click(function(e) {
+        $('.' + this.gamOptionsSubmitClass).click(function(e) {
             self.handleGameOptions();
         });
     }
@@ -53,7 +77,7 @@ class GameControlController {
     /* private */
     updateNumberOfCardsEvent() {
         let self = this;
-        $('.deckType').change(function(e) {
+        $('.' + this.deckType).change(function(e) {
             self.updateFormNumberOfCards();
         });
     }
@@ -61,7 +85,7 @@ class GameControlController {
     /* private */
     addPlayersEvent(document) {
         let self = this;
-        $('.playerNameSubmit').click(function(e) {
+        $('.' + this.playerNameSubmitClass).click(function(e) {
             self.addPlayers(document)
         });
     }
@@ -69,7 +93,7 @@ class GameControlController {
     /* private */
     handleCardClickEvent() {
         let self = this;
-        $(document).on('click', '.clickable', function (e) {
+        $(document).on('click', '.' + this.clickableClass, function (e) {
             self.handleCardClick(e);
         });
     }
@@ -77,7 +101,7 @@ class GameControlController {
     /* private */
     handleGameRestartEvent() {
         let self = this;
-        $('.gameOver').click(function() {
+        $('.' + this.gameResetClass).click(function() {
             self.handleGameRestart();
         });
     }
@@ -90,24 +114,24 @@ class GameControlController {
     /* private */
     updateFormNumberOfCards() {
         if (this.getFormDeckType() === 'picture') {
-            $('input[name="numberOfCardsToUse"]').val(PictureCardDeck.getNumberOfCardsInDeck());
+            $('input[name="' + this.numberOfCardsToUseName + '"]').val(PictureCardDeck.getNumberOfCardsInDeck());
         } else {
-            $('input[name="numberOfCardsToUse"]').val(PlayingCardDeck.getNumberOfCardsInDeck());
+            $('input[name="' + this.numberOfCardsToUseName + '"]').val(PlayingCardDeck.getNumberOfCardsInDeck());
         }
     }
 
     /* private */
     handleGameRestart() {
         this.getGame().getScoreBoard().hideScoreboard();
-        $('.gameOver').css('display', 'none');
-        $('.deckType options[value="' + this.getDeckType() + '"]');
-        $('.numPlayers option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
+        $('.' + this.gameResetClass).css('display', 'none');
+        $('.' + this.deckType + ' options[value="' + this.getDeckType() + '"]');
+        $('.' + this.numPlayersClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
         this.setFormOptionsFormVisibility(true);
     }
 
     /* private */
     handleCardClick(e) {
-        let clickedCardId = $(e.target).attr('class').replace('clickable ', '');
+        let clickedCardId = $(e.target).attr('class').replace(this.clickableClass + ' ', '');
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
         if (!card.getIsFaceUp()) {
             this.getGame().takePlayerTurn(card);
@@ -133,7 +157,7 @@ class GameControlController {
 
         try {
             this.deckType = this.getFormDeckType();
-            this.game = new Game(this.deckType, numCards);
+            this.game = new Game(this.deckType, numCards, this.clickableClass);
         } catch (error) {
             this.handleError(error);
             this.setFormOptionsFormVisibility(true);
@@ -145,13 +169,13 @@ class GameControlController {
     buildFormPlayers() {
         let players = [];
         for (let i = 0; i < this.numberOfPlayers; i++) {
-            let name = '.' + this.nameClassInputPrefix + (i + 1);
+            let name = '.' + this.nameInputPrefixClass + (i + 1);
             let playerName = $(name).val();
             if (playerName.trim().length < 1) {
                 playerName = 'Player ' + (i + 1);
             }
             players.push(new Player(playerName, (i + 1)));
-            $('.player' + (i + 1)).css('display', 'block');
+            $('.' + this.playerPrefixClass + (i + 1)).css('display', 'block');
             $('.playerName' + (i + 1)).css('display', 'none');
         }
         return players;
@@ -181,23 +205,23 @@ class GameControlController {
 
     /* private */
     getFormNumberOfPlayers() {
-        return parseInt($('.numPlayers').val());
+        return parseInt($('.' + this.numPlayersClass).val());
     }
 
     /* private */
     getFormNumberOfCards() {
-        return parseInt($('input[name="numberOfCardsToUse"]').val());
+        return parseInt($('input[name="' + this.numberOfCardsToUseName + '"]').val());
     }
 
     /* private */
     getFormDeckType() {
-        return $('.deckType').val();
+        return $('.' + this.deckType).val();
     }
 
     /* private */
     setPlayerNamesVisibility(numberOfPlayers, flag) {
         for (let i = 0; i < numberOfPlayers; i++) {
-            $('.playerName' + (i + 1)).css('display',flag ? 'block' : 'none');
+            $('.' + this.playerNamePrefixClass + + (i + 1)).css('display',flag ? 'block' : 'none');
         }
         return numberOfPlayers;
     }
@@ -209,6 +233,6 @@ class GameControlController {
 
     /* private */
     setFormPlayerSubmitVisibility(flag) {
-        $('.playerNameSubmit').css('display', flag ? 'block' : 'none');
+        $('.' + this.playerNameSubmitClass).css('display', flag ? 'block' : 'none');
     }
 }

@@ -2,8 +2,15 @@
  * Class that represents a playing card.
  */
 class PlayingCard extends Card {
-    constructor(rank, suit, x, y) {
-        super(rank + '-' + suit, x, y,0, 4, 100, 146, PlayingCardDeck.PLAYING_CARD_IMAGE);
+    constructor(rank, suit, x, y, clickableClass) {
+        super(rank + '-' + suit,
+            x,
+            y,
+            0,
+            4,
+            100,
+            146,
+            PlayingCardDeck.PLAYING_CARD_IMAGE, clickableClass);
         this.rank = rank;
         this.suit = suit;
     }

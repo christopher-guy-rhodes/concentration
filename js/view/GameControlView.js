@@ -1,7 +1,19 @@
 class GameControlView {
-    constructor(nameClassInputPrefix) {
-        this.maxPlayers = 4;
-        this.nameClassInputPrefix = nameClassInputPrefix;
+    constructor(maxPlayers, nameInputPrefixClass, gameOptionsSubmitClass, deckTypeClass, playerNameSubmitClass,
+                    gameResetClass, numPlayersClass, numberOfCardsToUseName, playerPrefixClass, playerNamePrefixClass) {
+        validateRequiredParams(this.constructor, 'maxPlayers', 'nameInputPrefixClass', 'gameOptionsSubmitClass',
+            'deckTypeClass', 'playerNameSubmitClass', 'gameResetClass', 'numPlayersClass', 'numberOfCardsToUseName',
+            'playerPrefixClass', 'playerNamePrefixClass');
+        this.maxPlayers = maxPlayers;
+        this.nameInputPrefixClass = nameInputPrefixClass;
+        this.gameOptionsSubmitClass = gameOptionsSubmitClass;
+        this.deckTypeClass = deckTypeClass;
+        this.playerNameSubmitClass = playerNameSubmitClass;
+        this.gameResetClass = gameResetClass;
+        this.numPlayersClass = numPlayersClass;
+        this.numberOfCardsToUseName = numberOfCardsToUseName;
+        this.playerPrefixClass = playerPrefixClass;
+        this.playerNamePrefixClass = playerNamePrefixClass;
     }
 
     renderForms(document) {
@@ -28,11 +40,11 @@ class GameControlView {
 
         for (let i = 1; i <= this.maxPlayers; i++) {
             form +=
-                '<div class="playerName' + i + '">' +
-                'Player ' + i + ' name: <input class="' + this.nameClassInputPrefix + i + '" type="text"/>' +
+                '<div class="' + this.playerNamePrefixClass + i + '">' +
+                'Player ' + i + ' name: <input class="' + this.nameInputPrefixClass + i + '" type="text"/>' +
                 '</div>';
         }
-        form += '<input class="playerNameSubmit" type="button" name="playerNames" value="submit"/>';
+        form += '<input class="' + this.playerNameSubmitClass + '" type="button" name="playerNames" value="submit"/>';
         form += '</form>';
 
         $('.playerFormContent').html(form);
@@ -43,7 +55,7 @@ class GameControlView {
             '<form class="gameOptionsForm" method="GET" action="./">' +
                 '<input type="hidden" class="numPlayersSelected" value="0"/>' +
                 'How many players?' +
-                '<select class="numPlayers">';
+                '<select class="' + this.numPlayersClass + '">';
 
         for (let i =1; i <= this.maxPlayers; i++) {
             form += '<option name="' + i + '" value="' + i + '">' + i + '</option>';
@@ -52,13 +64,13 @@ class GameControlView {
         form +=
                 '</select>' +
                 '<br/><br/>What type of deck?' +
-                '<select class="deckType">' +
+                '<select class="' + this.deckTypeClass + '">' +
                     '<option name="picture" value="picture">Picture Cards</option>' +
                     '<option name="playing" value="playing">Playing Cards</option>' +
                 '</select>' +
-                '<br/><br/>How many cards? <input type="text" name="numberOfCardsToUse" size="4"/>' +
+                '<br/><br/>How many cards? <input type="text" name="' + this.numberOfCardsToUseName + '" size="4"/>' +
                 '<br/><br/>' +
-                '<input class="gameOptionsSubmit" type="button" name="sub" value="submit"/>' +
+                '<input class="' + this.gameOptionsSubmitClass + '" type="button" name="sub" value="submit"/>' +
             '</form>';
         $('.gameOptionsContent').html(form);
     }
@@ -66,19 +78,19 @@ class GameControlView {
     renderScoreBoard() {
         let content = '';
         for (let i = 1; i < this.maxPlayers; i++) {
-            content += '<div class="player' + i + '">Player ' + i + ': 0 matches</div>'
+            content += '<div class="' + this.playerPrefixClass + i + '">Player ' + i + ': 0 matches</div>'
         }
         $('.scoreBoardContent').html(content);
     }
 
     renderResetContent() {
-        let content = '<div class="gameOver">' +
+        let content = '<div class="' + this.gameResetClass + '">' +
             '<a href="#">Click to play again</a>' +
         '</div>';
         $('.resetContent').html(content);
     }
 
     getNameClassInputPrefix() {
-        return this.nameClassInputPrefix;
+        return this.nameInputPrefixClass;
     }
 }

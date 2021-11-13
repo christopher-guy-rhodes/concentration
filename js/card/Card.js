@@ -2,7 +2,7 @@
  * Class that represents any game card.
  */
 class Card {
-    constructor(id, x, y, faceDownX, faceDownY, width, height, image) {
+    constructor(id, x, y, faceDownX, faceDownY, width, height, image, clickableClass) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -18,6 +18,7 @@ class Card {
             .withImgOffsetY(-1 * y * height)
             .withFaceDownOffsetX(faceDownX)
             .withFaceDownOffsetY(faceDownY)
+            .withClickableClass(clickableClass)
             .build();
     }
 

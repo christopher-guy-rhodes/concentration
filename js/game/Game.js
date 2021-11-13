@@ -2,14 +2,15 @@
  * Class for playing classic concentration game.
  */
 class Game {
-    constructor(type, numberOfCards) {
+    constructor(type, numberOfCards, clickableClass) {
 
         let numberOfRows = type === 'playing' ? 4 : 6;
 
         this.gameBoard = new GameBoardBuilder()
             .withDeckType(type)
             .withNumberOfCardsPerRow(numberOfCards / numberOfRows)
-            .withNumberOfRows(numberOfRows).build();
+            .withNumberOfRows(numberOfRows)
+            .withClickableClass(clickableClass).build();
 
         this.players = [];
         this.playerTurnIndex = 0;

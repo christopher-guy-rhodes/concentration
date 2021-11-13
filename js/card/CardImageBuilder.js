@@ -12,6 +12,7 @@ class CardImageBuilder {
         this.imgOffsetY = undefined;
         this.faceDownOffsetX = undefined;
         this.faceDownOffsetY = undefined;
+        this.clickableClass = undefined;
     }
 
     withId(id) {
@@ -60,8 +61,13 @@ class CardImageBuilder {
         return this;
     }
 
+    withClickableClass(clickableClass) {
+        this.clickableClass = clickableClass;
+        return this;
+    }
+
     build() {
         return new CardImage(this.id, this.width, this.height, this.image, this.isFaceUp, this.imgOffsetX,
-            this.imgOffsetY, this.faceDownOffsetX, this.faceDownOffsetY);
+            this.imgOffsetY, this.faceDownOffsetX, this.faceDownOffsetY, this.clickableClass);
     }
 }

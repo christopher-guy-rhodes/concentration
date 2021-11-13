@@ -23,8 +23,8 @@ const CLUBS = 'CLUBS';
 class PlayingCardDeck extends Deck {
     static PLAYING_CARD_IMAGE = '../images/decks/playing_cards.png';
 
-    constructor(numberOfCards) {
-        super(PlayingCardDeck.dealCards(numberOfCards),
+    constructor(numberOfCards, clickableClass) {
+        super(PlayingCardDeck.dealCards(numberOfCards, clickableClass),
             PlayingCardDeck.getNumberOfCardsInDeck(),
             PlayingCardDeck.PLAYING_CARD_IMAGE);
     }
@@ -44,7 +44,7 @@ class PlayingCardDeck extends Deck {
         return [A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, J, Q, K];
     }
 
-    static dealCards(numberOfCards) {
+    static dealCards(numberOfCards, clickableClass) {
         let cards = [];
         const suits = this.getSuits();
         const ranks = this.getRanks();
@@ -54,7 +54,7 @@ class PlayingCardDeck extends Deck {
             let suit = suits[y];
             for (let x = 0; x < ranks.length; x++) {
                 let rank = ranks[x];
-                let card = new PlayingCard(rank, suit, x, y);
+                let card = new PlayingCard(rank, suit, x, y, clickableClass);
                 cards.push(card);
 
                 // We may not be using a full deck

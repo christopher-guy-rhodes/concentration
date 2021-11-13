@@ -2,11 +2,13 @@
  * Main class to render card game
  */
 class GameBoard {
-    constructor(deckType, numberOfRows, numberOfCardsPerRow) {
-
+    constructor(deckType, numberOfRows, numberOfCardsPerRow, clickableClass) {
+        validateRequiredParams(this.constructor, 'deckType', 'numberOfRows', 'numberOfCardsPerRow',
+            'clickableClass');
         this.deckType = deckType;
         this.numberOfRows = numberOfRows;
         this.numberOfCardsPerRow = numberOfCardsPerRow;
+        this.clickableClass = clickableClass;
 
         let numberOfCards = this.numberOfRows * this.numberOfCardsPerRow;
         this.deck = this.getDeckByType(deckType, numberOfCards);
@@ -60,11 +62,11 @@ class GameBoard {
         let deck = undefined;
         switch(deckType) {
             case 'picture':
-                deck = new PictureCardDeck(numberOfCards);
+                deck = new PictureCardDeck(numberOfCards, this.clickableClass);
                 break;
             case 'playing':
             default :
-                deck = new PlayingCardDeck(numberOfCards);
+                deck = new PlayingCardDeck(numberOfCards, this.clickableClass);
         }
 
         return deck;
