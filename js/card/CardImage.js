@@ -2,8 +2,9 @@
  * Handles image rendering for a particular card using a single image that has all the cards.
  */
 class CardImage {
-    constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY, faceDownOffsetX, faceDownOffsetY, clickableClass) {
-        validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image', 'imgOffsetY',
+    constructor(id, width, height, image, isFaceUp, imgOffsetX, imgOffsetY, faceDownOffsetX, faceDownOffsetY,
+                clickableClass) {
+        validateRequiredParams(this.constructor, arguments, 'id', 'height', 'width', 'image', 'imgOffsetX','imgOffsetY',
             'faceDownOffsetX', 'faceDownOffsetY', 'clickableClass');
         this.id = id;
         this.height = height;
@@ -56,7 +57,7 @@ class CardImage {
      * Sets the card face down.
      */
     setFaceDown() {
-        this.renderNewOffset(this.faceDownCardXOffset, this.faceDownCardYOffset);
+        this.setOffset(this.faceDownCardXOffset, this.faceDownCardYOffset);
         this.isFaceUp = false;
     }
 
@@ -64,7 +65,7 @@ class CardImage {
      * Sets the card face up.
      */
     setFaceUp() {
-        this.renderNewOffset(this.imgOffsetX, this.imgOffsetY);
+        this.setOffset(this.imgOffsetX, this.imgOffsetY);
         this.isFaceUp = true;
     }
 
@@ -85,7 +86,7 @@ class CardImage {
     }
 
     /* private */
-    renderNewOffset(xOffset, yOffset) {
+    setOffset(xOffset, yOffset) {
         $('.' + this.id).css('background-position', xOffset + 'px ' + yOffset + 'px');
     }
 }

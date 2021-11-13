@@ -4,13 +4,10 @@
 class Card {
     constructor(id, x, y, faceDownX, faceDownY, width, height, image, clickableClass) {
         this.id = id;
-        this.x = x;
-        this.y = y;
-        this.image = image;
         this.isFaceUp = false;
 
         this.cardImage = new CardImageBuilder()
-            .withId(this.id)
+            .withId(id)
             .withWidth(width)
             .withHeight(height)
             .withImage(image)
@@ -18,8 +15,7 @@ class Card {
             .withImgOffsetY(-1 * y * height)
             .withFaceDownOffsetX(faceDownX)
             .withFaceDownOffsetY(faceDownY)
-            .withClickableClass(clickableClass)
-            .build();
+            .withClickableClass(clickableClass).build();
     }
 
     /**
