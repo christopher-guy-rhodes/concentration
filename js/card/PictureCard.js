@@ -11,6 +11,7 @@ class PictureCard extends Card {
             116,
             114,
             PictureCardDeck.PICTURE_CARD_IMAGE, clickableClass);
+        validateRequiredParams(this.constructor, arguments, 'animal', 'number', 'x', 'y', 'clickableClass');
         this.animal = animal;
         this.number = number;
     }

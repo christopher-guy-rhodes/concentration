@@ -27,6 +27,7 @@ function validateRequiredParams(func, values) {
     for (let requiredArgName of requiredArgsNames) {
         let index = argumentNameIndex[requiredArgName];
         if (values[index] === undefined) {
+            console.log("requiredArgNames: %o", requiredArgsNames)
             throw new Error("function " + func.name + " is missing required parameter \"" + requiredArgName + "\"");
         }
     }

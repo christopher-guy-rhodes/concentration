@@ -61,7 +61,7 @@ class Card {
      * @param y the y position to render the card.
      */
     renderCard(document, x, y) {
-        validateRequiredParams(this.renderCard, 'document', 'x', 'y');
+        validateRequiredParams(this.renderCard, arguments, 'document', 'x', 'y');
         this.getCardImage().renderCssAndHtml(document,
             x * this.getCardImage().getWidth(),
             y * this.getCardImage().getHeight());

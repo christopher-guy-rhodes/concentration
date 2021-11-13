@@ -1,7 +1,7 @@
 class GameControlView {
     constructor(maxPlayers, nameInputPrefixClass, gameOptionsSubmitClass, deckTypeClass, playerNameSubmitClass,
                     gameResetClass, numPlayersClass, numberOfCardsToUseName, playerPrefixClass, playerNamePrefixClass) {
-        validateRequiredParams(this.constructor, 'maxPlayers', 'nameInputPrefixClass', 'gameOptionsSubmitClass',
+        validateRequiredParams(this.constructor, arguments, 'maxPlayers', 'nameInputPrefixClass', 'gameOptionsSubmitClass',
             'deckTypeClass', 'playerNameSubmitClass', 'gameResetClass', 'numPlayersClass', 'numberOfCardsToUseName',
             'playerPrefixClass', 'playerNamePrefixClass');
         this.maxPlayers = maxPlayers;

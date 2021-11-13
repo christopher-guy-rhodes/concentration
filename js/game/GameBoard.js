@@ -3,7 +3,7 @@
  */
 class GameBoard {
     constructor(deckType, numberOfRows, numberOfCardsPerRow, clickableClass) {
-        validateRequiredParams(this.constructor, 'deckType', 'numberOfRows', 'numberOfCardsPerRow',
+        validateRequiredParams(this.constructor, arguments, 'deckType', 'numberOfRows', 'numberOfCardsPerRow',
             'clickableClass');
         this.deckType = deckType;
         this.numberOfRows = numberOfRows;
@@ -20,7 +20,7 @@ class GameBoard {
      * @param document the dom document
      */
     renderGameBoard(document) {
-        validateRequiredParams(this.renderGameBoard, 'document');
+        validateRequiredParams(this.renderGameBoard, arguments, 'document');
 
         this.setViewPort();
         this.deck.shuffleCards();

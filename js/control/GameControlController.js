@@ -161,7 +161,8 @@ class GameControlController {
         } catch (error) {
             this.handleError(error);
             this.setFormOptionsFormVisibility(true);
-            this.setPlayerNamesVisibility(numberOfPlayers, false);
+            this.setPlayerNamesVisibility(this.numberOfPlayers, false);
+            this.setFormPlayerSubmitVisibility(false);
         }
     }
 

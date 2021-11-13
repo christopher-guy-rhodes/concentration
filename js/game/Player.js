@@ -3,7 +3,7 @@
  */
 class Player {
     constructor(playerName, playerNumber) {
-        validateRequiredParams(this.constructor, 'playerName', 'playerNumber');
+        validateRequiredParams(this.constructor, arguments, 'playerName', 'playerNumber');
         // Set of card ids that the player has matched
         this.matches = [];
         this.firstCard = undefined;
