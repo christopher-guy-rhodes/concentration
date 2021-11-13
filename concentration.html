@@ -9,71 +9,32 @@
         $(document).ready(function(){
 
             // Classes
-            $.getScript('/js/constants.js', function() {
-            $.getScript('/js/util.js', function() {
-            $.getScript('/js/card/CardImage.js', function() {
-            $.getScript('/js/card/Card.js', function() {
-            $.getScript('/js/card/PlayingCard.js', function() {
-            $.getScript('/js/card/PictureCard.js', function() {
-            $.getScript('/js/card/CardImageBuilder.js', function() {
-            $.getScript('/js/deck/Deck.js', function() {
-            $.getScript('/js/deck/PlayingCardDeck.js', function() {
-            $.getScript('/js/deck/PictureCardDeck.js', function() {
-            $.getScript('/js/game/GameBoard.js', function() {
-            $.getScript('/js/game/GameBoardBuilder.js', function() {
-            $.getScript('/js/game/Player.js', function() {
-            $.getScript('/js/game/Game.js', function() {
-            $.getScript('/js/game/GameEventsHandler.js', function() {
-            $.getScript('/js/game/ScoreBoard.js', function() {
+            $.getScript('/js/constants.js'                     , function() {
+            $.getScript('/js/util.js'                          , function() {
+            $.getScript('/js/card/CardImage.js'                , function() {
+            $.getScript('/js/card/Card.js'                     , function() {
+            $.getScript('/js/card/PlayingCard.js'              , function() {
+            $.getScript('/js/card/PictureCard.js'              , function() {
+            $.getScript('/js/card/CardImageBuilder.js'         , function() {
+            $.getScript('/js/deck/Deck.js'                     , function() {
+            $.getScript('/js/deck/PlayingCardDeck.js'          , function() {
+            $.getScript('/js/deck/PictureCardDeck.js'          , function() {
+            $.getScript('/js/game/GameBoard.js'                , function() {
+            $.getScript('/js/game/GameBoardBuilder.js'         , function() {
+            $.getScript('/js/game/Player.js'                   , function() {
+            $.getScript('/js/game/Game.js'                     , function() {
+            $.getScript('/js/control/GameControlController.js' , function() {
+            $.getScript('/js/view/GameControlView.js'          , function() {
+            $.getScript('/js/game/ScoreBoard.js'               , function() {
 
-                // Call the main event handler
-                new GameEventsHandler().handleEvents();
+            // Call the main event handler
+            let gameController = new GameControlController();
+            gameController.renderForms(document);
+            gameController.handleEvents(document);
 
-        })})})})})})})})})})})})})})})})});
+        })})})})})})})})})})})})})})})})})});
     </script>
     <body>
-        <h2>Classic Concentration Memory Game</h2>
-        <form method="GET" action="./">
-            <div class="playerName1">
-                Player 1 name: <input class="name1" type="text" name="playerName1"/>
-            </div>
-            <div class="playerName2">
-                Player 2 name: <input class="name2" type="text" name="playerName1"/>
-            </div>
-            <div class="playerName3">
-                Player 3 name: <input class="name3" type="text" name="playerName1"/>
-            </div>
-            <div class="playerName4">
-                Player 4 name: <input class="name4" type="text" name="playerName1"/>
-            </div>
-            <input class="playerNameSubmit" type="button" name="playerNames" value="submit"/>
-        </form>
-
-        <form class="gameOptionsForm" method="GET" action="./">
-            <input type="hidden" class="numPlayersSelected" value="0"/>
-            How many players?
-            <select class="numPlayers">
-                <option name="1" value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
-            <br/><br/>What type of deck?
-            <select class="deckType">
-                <option name="picture" value="picture">Picture Cards</option>
-                <option name="playing" value="playing">Playing Cards</option>
-            </select>
-            <br/><br/>How many cards? <input type="text" name="numberOfCardsToUse" size="4"/>
-            <br/><br/>
-            <input class="gameOptionsSubmit" type="button" name="sub" value="submit"/>
-        </form>
-
-        <div class="player1">Player 1: 0 matches</div>
-        <div class="player2">Player 2: 0 matches</div>
-        <div class="player3">Player 3: 0 matches</div>
-        <div class="player4">Player 4: 0 matches</div>
-        <div class="gameOver">
-            <a href="#">Click to play again</a>
-        </div>
+        <!-- body will be rendered dynamically -->
     </body>
 </html>

@@ -1,14 +1,22 @@
-class GameEventsHandler {
+class GameControlController {
     constructor() {
         this.numberOfPlayers = undefined;
         this.deckType = undefined;
         this.game = undefined;
+        this.nameClassInputPrefix = 'name';
+
+        this.view = new GameControlView(this.nameClassInputPrefix);
     }
 
+
     /**
-     * Handle events related to the control flow of the game.
+     * Handle events related to the control flow of the forms used to configure and start the game.
+     * @param document the DOM document
      */
-    handleEvents() {
+    handleEvents(document) {
+        // Render for forms
+        this.renderForms(document);
+
         // Handle number of players, deck type and number of cards selections
         this.handleGameOptionsEvent();
 
@@ -28,6 +36,11 @@ class GameEventsHandler {
         this.updateFormNumberOfCardsEvent();
 
     }
+
+    renderForms(document) {
+        this.view.renderForms(document);
+    }
+
 
     /* private */
     handleGameOptionsEvent() {
@@ -130,10 +143,9 @@ class GameEventsHandler {
 
     /* private */
     buildFormPlayers() {
-        let names = ['.name1', '.name2', '.name3', '.name4'];
         let players = [];
         for (let i = 0; i < this.numberOfPlayers; i++) {
-            let name = names[i];
+            let name = '.' + this.nameClassInputPrefix + (i + 1);
             let playerName = $(name).val();
             if (playerName.trim().length < 1) {
                 playerName = 'Player ' + (i + 1);
