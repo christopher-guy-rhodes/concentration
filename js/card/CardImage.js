@@ -32,19 +32,6 @@ class CardImage {
         let imgOffsetX = this.isFaceUp ? this.imgOffsetX : this.faceDownCardXOffset;
         let imgOffsetY = this.isFaceUp ? this.imgOffsetY : this.faceDownCardYOffset;
 
-        // Generate the css to render a the cared with the given dimensions and offset
-        /*
-        let css = '.' + this.id + '-BACK {' + "\n" +
-            '\theight: ' + this.height + 'px' + ";\n" +
-            '\twidth: ' + this.width + 'px' + ";\n" +
-            '\tbackground-image: url(' + this.image + ')' + ";\n" +
-            '\tbackground-position: ' + imgOffsetX + 'px ' + imgOffsetY + 'px' + ";\n" +
-            '\tposition: absolute' + ";\n" +
-            '\ttop: ' + (yPixelOffset + HEADER_HEIGHT) + 'px' + ";\n" +
-            '\tleft: ' + xPixelOffset + 'px' + ";\n" +
-            '}' + "\n";
-
-         */
         let frontCss = this.getCss('FRONT', this.imgOffsetX, this.imgOffsetY, xPixelOffset, yPixelOffset);
         let backCss = this.getCss('BACK', this.faceDownCardXOffset, this.faceDownCardYOffset, xPixelOffset, yPixelOffset);
 
@@ -53,14 +40,15 @@ class CardImage {
         document.head.appendChild(styleSheet);
 
         let frontDiv = document.createElement("div");
-        //frontDiv.className = 'front';
         frontDiv.id = this.id + '-FRONT';
 
         let backDiv = document.createElement("div");
-        //backDiv.className = 'back';
         backDiv.id = this.id + '-BACK';
 
         // Create a div in the body with the class name and a "clickable" class to handle on click events
+
+        $('#' + this.id).remove();
+
         let parentDiv = document.createElement("div");
         parentDiv.className = this.clickableClass;
         parentDiv.id = this.id;

@@ -7,7 +7,7 @@ class GameControlController {
         this.game = undefined;
         this.nameInputPrefixClass = 'name';
         this.gamOptionsSubmitClass = 'gameOptionsSubmitClass';
-        this.deckType = 'deckType';
+        this.deckTypeClass = 'deckType';
         this.playerNameSubmitClass = 'playerNameSubmit';
         this.clickableClass = 'clickable';
         this.gameResetClass = 'gameOver';
@@ -20,7 +20,7 @@ class GameControlController {
             .withMaxPlayers(MAX_PLAYERS)
             .withNameInputPrefixClass(this.nameInputPrefixClass)
             .withGameOptionsSubmitClass(this.gamOptionsSubmitClass)
-            .withDeckTypeClass(this.deckType)
+            .withDeckTypeClass(this.deckTypeClass)
             .withPlayerNameSubmitClass(this.playerNameSubmitClass)
             .withGameResetClass(this.gameResetClass)
             .withNumPlayersClass(this.numPlayersClass)
@@ -132,7 +132,6 @@ class GameControlController {
     /* private */
     handleCardClick(e) {
         let clickedCardId = $(e.target).parent().attr('id');
-        console.log('id is: %o', clickedCardId);
 
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
         if (!card.getIsFaceUp()) {
@@ -159,6 +158,9 @@ class GameControlController {
 
         try {
             this.deckType = this.getFormDeckType();
+            if (this.deckType === undefined) {
+                alert('no deck type');
+            }
             this.game = new Game(this.deckType, numCards, this.clickableClass);
         } catch (error) {
             this.handleError(error);
@@ -218,7 +220,7 @@ class GameControlController {
 
     /* private */
     getFormDeckType() {
-        return $('.' + this.deckType).val();
+        return $('.' + this.deckTypeClass).val();
     }
 
     /* private */
