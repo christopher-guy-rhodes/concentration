@@ -23,7 +23,7 @@ class GameBoard {
         validateRequiredParams(this.renderGameBoard, arguments, 'document');
 
         this.setViewPort();
-        //this.deck.shuffleCards();
+        this.deck.shuffleCards();
         let cards = this.deck.getCards();
         let gridPositions = this.buildGrid();
 
