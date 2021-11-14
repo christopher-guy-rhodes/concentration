@@ -45,7 +45,7 @@ class GameBoard {
      */
     removeCards(cards) {
         for (let card of cards) {
-            $('.' + card.getId()).css('display', 'none');
+            $('#' + card.getId()).css('display', 'none');
         }
     }
 
