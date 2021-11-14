@@ -12,7 +12,7 @@ class GameBoard {
 
         let numberOfCards = this.numberOfRows * this.numberOfCardsPerRow;
         this.deck = this.getDeckByType(deckType, numberOfCards);
-        this.validateNumberOfCards(numberOfCards);
+        this.deck.validateNumberOfCards(numberOfCards);
     }
 
     /**
@@ -23,7 +23,7 @@ class GameBoard {
         validateRequiredParams(this.renderGameBoard, arguments, 'document');
 
         this.setViewPort();
-        this.deck.shuffleCards();
+        //this.deck.shuffleCards();
         let cards = this.deck.getCards();
         let gridPositions = this.buildGrid();
 
@@ -70,17 +70,6 @@ class GameBoard {
         }
 
         return deck;
-    }
-
-    /* private */
-    validateNumberOfCards(numberOfCards) {
-        if (this.numberOfRows * this.numberOfCardsPerRow % 2 !== 0 ||
-            numberOfCards < 2 ||
-            numberOfCards > this.deck.getNumberOfCards()) {
-            let msg = 'There must be an even number of cards. Greater than 1 and less than '
-                + this.deck.getNumberOfCardsInDeck();
-            throw new Error(msg);
-        }
     }
 
     /* private */

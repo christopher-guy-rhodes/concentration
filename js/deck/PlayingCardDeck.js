@@ -27,6 +27,16 @@ class PlayingCardDeck extends Deck {
         super(PlayingCardDeck.dealCards(numberOfCards, clickableClass),
             PlayingCardDeck.getNumberOfCardsInDeck(),
             PlayingCardDeck.PLAYING_CARD_IMAGE);
+        this.numberOfCards = numberOfCards;
+    }
+
+    validateNumberOfCards(numSelected) {
+        let numCardsInDeck = PlayingCardDeck.getNumberOfCardsInDeck();
+        if (this.numberOfCards !== 2 &&
+            (this.numberOfCards / 2 % 2 !== 0 || numSelected < 0 || numSelected > numCardsInDeck)) {
+            throw new Error("In order to play with a playing card deck you must use between 2 and " + numCardsInDeck +
+                " cards. There must be an even number of pairs cards.");
+        }
     }
 
     /**
