@@ -27,7 +27,7 @@ class ScoreBoard {
      */
     displayWinners(winningPlayers) {
         for (let winningPlayer of winningPlayers) {
-            let scoreBoardEntry = winningPlayer.getPlayerName() + ' <strong class="winner"> is the winner!</strong> ' +
+            let scoreBoardEntry = winningPlayer.getPlayerName() + ' <strong class="winner" style="color: #00ff00;"> is the winner!</strong> ' +
                 winningPlayer.getScore() + ' matches in ' + winningPlayer.getNumberOfTries() + ' turns';
             $('.player' + winningPlayer.getPlayerNumber()).html(scoreBoardEntry);
         }

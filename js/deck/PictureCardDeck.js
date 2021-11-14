@@ -75,7 +75,6 @@ class PictureCardDeck extends Deck {
         for (let y = 0; y < cardRows.length; y++) {
             for (let x = 0; x < cardRows[y].length; x++) {
                 let animal = cardRows[y][x];
-                console.log('abba:' + clickableClass);
                 let card1 = new PictureCard(animal, "ONE", x, y, clickableClass);
                 let card2 = new PictureCard(animal, "TWO", x, y, clickableClass);
                 cards.push(card1);

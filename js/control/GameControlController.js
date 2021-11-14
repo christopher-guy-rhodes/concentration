@@ -131,7 +131,9 @@ class GameControlController {
 
     /* private */
     handleCardClick(e) {
-        let clickedCardId = $(e.target).attr('class').replace(this.clickableClass + ' ', '');
+        let clickedCardId = $(e.target).parent().attr('id');
+        console.log('id is: %o', clickedCardId);
+
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
         if (!card.getIsFaceUp()) {
             this.getGame().takePlayerTurn(card);

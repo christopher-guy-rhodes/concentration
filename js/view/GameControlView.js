@@ -40,11 +40,11 @@ class GameControlView {
 
         for (let i = 1; i <= this.maxPlayers; i++) {
             form +=
-                '<div class="' + this.playerNamePrefixClass + i + '">' +
+                '<div style="display: none;" class="' + this.playerNamePrefixClass + i + '">' +
                 'Player ' + i + ' name: <input class="' + this.nameInputPrefixClass + i + '" type="text"/>' +
                 '</div>';
         }
-        form += '<input class="' + this.playerNameSubmitClass + '" type="button" name="playerNames" value="submit"/>';
+        form += '<input style="display: none;" class="' + this.playerNameSubmitClass + '" type="button" name="playerNames" value="submit"/>';
         form += '</form>';
 
         $('.playerFormContent').html(form);
@@ -78,13 +78,13 @@ class GameControlView {
     renderScoreBoard() {
         let content = '';
         for (let i = 1; i < this.maxPlayers; i++) {
-            content += '<div class="' + this.playerPrefixClass + i + '">Player ' + i + ': 0 matches</div>'
+            content += '<div style="display: none;" class="' + this.playerPrefixClass + i + '">Player ' + i + ': 0 matches</div>'
         }
         $('.scoreBoardContent').html(content);
     }
 
     renderResetContent() {
-        let content = '<div class="' + this.gameResetClass + '">' +
+        let content = '<div style="display: none;" class="' + this.gameResetClass + '">' +
             '<a href="#">Click to play again</a>' +
         '</div>';
         $('.resetContent').html(content);

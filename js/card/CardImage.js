@@ -33,7 +33,8 @@ class CardImage {
         let imgOffsetY = this.isFaceUp ? this.imgOffsetY : this.faceDownCardYOffset;
 
         // Generate the css to render a the cared with the given dimensions and offset
-        let css = '.' + this.id + ' {' + "\n" +
+        /*
+        let css = '.' + this.id + '-BACK {' + "\n" +
             '\theight: ' + this.height + 'px' + ";\n" +
             '\twidth: ' + this.width + 'px' + ";\n" +
             '\tbackground-image: url(' + this.image + ')' + ";\n" +
@@ -43,14 +44,47 @@ class CardImage {
             '\tleft: ' + xPixelOffset + 'px' + ";\n" +
             '}' + "\n";
 
+         */
+        let frontCss = this.getCss('FRONT', this.imgOffsetX, this.imgOffsetY, xPixelOffset, yPixelOffset);
+        let backCss = this.getCss('BACK', this.faceDownCardXOffset, this.faceDownCardYOffset, xPixelOffset, yPixelOffset);
+
         let styleSheet = document.createElement("style");
-        styleSheet.innerText = css;
+        styleSheet.innerText = frontCss + backCss;
         document.head.appendChild(styleSheet);
 
+        let frontDiv = document.createElement("div");
+        //frontDiv.className = 'front';
+        frontDiv.id = this.id + '-FRONT';
+
+        let backDiv = document.createElement("div");
+        //backDiv.className = 'back';
+        backDiv.id = this.id + '-BACK';
+
         // Create a div in the body with the class name and a "clickable" class to handle on click events
-        let myDiv = document.createElement("div");
-        myDiv.className = this.clickableClass + ' ' + this.id;
-        document.body.appendChild(myDiv);
+        let parentDiv = document.createElement("div");
+        parentDiv.className = this.clickableClass;
+        parentDiv.id = this.id;
+
+        parentDiv.appendChild(frontDiv);
+        parentDiv.appendChild(backDiv);
+
+        document.body.appendChild(parentDiv);
+    }
+
+    getCss(suffix, offsetX, offsetY, xPixelOffset, yPixelOffset) {
+        let rotateY = suffix === 'FRONT' ? '-180' : '0';
+        return '#' + this.id + '-' + suffix + '{' + "\n" +
+        '\theight: ' + this.height + 'px' + ";\n" +
+        '\twidth: ' + this.width + 'px' + ";\n" +
+        '\tbackground-image: url(' + this.image + ')' + ";\n" +
+        '\tbackground-position: ' + offsetX + 'px ' + offsetY + 'px' + ";\n" +
+        '\tposition: absolute' + ";\n" +
+        '\ttop: ' + (yPixelOffset + HEADER_HEIGHT) + 'px' + ";\n" +
+        '\tleft: ' + xPixelOffset + 'px' + ";\n" +
+        '\ttransform: perspective(600px) rotateY(' + rotateY + 'deg)' + ";\n" +
+        '\tbackface-visibility: hidden' + ";\n" +
+        '\ttransition: transform .5s linear 0s;' + ";\n" +
+        '}' + "\n"
     }
 
     /**
@@ -59,6 +93,8 @@ class CardImage {
     setFaceDown() {
         this.setOffset(this.faceDownCardXOffset, this.faceDownCardYOffset);
         this.isFaceUp = false;
+        $(this).attr('data-click-state', 0);
+        this.animateFlip(this.id, true);
     }
 
     /**
@@ -67,6 +103,8 @@ class CardImage {
     setFaceUp() {
         this.setOffset(this.imgOffsetX, this.imgOffsetY);
         this.isFaceUp = true;
+        $(this).attr('data-click-state', 1)
+        this.animateFlip(this.id, false);
     }
 
     /**
@@ -88,5 +126,13 @@ class CardImage {
     /* private */
     setOffset(xOffset, yOffset) {
         $('.' + this.id).css('background-position', xOffset + 'px ' + yOffset + 'px');
+    }
+
+    /* private */
+    animateFlip(id, isFlippingToFront) {
+        let rotateYFront = isFlippingToFront ? '-180' : '0';
+        let rotateYBack = isFlippingToFront ? '0' : '180';
+        $('#' + id + '-FRONT').css('transform', 'perspective(600px) rotateY(' + rotateYFront + 'deg)');
+        $('#' + id + '-BACK').css('transform', 'perspective(600px) rotateY(' + rotateYBack + 'deg)');
     }
 }
