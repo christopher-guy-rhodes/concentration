@@ -77,7 +77,7 @@ class GameControlController {
     /* private */
     updateNumberOfCardsEvent() {
         let self = this;
-        $('.' + this.deckType).change(function(e) {
+        $('.' + this.deckTypeClass).change(function(e) {
             self.updateFormNumberOfCards();
         });
     }
