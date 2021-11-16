@@ -31,7 +31,10 @@ class GameControlView {
     }
 
     withResetContent(document) {
-        let div = new ElementBuilder(document).withTag(DIV_TAG).withClass(this.gameResetClass).build();
+        let div = new ElementBuilder(document)
+            .withTag(DIV_TAG)
+            .withClass(this.gameResetClass)
+            .withAttribute('style', 'display: none;').build();
         div.appendChild(new ElementBuilder(document)
             .withTag(ANCHOR_TAG)
             .withAttribute("href", "#")
