@@ -1,53 +1,58 @@
 class GameControlView {
-    constructor(maxPlayers, nameInputPrefixClass, gameOptionsForClass, gameOptionsSubmitClass, deckTypeClass,
-                playerNameSubmitClass, gameResetClass, numPlayersClass, numberOfCardsToUseName, playerPrefixClass,
-                playerNamePrefixClass) {
-        validateRequiredParams(this.constructor, arguments, 'maxPlayers', 'nameInputPrefixClass',
-            'gameOptionsForClass', 'gameOptionsSubmitClass', 'deckTypeClass', 'playerNameSubmitClass', 'gameResetClass',
-            'numPlayersClass', 'numberOfCardsToUseName', 'playerPrefixClass', 'playerNamePrefixClass');
-        this.maxPlayers = maxPlayers;
-        this.nameInputPrefixClass = nameInputPrefixClass;
-        this.gameOptionsSubmitClass = gameOptionsSubmitClass;
+    constructor(gameOptionsForClass, gameOptionsSubmitButtonClass, deckTypeClass,
+                playerNameSubmitButtonClass, gameResetClass, numPlayersSelectClass, numberOfCardsToUseName,
+                scoreBoardPlayerPrefixClass, playerNamePrefixClass) {
+        validateRequiredParams(this.constructor, arguments, 'gameOptionsForClass', 'gameOptionsSubmitButtonClass',
+            'deckTypeClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectClass',
+            'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass');
+        this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.gameOptionsFormClass = gameOptionsForClass;
         this.deckTypeClass = deckTypeClass;
-        this.playerNameSubmitClass = playerNameSubmitClass;
+        this.playerNameSubmitButtonClass = playerNameSubmitButtonClass;
         this.gameResetClass = gameResetClass;
-        this.numPlayersClass = numPlayersClass;
+        this.numPlayersSelectClass = numPlayersSelectClass;
         this.numberOfCardsToUseName = numberOfCardsToUseName;
-        this.playerPrefixClass = playerPrefixClass;
+        this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
         this.playerNamePrefixClass = playerNamePrefixClass;
+
         this.scoreBoardClass = 'scoreBoardContent';
+        this.nameInputPrefixClass = 'name';
 
         this.body = new ElementBuilder(document).withTag("body").build();
     }
 
-    renderForms(document) {
-        validateRequiredParams(this.renderForms, arguments, 'document');
+    getNameInputPrefixClass() {
+        return this.nameInputPrefixClass;
+    }
+
+    withGameControlForms(document) {
+        validateRequiredParams(this.withGameControlForms, arguments, 'document');
         this.withTitleTag(document)
             .withPlayerForm(document)
             .withGameOptionsForm(document)
             .withScoreBoardContent(document)
             .withResetContent(document);
+        return this;
     }
 
     withResetContent(document) {
-        let div = new ElementBuilder(document)
+        validateRequiredParams(this.withResetContent, 'document');
+        this.body.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
             .withClass(this.gameResetClass)
-            .withAttribute('style', 'display: none;').build();
-        div.appendChild(new ElementBuilder(document)
-            .withTag(ANCHOR_TAG)
-            .withAttribute("href", "#")
-            .withInnerText('Click to play again').build());
-        this.body.appendChild(div);
+            .withAttribute('style', 'display: none;').build()
+            .appendChild(new ElementBuilder(document)
+                .withTag(ANCHOR_TAG)
+                .withAttribute('href', '#')
+                .withInnerText('Click to play again').build()));
         return this;
     }
 
     withScoreBoardContent(document) {
         let div = new ElementBuilder(document).withTag(DIV_TAG).withClass(this.scoreBoardClass).build();
-        for (let i = 1; i <= this.maxPlayers; i++) {
+        for (let i = 1; i <= MAX_PLAYERS; i++) {
             div.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
-                .withClass(this.playerPrefixClass + i)
+                .withClass(this.scoreBoardPlayerPrefixClass + i)
                 .withAttribute("style","display: none;")
                 .withInnerText('Player ' + i + ': 0 matches').build());
         }
@@ -79,14 +84,13 @@ class GameControlView {
         form
             .appendChild(new ElementBuilder(document)
                 .withTag(INPUT_TAG)
-                .withClass(this.gameOptionsSubmitClass)
+                .withClass(this.gameOptionsSubmitButtonClass)
                 .withAttribute("type", "button")
                 .withAttribute("value", "submit").build());
         return this;
     }
 
     withNumberOfCardsInput(document, form) {
-        // Number of cards
         form
             .appendChild(new ElementBuilder(document)
                 .withTag(DIV_TAG)
@@ -130,9 +134,9 @@ class GameControlView {
     withNumberOfPlayersSelect(document, form) {
         let numPlayersSelect = new ElementBuilder(document)
             .withTag(SELECT_TAG)
-            .withClass(this.numPlayersClass).build();
+            .withClass(this.numPlayersSelectClass).build();
 
-        for (let i = 1; i <= this.maxPlayers; i++) {
+        for (let i = 1; i <= MAX_PLAYERS; i++) {
             numPlayersSelect.appendChild(new ElementBuilder(document)
                 .withTag(OPTION_TAG)
                 .withAttribute('value', i)
@@ -158,22 +162,22 @@ class GameControlView {
         let form = new ElementBuilder(document)
             .withTag("form").build();
 
-        for (let i = 1; i <= this.maxPlayers; i++) {
+        for (let i = 1; i <= MAX_PLAYERS; i++) {
             form.appendChild(new ElementBuilder(document)
-                .withTag("div")
+                .withTag(DIV_TAG)
                 .withClass(this.playerNamePrefixClass + i)
                 .withAttribute("style", "display: none;")
                 .withInnerText("Player " + i + ' name:').build()
                 .appendChild(new ElementBuilder(document)
-                    .withTag("input").withClass(this.nameInputPrefixClass + i)
+                    .withTag(INPUT_TAG).withClass(this.nameInputPrefixClass + i)
                     .withAttribute("type", "text")
                     .build()))
         }
 
         form
             .appendChild(new ElementBuilder(document)
-                .withTag("input")
-                .withClass(this.playerNameSubmitClass)
+                .withTag(INPUT_TAG)
+                .withClass(this.playerNameSubmitButtonClass)
                 .withAttribute("style", "display: none")
                 .withAttribute("type", "button")
                 .withAttribute("name", "playerNames")
@@ -182,5 +186,4 @@ class GameControlView {
         this.body.appendChild(form);
         return this;
     }
-
 }

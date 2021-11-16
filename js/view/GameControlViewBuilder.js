@@ -1,16 +1,14 @@
 class GameControlViewBuilder {
 
     constructor() {
-        this.maxPlayers = undefined;
-        this.nameInputPrefixClass = undefined;
-        this.gameOptionsSubmitClass = undefined;
+        this.gameOptionsSubmitButtonClass = undefined;
         this.gameOptionsFormClass = undefined;
         this.deckTypeClass = undefined;
         this.playerNameSubmitClass = undefined;
         this.gameResetClass = undefined;
-        this.numPlayersClass = undefined;
+        this.numPlayersSelectClass = undefined;
         this.numberOfCardsToUseName = undefined;
-        this.playerPrefixClass = undefined;
+        this.scoreBoardPlayerPrefixClass = undefined;
         this.playerNamePrefixClass = undefined;
     }
 
@@ -24,8 +22,8 @@ class GameControlViewBuilder {
         return this;
     }
 
-    withGameOptionsSubmitClass(gameOptionsSubmitClass) {
-        this.gameOptionsSubmitClass = gameOptionsSubmitClass;
+    withGameOptionsSubmitButtonClass(gameOptionsSubmitButtonClass) {
+        this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         return this;
     }
 
@@ -34,23 +32,13 @@ class GameControlViewBuilder {
         return this;
     }
 
-    withNameInputPrefixClass(nameInputPrefixClass) {
-        this.nameInputPrefixClass = nameInputPrefixClass;
-        return this;
-    }
-
-    withMaxPlayers(maxPlayers) {
-        this.maxPlayers = maxPlayers;
-        return this;
-    }
-
     withGameResetClass(gameResetClass) {
         this.gameResetClass = gameResetClass;
         return this;
     }
 
-    withNumPlayersClass(numPlayers) {
-        this.numPlayersClass = numPlayers;
+    withNumPlayersClass(numPlayersSelectClass) {
+        this.numPlayersSelectClass = numPlayersSelectClass;
         return this;
     }
 
@@ -60,7 +48,7 @@ class GameControlViewBuilder {
     }
 
     withPlayerPrefixClass(prefix) {
-        this.playerPrefixClass = prefix;
+        this.scoreBoardPlayerPrefixClass = prefix;
         return this;
     }
 
@@ -70,8 +58,8 @@ class GameControlViewBuilder {
     }
 
     build() {
-        return new GameControlView(this.maxPlayers, this.nameInputPrefixClass, this.gameOptionsFormClass,
-            this.gameOptionsSubmitClass, this.deckTypeClass, this.playerNameSubmitClass, this.gameResetClass,
-            this.numPlayersClass, this.numberOfCardsToUseName, this.playerPrefixClass, this.playerNamePrefixClass);
+        return new GameControlView(this.gameOptionsFormClass, this.gameOptionsSubmitButtonClass,
+            this.deckTypeClass, this.playerNameSubmitClass, this.gameResetClass, this.numPlayersSelectClass,
+            this.numberOfCardsToUseName, this.scoreBoardPlayerPrefixClass, this.playerNamePrefixClass);
     }
 }

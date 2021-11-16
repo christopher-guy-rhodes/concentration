@@ -1,33 +1,30 @@
-const MAX_PLAYERS = 4;
+
 
 class GameControlController {
     constructor() {
         this.numberOfPlayers = undefined;
         this.deckType = undefined;
         this.game = undefined;
-        this.nameInputPrefixClass = 'name';
-        this.gamOptionsSubmitClass = 'gameOptionsSubmitClass';
+        this.gamOptionsSubmitClass = 'gameOptionsSubmit';
         this.gameOptionsFormClass = 'gameOptionsForm';
         this.deckTypeClass = 'deckType';
-        this.playerNameSubmitClass = 'playerNameSubmit';
+        this.playerNameSubmitButtonClass = 'playerNameSubmit';
         this.clickableClass = 'clickable';
         this.gameResetClass = 'gameOver';
         this.numPlayersClass = 'numPlayers';
         this.numberOfCardsToUseName = 'numberOfCardsToUse';
-        this.playerPrefixClass = 'player';
+        this.scoreBoardPlayerPrefixClass = 'player';
         this.playerNamePrefixClass = 'playerName';
 
         this.view = new GameControlViewBuilder()
-            .withMaxPlayers(MAX_PLAYERS)
-            .withNameInputPrefixClass(this.nameInputPrefixClass)
-            .withGameOptionsSubmitClass(this.gamOptionsSubmitClass)
+            .withGameOptionsSubmitButtonClass(this.gamOptionsSubmitClass)
             .withGameOptionsFormClass(this.gameOptionsFormClass)
             .withDeckTypeClass(this.deckTypeClass)
-            .withPlayerNameSubmitClass(this.playerNameSubmitClass)
+            .withPlayerNameSubmitClass(this.playerNameSubmitButtonClass)
             .withGameResetClass(this.gameResetClass)
             .withNumPlayersClass(this.numPlayersClass)
             .withNumberOfCardsToUseName(this.numberOfCardsToUseName)
-            .withPlayerPrefixClass(this.playerPrefixClass)
+            .withPlayerPrefixClass(this.scoreBoardPlayerPrefixClass)
             .withPlayerNamePrefixClass(this.playerNamePrefixClass)
             .build();
     }
@@ -64,7 +61,7 @@ class GameControlController {
      * @param document the DOM dodument
      */
     renderForms(document) {
-        this.view.renderForms(document);
+        this.view.withGameControlForms(document);
     }
 
 
@@ -87,7 +84,7 @@ class GameControlController {
     /* private */
     addPlayersEvent(document) {
         let self = this;
-        $('.' + this.playerNameSubmitClass).click(function(e) {
+        $('.' + this.playerNameSubmitButtonClass).click(function(e) {
             self.addPlayers(document)
         });
     }
@@ -144,7 +141,7 @@ class GameControlController {
     /* private */
     addPlayers(document) {
         this.setFormPlayerSubmitVisibility(false);
-        this.getGame().addPlayers(this.buildFormPlayers());
+        this.getGame().addPlayers(this.buildPlayersFromForm());
         this.getGame().play(document);
     }
 
@@ -173,16 +170,16 @@ class GameControlController {
     }
 
     /* private */
-    buildFormPlayers() {
+    buildPlayersFromForm() {
         let players = [];
         for (let i = 0; i < this.numberOfPlayers; i++) {
-            let name = '.' + this.nameInputPrefixClass + (i + 1);
+            let name = '.' + this.view.getNameInputPrefixClass() + (i + 1);
             let playerName = $(name).val();
             if (playerName.trim().length < 1) {
                 playerName = 'Player ' + (i + 1);
             }
             players.push(new Player(playerName, (i + 1)));
-            $('.' + this.playerPrefixClass + (i + 1)).css('display', 'block');
+            $('.' + this.scoreBoardPlayerPrefixClass + (i + 1)).css('display', 'block');
             $('.playerName' + (i + 1)).css('display', 'none');
         }
         return players;
@@ -240,6 +237,6 @@ class GameControlController {
 
     /* private */
     setFormPlayerSubmitVisibility(flag) {
-        $('.' + this.playerNameSubmitClass).css('display', flag ? 'block' : 'none');
+        $('.' + this.playerNameSubmitButtonClass).css('display', flag ? 'block' : 'none');
     }
 }

@@ -1,5 +1,6 @@
 const HEADER_HEIGHT = 160;
 const CARD_FLIP_DELAY_MS = 1500;
+const MAX_PLAYERS = 4;
 
 const FORM_TAG = 'form';
 const H2_TAG = 'h2';
