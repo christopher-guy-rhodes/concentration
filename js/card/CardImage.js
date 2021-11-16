@@ -69,7 +69,7 @@ class CardImage {
         '\tposition: absolute' + ";\n" +
         '\ttop: ' + (yPixelOffset + HEADER_HEIGHT) + 'px' + ";\n" +
         '\tleft: ' + xPixelOffset + 'px' + ";\n" +
-        '\ttransform: perspective(600px) rotateY(' + rotateY + 'deg)' + ";\n" +
+        '\ttransform: rotateY(' + rotateY + 'deg)' + ";\n" +
         '\tbackface-visibility: hidden' + ";\n" +
         '\ttransition: transform .5s linear 0s;' + ";\n" +
         '}' + "\n"
@@ -120,7 +120,7 @@ class CardImage {
     animateFlip(id, isFlippingToFront) {
         let rotateYFront = isFlippingToFront ? '-180' : '0';
         let rotateYBack = isFlippingToFront ? '0' : '180';
-        $('#' + id + '-FRONT').css('transform', 'perspective(600px) rotateY(' + rotateYFront + 'deg)');
-        $('#' + id + '-BACK').css('transform', 'perspective(600px) rotateY(' + rotateYBack + 'deg)');
+        $('#' + id + '-FRONT').css('transform', 'rotateY(' + rotateYFront + 'deg)');
+        $('#' + id + '-BACK').css('transform', 'rotateY(' + rotateYBack + 'deg)');
     }
 }
