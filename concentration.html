@@ -13,6 +13,8 @@
             // Classes
             $.getScript('/js/constants.js'                     , function() {
             $.getScript('/js/util.js'                          , function() {
+            $.getScript('/js/dom/Element.js'                   , function() {
+            $.getScript('/js/dom/ElementBuilder.js'            , function() {
             $.getScript('/js/card/CardImage.js'                , function() {
             $.getScript('/js/card/Card.js'                     , function() {
             $.getScript('/js/card/PlayingCard.js'              , function() {
@@ -35,11 +37,9 @@
             gameController.renderForms(document);
             gameController.handleEvents(document);
 
-            })})})})})})})})})})})})})})})})})})});
+            })})})})})})})})})})})})})})})})})})})})});
 
 
     </script>
-    <body>
-        <!-- body will be rendered dynamically -->
-    </body>
+    <!-- body will be rendered dynamically -->
 </html>

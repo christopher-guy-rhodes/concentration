@@ -7,6 +7,7 @@ class GameControlController {
         this.game = undefined;
         this.nameInputPrefixClass = 'name';
         this.gamOptionsSubmitClass = 'gameOptionsSubmitClass';
+        this.gameOptionsFormClass = 'gameOptionsForm';
         this.deckTypeClass = 'deckType';
         this.playerNameSubmitClass = 'playerNameSubmit';
         this.clickableClass = 'clickable';
@@ -20,6 +21,7 @@ class GameControlController {
             .withMaxPlayers(MAX_PLAYERS)
             .withNameInputPrefixClass(this.nameInputPrefixClass)
             .withGameOptionsSubmitClass(this.gamOptionsSubmitClass)
+            .withGameOptionsFormClass(this.gameOptionsFormClass)
             .withDeckTypeClass(this.deckTypeClass)
             .withPlayerNameSubmitClass(this.playerNameSubmitClass)
             .withGameResetClass(this.gameResetClass)
@@ -233,7 +235,7 @@ class GameControlController {
 
     /* private */
     setFormOptionsFormVisibility(flag) {
-        $('.gameOptionsForm').css('display', flag ? 'block' : 'none');
+        $('.' + this.gameOptionsFormClass).css('display', flag ? 'block' : 'none');
     }
 
     /* private */

@@ -4,6 +4,7 @@ class GameControlViewBuilder {
         this.maxPlayers = undefined;
         this.nameInputPrefixClass = undefined;
         this.gameOptionsSubmitClass = undefined;
+        this.gameOptionsFormClass = undefined;
         this.deckTypeClass = undefined;
         this.playerNameSubmitClass = undefined;
         this.gameResetClass = undefined;
@@ -25,6 +26,11 @@ class GameControlViewBuilder {
 
     withGameOptionsSubmitClass(gameOptionsSubmitClass) {
         this.gameOptionsSubmitClass = gameOptionsSubmitClass;
+        return this;
+    }
+
+    withGameOptionsFormClass(gameOptionsFormClass) {
+        this.gameOptionsFormClass = gameOptionsFormClass;
         return this;
     }
 
@@ -64,8 +70,8 @@ class GameControlViewBuilder {
     }
 
     build() {
-        return new GameControlView(this.maxPlayers, this.nameInputPrefixClass, this.gameOptionsSubmitClass,
-            this.deckTypeClass, this.playerNameSubmitClass, this.gameResetClass, this.numPlayersClass,
-            this.numberOfCardsToUseName, this.playerPrefixClass, this.playerNamePrefixClass);
+        return new GameControlView(this.maxPlayers, this.nameInputPrefixClass, this.gameOptionsFormClass,
+            this.gameOptionsSubmitClass, this.deckTypeClass, this.playerNameSubmitClass, this.gameResetClass,
+            this.numPlayersClass, this.numberOfCardsToUseName, this.playerPrefixClass, this.playerNamePrefixClass);
     }
 }
