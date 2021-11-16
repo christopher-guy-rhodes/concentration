@@ -28,51 +28,51 @@ class CardImage {
     renderCssAndHtml(document, xPixelOffset, yPixelOffset) {
         validateRequiredParams(this.renderCssAndHtml, arguments, 'document', 'xPixelOffset', 'yPixelOffset');
 
-        // Override the offsets to the single face down card image if the card is face down
-        let imgOffsetX = this.isFaceUp ? this.imgOffsetX : this.faceDownCardXOffset;
-        let imgOffsetY = this.isFaceUp ? this.imgOffsetY : this.faceDownCardYOffset;
+        HEAD_ELEMENT.appendChild(this.getCssElement(document,
+            FRONT_ID_SUFFIX,
+            this.imgOffsetX,
+            this.imgOffsetY,
+            xPixelOffset,
+            yPixelOffset));
+        HEAD_ELEMENT.appendChild(this.getCssElement(document,
+            BACK_ID_SUFFIX,
+            this.faceDownCardXOffset,
+            this.faceDownCardYOffset,
+            xPixelOffset,
+            yPixelOffset));
 
-        let frontCss = this.getCss('FRONT', this.imgOffsetX, this.imgOffsetY, xPixelOffset, yPixelOffset);
-        let backCss = this.getCss('BACK', this.faceDownCardXOffset, this.faceDownCardYOffset, xPixelOffset, yPixelOffset);
-
-        let styleSheet = document.createElement("style");
-        styleSheet.innerText = frontCss + backCss;
-        document.head.appendChild(styleSheet);
-
-        let frontDiv = document.createElement("div");
-        frontDiv.id = this.id + '-FRONT';
-
-        let backDiv = document.createElement("div");
-        backDiv.id = this.id + '-BACK';
-
-        // Create a div in the body with the class name and a "clickable" class to handle on click events
-
+        // remove the node before creating to handle redraw events
         $('#' + this.id).remove();
 
-        let parentDiv = document.createElement("div");
-        parentDiv.className = this.clickableClass;
-        parentDiv.id = this.id;
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+            .withTag(DIV_TAG)
+            .withClass(this.clickableClass)
+            .withId(this.id).build()
+            .appendChild(new ElementBuilder(document)
+                .withTag(DIV_TAG)
+                .withId(this.id + '-FRONT').build())
+            .appendChild(new ElementBuilder(document)
+                .withTag(DIV_TAG)
+                .withId(this.id + '-BACK').build()));
 
-        parentDiv.appendChild(frontDiv);
-        parentDiv.appendChild(backDiv);
-
-        document.body.appendChild(parentDiv);
     }
 
-    getCss(suffix, offsetX, offsetY, xPixelOffset, yPixelOffset) {
-        let rotateY = suffix === 'FRONT' ? '-180' : '0';
-        return '#' + this.id + '-' + suffix + '{' + "\n" +
-        '\theight: ' + this.height + 'px' + ";\n" +
-        '\twidth: ' + this.width + 'px' + ";\n" +
-        '\tbackground-image: url(' + this.image + ')' + ";\n" +
-        '\tbackground-position: ' + offsetX + 'px ' + offsetY + 'px' + ";\n" +
-        '\tposition: absolute' + ";\n" +
-        '\ttop: ' + (yPixelOffset + HEADER_HEIGHT) + 'px' + ";\n" +
-        '\tleft: ' + xPixelOffset + 'px' + ";\n" +
-        '\ttransform: rotateY(' + rotateY + 'deg)' + ";\n" +
-        '\tbackface-visibility: hidden' + ";\n" +
-        '\ttransition: transform .5s linear 0s;' + ";\n" +
-        '}' + "\n"
+    getCssElement(document, suffix, offsetX, offsetY, xPixelOffset, yPixelOffset) {
+        let rotateY = suffix === FRONT_ID_SUFFIX ? '-180' : '0';
+
+        return new ElementBuilder(document).withTag(STYLE_TAG)
+            .withInnerText('#' + this.id + '-' + suffix + '{' +
+                'height: ' + this.height + 'px;' +
+                'width: ' + this.width + 'px;' +
+                'background-image: url(' + this.image + ');' +
+                'background-position: ' + offsetX + 'px ' + offsetY + 'px;' +
+                'position: absolute;' +
+                'top: ' + (yPixelOffset + HEADER_HEIGHT) + 'px;' +
+                'left: ' + xPixelOffset + 'px;' +
+                'transform: rotateY(' + rotateY + 'deg);' +
+                'backface-visibility: hidden;' +
+                'transition: transform .5s linear 0s;' +
+            '}').build();
     }
 
     /**

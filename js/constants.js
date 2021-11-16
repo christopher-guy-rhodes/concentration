@@ -1,7 +1,11 @@
+// Game config
 const HEADER_HEIGHT = 160;
 const CARD_FLIP_DELAY_MS = 1500;
 const MAX_PLAYERS = 4;
 
+// DOM constants
+const BODY_TAG = 'body';
+const HEAD_TAG = 'head';
 const FORM_TAG = 'form';
 const H2_TAG = 'h2';
 const DIV_TAG = 'div';
@@ -10,5 +14,13 @@ const SELECT_TAG = 'select';
 const OPTION_TAG = 'option';
 const BREAK_TAG = 'br';
 const ANCHOR_TAG = 'a';
+const STYLE_TAG = 'style';
+
+// Css constants
+const FRONT_ID_SUFFIX = 'FRONT';
+const BACK_ID_SUFFIX = 'BACK';
 
 
+// Top level DOM elements
+const BODY_ELEMENT = new ElementBuilder(document).withTag(BODY_TAG).build();
+const HEAD_ELEMENT = new ElementBuilder(document).withTag(HEAD_TAG).build();

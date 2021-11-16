@@ -11,10 +11,10 @@
 
 
             // Classes
-            $.getScript('/js/constants.js'                     , function() {
             $.getScript('/js/util.js'                          , function() {
             $.getScript('/js/dom/Element.js'                   , function() {
             $.getScript('/js/dom/ElementBuilder.js'            , function() {
+            $.getScript('/js/constants.js'                     , function() {
             $.getScript('/js/card/CardImage.js'                , function() {
             $.getScript('/js/card/Card.js'                     , function() {
             $.getScript('/js/card/PlayingCard.js'              , function() {
@@ -31,6 +31,7 @@
             $.getScript('/js/view/GameControlView.js'          , function() {
             $.getScript('/js/view/GameControlViewBuilder.js'   , function() {
             $.getScript('/js/game/ScoreBoard.js'               , function() {
+
 
             // Call the main event handler
             let gameController = new GameControlController();

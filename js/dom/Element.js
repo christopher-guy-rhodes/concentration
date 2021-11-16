@@ -31,9 +31,11 @@ class Element {
     }
 
     appendChild(element) {
-        if (this.tag === 'body') {
-            // The append does not work for "body" unless the document is used. Not sure why
+        // The append does not work for "body" or "head" unless the document is used. Not sure why
+        if (this.tag === BODY_TAG) {
             this.document.body.appendChild(element.node);
+        } else if (this.tag === HEAD_TAG) {
+            this.document.head.appendChild(element.node);
         } else {
             this.node.appendChild(element.node);
         }

@@ -17,8 +17,6 @@ class GameControlView {
 
         this.scoreBoardClass = 'scoreBoardContent';
         this.nameInputPrefixClass = 'name';
-
-        this.body = new ElementBuilder(document).withTag("body").build();
     }
 
     getNameInputPrefixClass() {
@@ -37,7 +35,7 @@ class GameControlView {
 
     withResetContent(document) {
         validateRequiredParams(this.withResetContent, 'document');
-        this.body.appendChild(new ElementBuilder(document)
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
             .withClass(this.gameResetClass)
             .withAttribute('style', 'display: none;').build()
@@ -56,12 +54,12 @@ class GameControlView {
                 .withAttribute("style","display: none;")
                 .withInnerText('Player ' + i + ': 0 matches').build());
         }
-        this.body.appendChild(div);
+        BODY_ELEMENT.appendChild(div);
         return this;
     }
 
     withTitleTag(document) {
-        this.body.appendChild(new ElementBuilder(document)
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(H2_TAG)
             .withInnerText('Classic Concentration Memory Game').build());
         return this;
@@ -76,7 +74,7 @@ class GameControlView {
             .withDeckTypeSelect(document, form)
             .withNumberOfCardsInput(document, form)
             .withGameOptionsSubmit(document, form);
-        this.body.appendChild(form);
+        BODY_ELEMENT.appendChild(form);
         return this;
     }
 
@@ -183,7 +181,7 @@ class GameControlView {
                 .withAttribute("name", "playerNames")
                 .withAttribute("value", "submit").build());
 
-        this.body.appendChild(form);
+        BODY_ELEMENT.appendChild(form);
         return this;
     }
 }
