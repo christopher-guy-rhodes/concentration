@@ -1,12 +1,12 @@
 class GameConfigView {
-    constructor(gameOptionsForClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
+    constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
-                scoreBoardPlayerPrefixClass, playerNamePrefixClass) {
-        validateRequiredParams(this.constructor, arguments, 'gameOptionsForClass', 'gameOptionsSubmitButtonClass',
+                scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass) {
+        validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
-            'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass');
+            'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass');
+        this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
-        this.gameOptionsFormClass = gameOptionsForClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
         this.playerNameSubmitButtonClass = playerNameSubmitButtonClass;
         this.gameResetClass = gameResetClass;
@@ -14,25 +14,23 @@ class GameConfigView {
         this.numberOfCardsToUseName = numberOfCardsToUseName;
         this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
         this.playerNamePrefixClass = playerNamePrefixClass;
-
-        this.scoreBoardClass = 'scoreBoardContent';
-        this.nameInputPrefixClass = 'name';
+        this.nameInputPrefixClass = nameInputPrefixClass;
     }
 
-    getNameInputPrefixClass() {
-        return this.nameInputPrefixClass;
-    }
-
-    withGameControlForms(document) {
-        validateRequiredParams(this.withGameControlForms, arguments, 'document');
+    /**
+     * Generate the forms used to configure the game.
+     * @param document the DOM document
+     */
+    buildGameControlForms(document) {
+        validateRequiredParams(this.buildGameControlForms, arguments, 'document');
         this.withTitleTag(document)
             .withPlayerForm(document)
             .withGameOptionsForm(document)
             .withScoreBoardContent(document)
             .withResetContent(document);
-        return this;
     }
 
+    /* private */
     withResetContent(document) {
         validateRequiredParams(this.withResetContent, 'document');
         BODY_ELEMENT.appendChild(new ElementBuilder(document)
@@ -46,8 +44,9 @@ class GameConfigView {
         return this;
     }
 
+    /* private */
     withScoreBoardContent(document) {
-        let div = new ElementBuilder(document).withTag(DIV_TAG).withClass(this.scoreBoardClass).build();
+        let div = new ElementBuilder(document).withTag(DIV_TAG).build();
         for (let i = 1; i <= MAX_PLAYERS; i++) {
             div.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
                 .withClass(this.scoreBoardPlayerPrefixClass + i)
@@ -58,6 +57,7 @@ class GameConfigView {
         return this;
     }
 
+    /* private */
     withTitleTag(document) {
         BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(H2_TAG)
@@ -65,6 +65,7 @@ class GameConfigView {
         return this;
     }
 
+    /* private */
     withGameOptionsForm(document) {
         validateRequiredParams(this.withGameOptionsForm, arguments, 'document');
 
@@ -73,41 +74,58 @@ class GameConfigView {
         this.withNumberOfPlayersSelect(document, form)
             .withDeckTypeSelect(document, form)
             .withNumberOfCardsInput(document, form)
-            .withGameOptionsSubmit(document, form);
+            .withGameOptionsSubmit(document, form)
+            .withDeckPreviewImage(document, form)
+
         BODY_ELEMENT.appendChild(form);
         return this;
     }
 
+    /* private */
+    withDeckPreviewImage(document, form) {
+        form
+            .appendChild(new ElementBuilder(document)
+                .withTag(H3_TAG).build()
+                .appendChild(new ElementBuilder(document)
+                    .withTag(SPAN_TAG)
+                    .withInnerText('Deck Preview').build()))
+            .appendChild(new ElementBuilder(document)
+                .withTag(IMAGE_TAG).build());
+        return this;
+    }
+
+    /* private */
     withGameOptionsSubmit(document, form) {
         form
             .appendChild(new ElementBuilder(document)
-                .withTag(INPUT_TAG)
-                .withClass(this.gameOptionsSubmitButtonClass)
-                .withAttribute("type", "button")
-                .withAttribute("value", "submit").build());
+                .withTag(SPAN_TAG).build()
+                .appendChild(new ElementBuilder(document)
+                    .withTag(INPUT_TAG)
+                    .withClass(this.gameOptionsSubmitButtonClass)
+                    .withAttribute("type", "button")
+                    .withAttribute("value", "Play!").build()));
         return this;
     }
 
+    /* private */
     withNumberOfCardsInput(document, form) {
         form
-            .appendChild(new ElementBuilder(document)
-                .withTag(DIV_TAG)
-                .withInnerText('How many cards?').build())
-            .appendChild(new ElementBuilder(document).withTag(INPUT_TAG)
-                .withAttribute("type", "text")
-                .withAttribute("name", this.numberOfCardsToUseName)
-                .withAttribute("size", "4").build())
-            .appendChild(new ElementBuilder(document)
-                .withTag(BREAK_TAG).build())
-            .appendChild(new ElementBuilder(document)
-                .withTag(BREAK_TAG).build());
+            .appendChild(new ElementBuilder(document).withTag(DIV_TAG).build()
+                .appendChild(new ElementBuilder(document)
+                    .withTag(SPAN_TAG)
+                    .withInnerText('How many cards?').build())
+                .appendChild(new ElementBuilder(document).withTag(INPUT_TAG)
+                    .withAttribute("type", "text")
+                    .withAttribute("name", this.numberOfCardsToUseName)
+                    .withAttribute("size", "2").build()));
         return this;
     }
 
+    /* private */
     withDeckTypeSelect(document, form) {
         let deckTypeSelect = new ElementBuilder(document)
-            .withTag(SELECT_TAG)
-            .withClass(this.deckTypeSelectorClass).build()
+                .withTag(SELECT_TAG)
+                .withClass(this.deckTypeSelectorClass).build()
             .appendChild(new ElementBuilder(document)
                 .withTag(OPTION_TAG)
                 .withAttribute('value', 'picture')
@@ -118,17 +136,15 @@ class GameConfigView {
                 .withInnerText('Playing Deck').build());
 
         form
-            .appendChild(new ElementBuilder(document)
-                .withTag(DIV_TAG)
-                .withInnerText('What type of deck?').build())
-            .appendChild(deckTypeSelect)
-            .appendChild(new ElementBuilder(document)
-                .withTag(BREAK_TAG).build())
-            .appendChild(new ElementBuilder(document)
-                .withTag(BREAK_TAG).build());
+            .appendChild(new ElementBuilder(document).withTag(DIV_TAG).build()
+                .appendChild(new ElementBuilder(document)
+                    .withTag(SPAN_TAG)
+                    .withInnerText('What type of deck?').build())
+                .appendChild(deckTypeSelect));
         return this;
     }
 
+    /* private */
     withNumberOfPlayersSelect(document, form) {
         let numPlayersSelect = new ElementBuilder(document)
             .withTag(SELECT_TAG)
@@ -136,25 +152,22 @@ class GameConfigView {
 
         for (let i = 1; i <= MAX_PLAYERS; i++) {
             numPlayersSelect.appendChild(new ElementBuilder(document)
+
                 .withTag(OPTION_TAG)
                 .withAttribute('value', i)
                 .withInnerText(i).build());
         }
 
         form
-            .appendChild(new ElementBuilder(document)
-                .withTag(DIV_TAG)
-                .withInnerText('How many players?').build())
-            .appendChild(new ElementBuilder(document).withTag(INPUT_TAG)
-                .withAttribute("type", "hidden").build())
-            .appendChild(numPlayersSelect)
-            .appendChild(new ElementBuilder(document)
-                .withTag(BREAK_TAG).build())
-            .appendChild(new ElementBuilder(document)
-                .withTag(BREAK_TAG).build());
+            .appendChild(new ElementBuilder(document).withTag(DIV_TAG).build()
+                .appendChild(new ElementBuilder(document)
+                    .withTag(SPAN_TAG)
+                    .withInnerText('How many players?').build())
+                .appendChild(numPlayersSelect))
         return this;
     }
 
+    /* private */
     withPlayerForm(document) {
         validateRequiredParams(this.withPlayerForm, arguments, 'document');
         let form = new ElementBuilder(document)

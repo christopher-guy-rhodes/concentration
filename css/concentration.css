@@ -1,1 +1,28 @@
-/* add static styles here */
+h2 {
+    font-family: Arial;
+}
+
+.gameOptionsForm span {
+    font-family: Arial;
+    padding: 5px;
+}
+
+.gameOptionsForm div {
+    float: left;
+    margin-right: 20px;
+}
+
+.gameOptionsForm img {
+    display: block;
+}
+
+.gameOptionsForm {
+    display: inline-block;
+}
+
+.gameOptionsForm {
+    background-color: lightblue;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+}

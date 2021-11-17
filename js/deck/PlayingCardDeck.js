@@ -40,6 +40,15 @@ class PlayingCardDeck extends Deck {
     }
 
     /**
+     * Get the deck image
+     * @returns {string} the url of the deck image
+     */
+    static getDeckImage() {
+        return PlayingCardDeck.PLAYING_CARD_IMAGE;
+    }
+
+
+    /**
      * Get the maximum number of cards in the deck.
      */
     static getNumberOfCardsInDeck() {

@@ -15,17 +15,19 @@ class GameConfigController {
         this.numberOfCardsToUseName = 'numberOfCardsToUse';
         this.scoreBoardPlayerPrefixClass = 'player';
         this.playerNamePrefixClass = 'playerName';
+        this.nameInputPrefixClass = 'name';
 
         this.view = new GameConfigViewBuilder()
-            .withGameOptionsSubmitButtonClass(this.gamOptionsSubmitClass)
             .withGameOptionsFormClass(this.gameOptionsFormClass)
-            .withDeckTypeClass(this.deckTypeSelectorClass)
+            .withGameOptionsSubmitButtonClass(this.gamOptionsSubmitClass)
+            .withDeckTypeSelectorClass(this.deckTypeSelectorClass)
             .withPlayerNameSubmitClass(this.playerNameSubmitButtonClass)
             .withGameResetClass(this.gameResetClass)
             .withNumPlayersClass(this.numPlayersSelectorClass)
             .withNumberOfCardsToUseName(this.numberOfCardsToUseName)
             .withPlayerPrefixClass(this.scoreBoardPlayerPrefixClass)
             .withPlayerNamePrefixClass(this.playerNamePrefixClass)
+            .withNameInputPrefixClass(this.nameInputPrefixClass)
             .build();
     }
 
@@ -61,7 +63,7 @@ class GameConfigController {
      * @param document the DOM dodument
      */
     renderForms(document) {
-        this.view.withGameControlForms(document);
+        this.view.buildGameControlForms(document);
     }
 
 
@@ -77,7 +79,7 @@ class GameConfigController {
     updateNumberOfCardsEvent() {
         let self = this;
         $('.' + this.deckTypeSelectorClass).change(function(e) {
-            self.updateFormNumberOfCards();
+            self.updateCardsAndImagePreview();
         });
     }
 
@@ -107,15 +109,17 @@ class GameConfigController {
 
     /* private */
     updateFormNumberOfCardsEvent() {
-        this.updateFormNumberOfCards();
+        this.updateCardsAndImagePreview();
     }
 
     /* private */
-    updateFormNumberOfCards() {
+    updateCardsAndImagePreview() {
         if (this.getFormDeckType() === 'picture') {
             $('input[name="' + this.numberOfCardsToUseName + '"]').val(PictureCardDeck.getNumberOfCardsInDeck());
+            $('.' + this.gameOptionsFormClass).find('img').attr('src', PictureCardDeck.getDeckImage());
         } else {
             $('input[name="' + this.numberOfCardsToUseName + '"]').val(PlayingCardDeck.getNumberOfCardsInDeck());
+            $('.' + this.gameOptionsFormClass).find('img').attr('src', PlayingCardDeck.getDeckImage());
         }
     }
 
@@ -170,7 +174,7 @@ class GameConfigController {
     buildPlayersFromForm() {
         let players = [];
         for (let i = 0; i < this.numberOfPlayers; i++) {
-            let name = '.' + this.view.getNameInputPrefixClass() + (i + 1);
+            let name = '.' + this.nameInputPrefixClass + (i + 1);
             let playerName = $(name).val();
             if (playerName.trim().length < 1) {
                 playerName = 'Player ' + (i + 1);

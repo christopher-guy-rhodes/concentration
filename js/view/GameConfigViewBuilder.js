@@ -10,6 +10,12 @@ class GameConfigViewBuilder {
         this.numberOfCardsToUseName = undefined;
         this.scoreBoardPlayerPrefixClass = undefined;
         this.playerNamePrefixClass = undefined;
+        this.nameInputPrefixClass = 'name';
+    }
+
+    withNameInputPrefixClass(nameInputPrefixClass) {
+        this.nameInputPrefixClass = nameInputPrefixClass;
+        return this;
     }
 
     withPlayerNameSubmitClass(playerNameSubmitClass) {
@@ -17,7 +23,7 @@ class GameConfigViewBuilder {
         return this;
     }
 
-    withDeckTypeClass(deckTypeClass) {
+    withDeckTypeSelectorClass(deckTypeClass) {
         this.deckTypeSelectorClass = deckTypeClass;
         return this;
     }
@@ -60,6 +66,7 @@ class GameConfigViewBuilder {
     build() {
         return new GameConfigView(this.gameOptionsFormClass, this.gameOptionsSubmitButtonClass,
             this.deckTypeSelectorClass, this.playerNameSubmitClass, this.gameResetClass, this.numPlayersSelectorClass,
-            this.numberOfCardsToUseName, this.scoreBoardPlayerPrefixClass, this.playerNamePrefixClass);
+            this.numberOfCardsToUseName, this.scoreBoardPlayerPrefixClass, this.playerNamePrefixClass,
+            this.nameInputPrefixClass);
     }
 }

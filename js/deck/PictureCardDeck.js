@@ -57,6 +57,14 @@ class PictureCardDeck extends Deck {
     }
 
     /**
+     * Get the deck image
+     * @returns {string} the url of the deck image
+     */
+    static getDeckImage() {
+        return PictureCardDeck.PICTURE_CARD_IMAGE;
+    }
+
+    /**
      * Get the maximum number of cards in the deck
      */
     static getNumberOfCardsInDeck() {
