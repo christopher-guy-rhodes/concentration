@@ -44,7 +44,7 @@ class CardImage {
         // remove the node before creating to handle redraw events
         $('#' + this.id).remove();
 
-        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+        GAMEBOARD_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
             .withClass(this.clickableClass)
             .withId(this.id).build()

@@ -17,6 +17,7 @@ class GameConfigController {
         this.playerNamePrefixClass = 'playerName';
         this.nameInputPrefixClass = 'name';
         this.playerNameForm = 'playerNameForm';
+        this.scoreBoardForm = 'scoreBoardForm';
 
         this.view = new GameConfigViewBuilder()
             .withGameOptionsFormClass(this.gameOptionsFormClass)
@@ -30,6 +31,7 @@ class GameConfigController {
             .withPlayerNamePrefixClass(this.playerNamePrefixClass)
             .withNameInputPrefixClass(this.nameInputPrefixClass)
             .withPlayerNameForm(this.playerNameForm)
+            .withScoreBoardForm(this.scoreBoardForm)
             .build();
     }
 
@@ -129,6 +131,7 @@ class GameConfigController {
     handleGameRestart() {
         this.getGame().getScoreBoard().hideScoreboard();
         $('.' + this.gameResetClass).css('display', 'none');
+        $('.' + this.scoreBoardForm).css('display', 'none');
         $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
         $('.' + this.numPlayersSelectorClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
         this.setFormOptionsFormVisibility(true);
@@ -174,6 +177,7 @@ class GameConfigController {
 
     /* private */
     buildPlayersFromForm() {
+        $('.' + this.scoreBoardForm).css('display', 'inline-block');
         let players = [];
         for (let i = 0; i < this.numberOfPlayers; i++) {
             let name = '.' + this.nameInputPrefixClass + (i + 1);

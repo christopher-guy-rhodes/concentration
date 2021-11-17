@@ -98,7 +98,8 @@ class Game {
     handleGameOver() {
         this.pendingFlipOrRemovel = new Set();
         this.scoreBoard.displayWinners(this.getWinningPlayers());
-        $('.gameOver').css('display', 'block');
+        // TODO: remove this hard coded class
+        $('.gameOver').css('display', 'inline-block');
     }
 
     /* private */

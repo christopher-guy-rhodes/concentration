@@ -1,11 +1,12 @@
 class GameConfigView {
     constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
-                scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm) {
+                scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm,
+                scoreBoardForm) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
-            'playerNameForm');
+            'playerNameForm', 'scoreBoardForm');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -17,6 +18,7 @@ class GameConfigView {
         this.playerNamePrefixClass = playerNamePrefixClass;
         this.nameInputPrefixClass = nameInputPrefixClass;
         this.playerNameForm = playerNameForm;
+        this.scoreBoardForm = scoreBoardForm;
     }
 
     /**
@@ -28,14 +30,23 @@ class GameConfigView {
         this.withTitleTag(document)
             .withGameOptionsForm(document)
             .withPlayerForm(document)
-            .withScoreBoardContent(document)
-            .withResetContent(document);
+            .withScoreBoardContent(document);
     }
 
     /* private */
-    withResetContent(document) {
-        validateRequiredParams(this.withResetContent, 'document');
-        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+    withScoreBoardContent(document) {
+        let div = new ElementBuilder(document)
+            .withClass(this.scoreBoardForm)
+            .withAttribute('style', 'display: none')
+            .withTag(DIV_TAG).build();
+        for (let i = 1; i <= MAX_PLAYERS; i++) {
+            div.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
+                .withClass(this.scoreBoardPlayerPrefixClass + i)
+                .withAttribute("style","display: none;")
+                .withInnerText('Player ' + i + ': 0 matches').build());
+        }
+
+        div.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
             .withClass(this.gameResetClass)
             .withAttribute('style', 'display: none;').build()
@@ -43,18 +54,7 @@ class GameConfigView {
                 .withTag(ANCHOR_TAG)
                 .withAttribute('href', '#')
                 .withInnerText('Click to play again').build()));
-        return this;
-    }
 
-    /* private */
-    withScoreBoardContent(document) {
-        let div = new ElementBuilder(document).withTag(DIV_TAG).build();
-        for (let i = 1; i <= MAX_PLAYERS; i++) {
-            div.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
-                .withClass(this.scoreBoardPlayerPrefixClass + i)
-                .withAttribute("style","display: none;")
-                .withInnerText('Player ' + i + ': 0 matches').build());
-        }
         BODY_ELEMENT.appendChild(div);
         return this;
     }
