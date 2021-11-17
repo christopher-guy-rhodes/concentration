@@ -1,16 +1,16 @@
-class GameControlView {
-    constructor(gameOptionsForClass, gameOptionsSubmitButtonClass, deckTypeClass,
-                playerNameSubmitButtonClass, gameResetClass, numPlayersSelectClass, numberOfCardsToUseName,
+class GameConfigView {
+    constructor(gameOptionsForClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
+                playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
                 scoreBoardPlayerPrefixClass, playerNamePrefixClass) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsForClass', 'gameOptionsSubmitButtonClass',
-            'deckTypeClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectClass',
+            'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass');
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.gameOptionsFormClass = gameOptionsForClass;
-        this.deckTypeClass = deckTypeClass;
+        this.deckTypeSelectorClass = deckTypeSelectorClass;
         this.playerNameSubmitButtonClass = playerNameSubmitButtonClass;
         this.gameResetClass = gameResetClass;
-        this.numPlayersSelectClass = numPlayersSelectClass;
+        this.numPlayersSelectorClass = numPlayersSelectorClass;
         this.numberOfCardsToUseName = numberOfCardsToUseName;
         this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
         this.playerNamePrefixClass = playerNamePrefixClass;
@@ -107,7 +107,7 @@ class GameControlView {
     withDeckTypeSelect(document, form) {
         let deckTypeSelect = new ElementBuilder(document)
             .withTag(SELECT_TAG)
-            .withClass(this.deckTypeClass).build()
+            .withClass(this.deckTypeSelectorClass).build()
             .appendChild(new ElementBuilder(document)
                 .withTag(OPTION_TAG)
                 .withAttribute('value', 'picture')
@@ -132,7 +132,7 @@ class GameControlView {
     withNumberOfPlayersSelect(document, form) {
         let numPlayersSelect = new ElementBuilder(document)
             .withTag(SELECT_TAG)
-            .withClass(this.numPlayersSelectClass).build();
+            .withClass(this.numPlayersSelectorClass).build();
 
         for (let i = 1; i <= MAX_PLAYERS; i++) {
             numPlayersSelect.appendChild(new ElementBuilder(document)

@@ -27,14 +27,14 @@
             $.getScript('/js/game/GameBoardBuilder.js'         , function() {
             $.getScript('/js/game/Player.js'                   , function() {
             $.getScript('/js/game/Game.js'                     , function() {
-            $.getScript('/js/control/GameControlController.js' , function() {
-            $.getScript('/js/view/GameControlView.js'          , function() {
-            $.getScript('/js/view/GameControlViewBuilder.js'   , function() {
+            $.getScript('/js/control/GameConfigController.js'  , function() {
+            $.getScript('/js/view/GameConfigView.js'           , function() {
+            $.getScript('/js/view/GameConfigViewBuilder.js'    , function() {
             $.getScript('/js/game/ScoreBoard.js'               , function() {
 
 
             // Call the main event handler
-            let gameController = new GameControlController();
+            let gameController = new GameConfigController();
             gameController.renderForms(document);
             gameController.handleEvents(document);
 

@@ -1,28 +1,28 @@
 
 
-class GameControlController {
+class GameConfigController {
     constructor() {
         this.numberOfPlayers = undefined;
         this.deckType = undefined;
         this.game = undefined;
         this.gamOptionsSubmitClass = 'gameOptionsSubmit';
         this.gameOptionsFormClass = 'gameOptionsForm';
-        this.deckTypeClass = 'deckType';
+        this.deckTypeSelectorClass = 'deckType';
         this.playerNameSubmitButtonClass = 'playerNameSubmit';
         this.clickableClass = 'clickable';
         this.gameResetClass = 'gameOver';
-        this.numPlayersClass = 'numPlayers';
+        this.numPlayersSelectorClass = 'numPlayers';
         this.numberOfCardsToUseName = 'numberOfCardsToUse';
         this.scoreBoardPlayerPrefixClass = 'player';
         this.playerNamePrefixClass = 'playerName';
 
-        this.view = new GameControlViewBuilder()
+        this.view = new GameConfigViewBuilder()
             .withGameOptionsSubmitButtonClass(this.gamOptionsSubmitClass)
             .withGameOptionsFormClass(this.gameOptionsFormClass)
-            .withDeckTypeClass(this.deckTypeClass)
+            .withDeckTypeClass(this.deckTypeSelectorClass)
             .withPlayerNameSubmitClass(this.playerNameSubmitButtonClass)
             .withGameResetClass(this.gameResetClass)
-            .withNumPlayersClass(this.numPlayersClass)
+            .withNumPlayersClass(this.numPlayersSelectorClass)
             .withNumberOfCardsToUseName(this.numberOfCardsToUseName)
             .withPlayerPrefixClass(this.scoreBoardPlayerPrefixClass)
             .withPlayerNamePrefixClass(this.playerNamePrefixClass)
@@ -76,7 +76,7 @@ class GameControlController {
     /* private */
     updateNumberOfCardsEvent() {
         let self = this;
-        $('.' + this.deckTypeClass).change(function(e) {
+        $('.' + this.deckTypeSelectorClass).change(function(e) {
             self.updateFormNumberOfCards();
         });
     }
@@ -123,8 +123,8 @@ class GameControlController {
     handleGameRestart() {
         this.getGame().getScoreBoard().hideScoreboard();
         $('.' + this.gameResetClass).css('display', 'none');
-        $('.' + this.deckType + ' options[value="' + this.getDeckType() + '"]');
-        $('.' + this.numPlayersClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
+        $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
+        $('.' + this.numPlayersSelectorClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
         this.setFormOptionsFormVisibility(true);
     }
 
@@ -157,9 +157,6 @@ class GameControlController {
 
         try {
             this.deckType = this.getFormDeckType();
-            if (this.deckType === undefined) {
-                alert('no deck type');
-            }
             this.game = new Game(this.deckType, numCards, this.clickableClass);
         } catch (error) {
             this.handleError(error);
@@ -209,7 +206,7 @@ class GameControlController {
 
     /* private */
     getFormNumberOfPlayers() {
-        return parseInt($('.' + this.numPlayersClass).val());
+        return parseInt($('.' + this.numPlayersSelectorClass).val());
     }
 
     /* private */
@@ -219,7 +216,7 @@ class GameControlController {
 
     /* private */
     getFormDeckType() {
-        return $('.' + this.deckTypeClass).val();
+        return $('.' + this.deckTypeSelectorClass).val();
     }
 
     /* private */
