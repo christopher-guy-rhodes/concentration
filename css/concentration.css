@@ -26,3 +26,12 @@ h2 {
     border-radius: 10px;
     padding: 5px;
 }
+
+.playerNameForm {
+    font-family: Arial;
+    background-color: lightblue;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    display: inline-block;
+}

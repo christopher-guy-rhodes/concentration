@@ -1,10 +1,11 @@
 class GameConfigView {
     constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
-                scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass) {
+                scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
-            'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass');
+            'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
+            'playerNameForm');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -15,6 +16,7 @@ class GameConfigView {
         this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
         this.playerNamePrefixClass = playerNamePrefixClass;
         this.nameInputPrefixClass = nameInputPrefixClass;
+        this.playerNameForm = playerNameForm;
     }
 
     /**
@@ -24,8 +26,8 @@ class GameConfigView {
     buildGameControlForms(document) {
         validateRequiredParams(this.buildGameControlForms, arguments, 'document');
         this.withTitleTag(document)
-            .withPlayerForm(document)
             .withGameOptionsForm(document)
+            .withPlayerForm(document)
             .withScoreBoardContent(document)
             .withResetContent(document);
     }
@@ -171,6 +173,8 @@ class GameConfigView {
     withPlayerForm(document) {
         validateRequiredParams(this.withPlayerForm, arguments, 'document');
         let form = new ElementBuilder(document)
+            .withClass(this.playerNameForm)
+            .withAttribute('style', 'display: none')
             .withTag("form").build();
 
         for (let i = 1; i <= MAX_PLAYERS; i++) {

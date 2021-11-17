@@ -16,6 +16,7 @@ class GameConfigController {
         this.scoreBoardPlayerPrefixClass = 'player';
         this.playerNamePrefixClass = 'playerName';
         this.nameInputPrefixClass = 'name';
+        this.playerNameForm = 'playerNameForm';
 
         this.view = new GameConfigViewBuilder()
             .withGameOptionsFormClass(this.gameOptionsFormClass)
@@ -28,6 +29,7 @@ class GameConfigController {
             .withPlayerPrefixClass(this.scoreBoardPlayerPrefixClass)
             .withPlayerNamePrefixClass(this.playerNamePrefixClass)
             .withNameInputPrefixClass(this.nameInputPrefixClass)
+            .withPlayerNameForm(this.playerNameForm)
             .build();
     }
 
@@ -225,6 +227,7 @@ class GameConfigController {
 
     /* private */
     setPlayerNamesVisibility(numberOfPlayers, flag) {
+        $('.' + this.playerNameForm).css('display', flag ? 'inline-block' : 'none');
         for (let i = 0; i < numberOfPlayers; i++) {
             $('.' + this.playerNamePrefixClass + + (i + 1)).css('display',flag ? 'block' : 'none');
         }
@@ -238,6 +241,7 @@ class GameConfigController {
 
     /* private */
     setFormPlayerSubmitVisibility(flag) {
+        $('.' + this.playerNameForm).css('display', flag ? 'inline-block' : 'none');
         $('.' + this.playerNameSubmitButtonClass).css('display', flag ? 'block' : 'none');
     }
 }
