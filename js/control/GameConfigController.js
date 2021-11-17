@@ -114,13 +114,13 @@ class GameConfigController {
 
     /* private */
     updateCardsAndImagePreview() {
-        if (this.getFormDeckType() === 'picture') {
-            $('input[name="' + this.numberOfCardsToUseName + '"]').val(PictureCardDeck.getNumberOfCardsInDeck());
-            $('.' + this.gameOptionsFormClass).find('img').attr('src', PictureCardDeck.getDeckImage());
-        } else {
-            $('input[name="' + this.numberOfCardsToUseName + '"]').val(PlayingCardDeck.getNumberOfCardsInDeck());
-            $('.' + this.gameOptionsFormClass).find('img').attr('src', PlayingCardDeck.getDeckImage());
-        }
+        let img = $('.' + this.gameOptionsFormClass).find('img');
+        let input = $('input[name="' + this.numberOfCardsToUseName + '"]');
+        let isPicture = this.getFormDeckType() === 'picture';
+
+        input.val(isPicture ? PictureCardDeck.getNumberOfCardsInDeck() : PlayingCardDeck.getNumberOfCardsInDeck());
+        img.attr('src', isPicture ? PictureCardDeck.getDeckImage() : PlayingCardDeck.getDeckImage());
+        img.attr('width', '700px');
     }
 
     /* private */

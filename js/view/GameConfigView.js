@@ -128,12 +128,12 @@ class GameConfigView {
                 .withClass(this.deckTypeSelectorClass).build()
             .appendChild(new ElementBuilder(document)
                 .withTag(OPTION_TAG)
-                .withAttribute('value', 'picture')
-                .withInnerText('Picture Deck').build())
+                .withAttribute('value', 'playing')
+                .withInnerText('Playing Deck').build())
             .appendChild(new ElementBuilder(document)
                 .withTag(OPTION_TAG)
-                .withAttribute('value', 'playing')
-                .withInnerText('Playing Deck').build());
+                .withAttribute('value', 'picture')
+                .withInnerText('Picture Deck').build());
 
         form
             .appendChild(new ElementBuilder(document).withTag(DIV_TAG).build()
