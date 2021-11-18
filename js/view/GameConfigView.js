@@ -52,9 +52,9 @@ class GameConfigView {
             .withClass(this.gameResetClass)
             .withAttribute('style', 'display: none;').build()
             .appendChild(new ElementBuilder(document)
-                .withTag(ANCHOR_TAG)
-                .withAttribute('href', '#')
-                .withInnerText('Click to play again').build()));
+                .withTag(INPUT_TAG)
+                .withAttribute('type', 'button')
+                .withAttribute('value', 'Play again!').build()));
 
         BODY_ELEMENT.appendChild(div);
         return this;

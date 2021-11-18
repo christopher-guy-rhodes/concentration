@@ -45,5 +45,9 @@ h2 {
     display: inline-block;
 }
 
+.scoreBoardForm div {
+    padding: 5px;
+}
+
 .gameBoard {
 }

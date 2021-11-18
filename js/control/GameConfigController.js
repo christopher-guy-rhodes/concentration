@@ -186,7 +186,7 @@ class GameConfigController {
                 playerName = 'Player ' + (i + 1);
             }
             players.push(new Player(playerName, (i + 1)));
-            $('.' + this.scoreBoardPlayerPrefixClass + (i + 1)).css('display', 'block');
+            $('.' + this.scoreBoardPlayerPrefixClass + (i + 1)).css('display', 'inline-block');
             $('.playerName' + (i + 1)).css('display', 'none');
         }
         return players;
