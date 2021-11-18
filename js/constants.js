@@ -26,5 +26,5 @@ const BACK_ID_SUFFIX = 'BACK';
 
 // Top level DOM elements
 const GAMEBOARD_ELEMENT = new ElementBuilder(document).withTag(DIV_TAG).withClass('gameBoard').build();
-const BODY_ELEMENT = new ElementBuilder(document).withTag(BODY_TAG).build().appendChild(GAMEBOARD_ELEMENT);
+const BODY_ELEMENT = new ElementBuilder(document).withTag(BODY_TAG).build();
 const HEAD_ELEMENT = new ElementBuilder(document).withTag(HEAD_TAG).build();

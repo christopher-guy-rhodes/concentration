@@ -31,6 +31,7 @@ class GameConfigView {
             .withGameOptionsForm(document)
             .withPlayerForm(document)
             .withScoreBoardContent(document);
+        BODY_ELEMENT.appendChild(GAMEBOARD_ELEMENT);
     }
 
     /* private */
