@@ -36,6 +36,46 @@ h2 {
     display: inline-block;
 }
 
+.playerNameForm .playerName1 {
+    padding: 5px;
+}
+
+.playerNameForm .playerName1 span {
+    padding: 5px;
+}
+
+.playerNameForm .playerName1 {
+    padding: 5px;
+}
+
+.playerNameForm .playerName2 span {
+    padding: 5px;
+}
+
+.playerNameForm .playerName2 {
+    padding: 5px;
+}
+
+.playerNameForm .playerName3 span {
+    padding: 5px;
+}
+
+.playerNameForm .playerName3 {
+    padding: 5px;
+}
+
+.playerNameForm .playerName3 span {
+    padding: 5px;
+}
+
+.playerNameForm .playerName4 {
+    padding: 5px;
+}
+
+.playerNameForm .playerName4 span {
+    padding: 5px;
+}
+
 .scoreBoardForm {
     font-family: Arial;
     background-color: lightblue;
@@ -47,6 +87,7 @@ h2 {
 
 .scoreBoardForm div {
     padding: 5px;
+    margin-right: 20px;
 }
 
 .gameBoard {

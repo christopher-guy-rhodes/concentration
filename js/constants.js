@@ -1,5 +1,5 @@
 // Game config
-const HEADER_HEIGHT = 160;
+const HEADER_HEIGHT = 120;
 const CARD_FLIP_DELAY_MS = 1500;
 const MAX_PLAYERS = 4;
 
