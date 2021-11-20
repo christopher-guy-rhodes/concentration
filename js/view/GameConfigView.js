@@ -73,7 +73,10 @@ class GameConfigView {
         validateRequiredParams(this.withGameOptionsForm, arguments, 'document');
 
         let form = new ElementBuilder(document).withTag(FORM_TAG)
-            .withClass(this.gameOptionsFormClass).build();
+            .withClass(this.gameOptionsFormClass)
+            // Force hard coded width that can be used as a reference to scale for mobile viewing
+            .withAttribute('style', 'width: ' + PREVIEW_IMG_WIDTH + 'px')
+            .build();
         this.withNumberOfPlayersSelect(document, form)
             .withDeckTypeSelect(document, form)
             .withNumberOfCardsInput(document, form)
@@ -176,6 +179,8 @@ class GameConfigView {
         let form = new ElementBuilder(document)
             .withClass(this.playerNameForm)
             .withAttribute('style', 'display: none')
+            // Force hard coded width that can be used as a reference to scale for mobile viewing
+            .withAttribute('style', 'width: ' + PLAYER_FORM_WIDTH + 'px')
             .withTag("form").build();
 
         for (let i = 1; i <= MAX_PLAYERS; i++) {

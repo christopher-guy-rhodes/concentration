@@ -20,6 +20,8 @@ class GameConfigController {
         this.scoreBoardForm = 'scoreBoardForm';
         this.gameBoardCss = 'gameBoard';
 
+        this.scalingDimension = undefined;
+
         this.view = new GameConfigViewBuilder()
             .withGameOptionsFormClass(this.gameOptionsFormClass)
             .withGameOptionsSubmitButtonClass(this.gamOptionsSubmitClass)
@@ -69,7 +71,7 @@ class GameConfigController {
      */
     renderForms(document) {
         this.view.buildGameControlForms(document);
-
+        this.scalingDimension = $(window).width();
         this.setViewPort(PREVIEW_IMG_WIDTH + 50);
     }
 
@@ -191,7 +193,7 @@ class GameConfigController {
         $('.' + this.gameBoardCss).css('width', numberOfCardsPerRow * cardWidth);
 
         // set the view port
-        this.setViewPort(numberOfRows * cardWidth);
+        this.setViewPort(PREVIEW_IMG_WIDTH + 50);
 
         this.getGame().play(document);
     }
@@ -201,7 +203,8 @@ class GameConfigController {
         let viewportMeta = document.querySelector('meta[name="viewport"]');
         let width = $(window).width();
         let height = $(window).height();
-        let scalingDimension = width;
+        let scalingDimension = this.scalingDimension;
+        console.log('scaling dimension:' + scalingDimension);
         viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
             'initial-scale=' + (scalingDimension / screenWidth));
 
@@ -283,6 +286,9 @@ class GameConfigController {
 
     /* private */
     setPlayerNamesVisibility(numberOfPlayers, flag) {
+        if (flag) {
+            this.setViewPort(PLAYER_FORM_WIDTH + 50);
+        }
         $('.' + this.playerNameForm).css('display', flag ? 'inline-block' : 'none');
         for (let i = 0; i < numberOfPlayers; i++) {
             $('.' + this.playerNamePrefixClass + + (i + 1)).css('display',flag ? 'block' : 'none');
