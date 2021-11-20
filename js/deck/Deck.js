@@ -29,8 +29,20 @@ class Deck {
         return this.cards;
     }
 
-    dealTopCard() {
-        return this.cards[0];
+    /**
+     * Get the height of a card.
+     * @returns {number}
+     */
+    getCardHeight() {
+        return this.dealTopCard().getHeight();
+    }
+
+    /**
+     * Get the width of a card.
+     * @returns {number}a
+     */
+    getCardWidth() {
+        return this.dealTopCard().getWidth();
     }
 
     /**
@@ -69,5 +81,10 @@ class Deck {
     /* private */
     indexCard(card) {
         this.cardIndex[card.getId()] = card;
+    }
+
+    /* private */
+    dealTopCard() {
+        return this.cards[0];
     }
 }

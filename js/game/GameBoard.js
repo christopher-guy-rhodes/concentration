@@ -80,6 +80,9 @@ class GameBoard {
                 gridPositions.push({x : x, y : y});
             }
         }
+        $('.gameBoard').css('display', 'block');
+        $('.gameBoard').css('height', this.numberOfRows * this.deck.getCardHeight());
+        $('.gameBoard').css('width', this.numberOfCardsPerRow * this.deck.getCardWidth())
         return gridPositions;
     }
 
@@ -93,9 +96,8 @@ class GameBoard {
         let width = $(window).width();
         let height = $(window).height();
         let scalingDimension = width;
-        let card = this.deck.dealTopCard();
         viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
-            'initial-scale=' + (scalingDimension / (this.numberOfRows * card.getCardImage().getWidth())));
+            'initial-scale=' + (scalingDimension / (this.numberOfRows * this.deck.getCardWidth())));
 
     }
 }

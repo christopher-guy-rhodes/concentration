@@ -6,7 +6,7 @@ class PlayingCard extends Card {
         super(rank + '-' + suit,
             x,
             y,
-            0,
+            0   ,
             4,
             100,
             146,

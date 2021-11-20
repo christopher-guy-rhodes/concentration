@@ -1,5 +1,4 @@
 // Game config
-const HEADER_HEIGHT = 120;
 const CARD_FLIP_DELAY_MS = 1500;
 const MAX_PLAYERS = 4;
 
@@ -25,6 +24,8 @@ const FRONT_ID_SUFFIX = 'FRONT';
 const BACK_ID_SUFFIX = 'BACK';
 
 // Top level DOM elements
-const GAMEBOARD_ELEMENT = new ElementBuilder(document).withTag(DIV_TAG).withClass('gameBoard').build();
+const GAMEBOARD_ELEMENT = new ElementBuilder(document).withTag(DIV_TAG)
+    .withAttribute('style', 'display : none')
+    .withClass('gameBoard').build();
 const BODY_ELEMENT = new ElementBuilder(document).withTag(BODY_TAG).build();
 const HEAD_ELEMENT = new ElementBuilder(document).withTag(HEAD_TAG).build();

@@ -67,7 +67,7 @@ class CardImage {
                 'background-image: url(' + this.image + ');' +
                 'background-position: ' + offsetX + 'px ' + offsetY + 'px;' +
                 'position: absolute;' +
-                'top: ' + (yPixelOffset + HEADER_HEIGHT) + 'px;' +
+                'top: ' + yPixelOffset + 'px;' +
                 'left: ' + xPixelOffset + 'px;' +
                 'transform: rotateY(' + rotateY + 'deg);' +
                 'backface-visibility: hidden;' +

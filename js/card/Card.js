@@ -5,6 +5,8 @@ class Card {
     constructor(id, x, y, faceDownX, faceDownY, width, height, image, clickableClass) {
         this.id = id;
         this.isFaceUp = false;
+        this.width = width;
+        this.height = height;
 
         this.cardImage = new CardImageBuilder()
             .withId(id)
@@ -24,6 +26,22 @@ class Card {
      */
     getId() {
         return this.id;
+    }
+
+    /**
+     * Get the width of a card.
+     * @returns {number}
+     */
+    getWidth() {
+        return this.width;
+    }
+
+    /**
+     * Get the height of a card.
+     * @returns {number}
+     */
+    getHeight() {
+        return this.height;
     }
 
     /**
