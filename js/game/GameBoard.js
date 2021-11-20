@@ -12,14 +12,11 @@ class GameBoard {
         this.deck = this.getDeckByType(deckType, numberOfCards);
         this.deck.validateNumberOfCards(numberOfCards);
 
-        // If the cards fit into a square the number of rows will be the sqrt of the number of cards. Use that as the
-        // number of rows or the ceiling of that if the cards don't fit into a nice square. If they don't fit into
-        // a nice square there will be more cards in the row then the number of rows
-        this.numberOfRows = this.getNumberOfRowsThatMaximizesNumberOfCardsPerRow();
+        this.numberOfRows = this.getNumOfRowsThatMakesBiggestRectangle();
         this.numberOfCardsPerRow = this.numberOfCards / this.numberOfRows;
     }
 
-    getNumberOfRowsThatMaximizesNumberOfCardsPerRow() {
+    getNumOfRowsThatMakesBiggestRectangle() {
         // Let n be the number of cards n = a*b . We want to minimize b - a so that a and b are as large as possible.
         // It follows that a is the largest divisor that is less than or equal to the square root.
         let a = Math.floor(Math.sqrt(this.numberOfCards));
