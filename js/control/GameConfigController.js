@@ -18,6 +18,7 @@ class GameConfigController {
         this.nameInputPrefixClass = 'name';
         this.playerNameForm = 'playerNameForm';
         this.scoreBoardForm = 'scoreBoardForm';
+        this.gameBoardCss = 'gameBoard';
 
         this.view = new GameConfigViewBuilder()
             .withGameOptionsFormClass(this.gameOptionsFormClass)
@@ -130,7 +131,7 @@ class GameConfigController {
     /* private */
     handleGameRestart() {
         this.getGame().getScoreBoard().hideScoreboard();
-        $('.gameBoard').css('display', 'none');
+        $('.' + this.gameBoardCss).css('display', 'none');
         $('.' + this.gameResetClass).css('display', 'none');
         $('.' + this.scoreBoardForm).css('display', 'none');
         $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
@@ -152,6 +153,16 @@ class GameConfigController {
     addPlayers(document) {
         this.setFormPlayerSubmitVisibility(false);
         this.getGame().addPlayers(this.buildPlayersFromForm());
+        // show the game board
+        this.getGame().getGameBoard().getNumberOfCardsPerRow();
+
+        $('.' + this.gameBoardCss).css('display', 'block');
+        $('.' + this.gameBoardCss).css('height',
+            this.getGame().getGameBoard().getNumberOfRows() * this.getGame().getGameBoard().getDeck().getCardHeight());
+        $('.' + this.gameBoardCss).css('width',
+            this.getGame().getGameBoard().getNumberOfCardsPerRow() *
+                this.getGame().getGameBoard().getDeck().getCardWidth());
+
         this.getGame().play(document);
     }
 

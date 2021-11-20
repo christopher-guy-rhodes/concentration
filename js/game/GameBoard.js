@@ -68,6 +68,23 @@ class GameBoard {
         return this.deck;
     }
 
+    /**
+     * Get the number of rows on the game bord.
+     * @returns {number} the number of rows
+     */
+    getNumberOfRows() {
+        return this.numberOfRows;
+    }
+
+    /**
+     * Get the number of cards per row on the game bord.
+     * @returns {number} the number of cards per row
+     */
+
+    getNumberOfCardsPerRow() {
+        return this.numberOfCardsPerRow;
+    }
+
     /* private */
     getDeckByType(deckType, numberOfCards) {
         let deck = undefined;
@@ -91,10 +108,6 @@ class GameBoard {
                 gridPositions.push({x : x, y : y});
             }
         }
-        $('.gameBoard').css('display', 'block');
-
-        $('.gameBoard').css('height', this.numberOfRows * this.deck.getCardHeight());
-        $('.gameBoard').css('width', this.numberOfCardsPerRow * this.deck.getCardWidth());
         return gridPositions;
     }
 
