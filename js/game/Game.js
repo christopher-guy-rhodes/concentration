@@ -2,8 +2,9 @@
  * Class for playing classic concentration game.
  */
 class Game {
-    constructor(type, numberOfCards, clickableClass, gameResetClass) {
-        validateRequiredParams(this.constructor, 'type', 'numberOfCards', 'clickableClass', 'gameResetClass');
+    constructor(type, numberOfCards, clickableClass, gameResetClass, scoreBoardPlayerPrefixClass) {
+        validateRequiredParams(this.constructor, arguments, 'type', 'numberOfCards', 'clickableClass', 'gameResetClass',
+            'scoreBoardPlayerPrefixClass');
         this.gameBoard = new GameBoardBuilder()
             .withDeckType(type)
             .withNumberOfCards(numberOfCards)
@@ -13,6 +14,7 @@ class Game {
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
         this.gameResetClass = gameResetClass;
+        this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
         // Keep track of the card pair selections that are waiting to be flipped back over or removed after a match
         // attempt. This way if the player makes a new selection before the time delay they can proceed without having
         // to wait and the actions that would happen after the timeout will happen immediately.
@@ -71,7 +73,7 @@ class Game {
     addPlayers(players) {
         validateRequiredParams(this.addPlayers, arguments, 'players');
         this.players = this.players.concat(players);
-        this.scoreBoard = new ScoreBoard(this.players);
+        this.scoreBoard = new ScoreBoard(this.players, this.scoreBoardPlayerPrefixClass);
     }
 
     /* private */

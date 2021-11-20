@@ -1,6 +1,8 @@
 class ScoreBoard {
-    constructor(players) {
+    constructor(players, scoreBoardPlayerPrefixClass) {
+        validateRequiredParams(this.constructor, 'players', 'scoreBoardPlayerPrefixClass')
         this.players = players;
+        this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
     }
 
     /**
@@ -17,7 +19,7 @@ class ScoreBoard {
             }
             scoreBoardEntry = scoreBoardEntry + ' ' + player.getScore() + ' matches in ' + player.getNumberOfTries()
                 + ' turns';
-            $('.player' + player.getPlayerNumber()).html(scoreBoardEntry);
+            $('.' + this.scoreBoardPlayerPrefixClass + player.getPlayerNumber()).html(scoreBoardEntry);
         }
     }
 
@@ -27,9 +29,10 @@ class ScoreBoard {
      */
     displayWinners(winningPlayers) {
         for (let winningPlayer of winningPlayers) {
-            let scoreBoardEntry = winningPlayer.getPlayerName() + ' <strong class="winner" style="color: #00ff00;"> is the winner!</strong> ' +
-                winningPlayer.getScore() + ' matches in ' + winningPlayer.getNumberOfTries() + ' turns';
-            $('.player' + winningPlayer.getPlayerNumber()).html(scoreBoardEntry);
+            let scoreBoardEntry = winningPlayer.getPlayerName() +
+                ' <strong class="winner" style="color: #00ff00;"> is the winner!</strong> ' +
+                    winningPlayer.getScore() + ' matches in ' + winningPlayer.getNumberOfTries() + ' turns';
+            $('.' + this.scoreBoardPlayerPrefixClass + winningPlayer.getPlayerNumber()).html(scoreBoardEntry);
         }
     }
 
@@ -38,7 +41,7 @@ class ScoreBoard {
      */
     hideScoreboard() {
         for (let player of this.players) {
-            $('.player' + player.getPlayerNumber()).css('display', 'none');
+            $('.' + this.scoreBoardPlayerPrefixClass + player.getPlayerNumber()).css('display', 'none');
         }
     }
 }

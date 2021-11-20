@@ -221,7 +221,8 @@ class GameConfigController {
 
         try {
             this.deckType = this.getFormDeckType();
-            this.game = new Game(this.deckType, numCards, this.clickableClass, this.gameResetClass);
+            this.game = new Game(this.deckType, numCards, this.clickableClass, this.gameResetClass,
+                this.scoreBoardPlayerPrefixClass);
         } catch (error) {
             this.handleError(error);
             this.setFormOptionsFormVisibility(true);
