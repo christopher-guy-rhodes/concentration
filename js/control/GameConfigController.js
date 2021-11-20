@@ -204,7 +204,6 @@ class GameConfigController {
         let width = $(window).width();
         let height = $(window).height();
         let scalingDimension = this.scalingDimension;
-        console.log('scaling dimension:' + scalingDimension);
         viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
             'initial-scale=' + (scalingDimension / screenWidth));
 
@@ -222,7 +221,7 @@ class GameConfigController {
 
         try {
             this.deckType = this.getFormDeckType();
-            this.game = new Game(this.deckType, numCards, this.clickableClass);
+            this.game = new Game(this.deckType, numCards, this.clickableClass, this.gameResetClass);
         } catch (error) {
             this.handleError(error);
             this.setFormOptionsFormVisibility(true);

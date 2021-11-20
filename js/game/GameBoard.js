@@ -10,7 +10,6 @@ class GameBoard {
 
         this.deck = this.getDeckByType(deckType, numberOfCards);
         this.deck.validateNumberOfCards(numberOfCards);
-
         this.numberOfRows = this.getNumOfRowsThatMakesBiggestRectangle();
         this.numberOfCardsPerRow = this.numberOfCards / this.numberOfRows;
     }

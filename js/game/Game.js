@@ -2,8 +2,8 @@
  * Class for playing classic concentration game.
  */
 class Game {
-    constructor(type, numberOfCards, clickableClass) {
-
+    constructor(type, numberOfCards, clickableClass, gameResetClass) {
+        validateRequiredParams(this.constructor, 'type', 'numberOfCards', 'clickableClass', 'gameResetClass');
         this.gameBoard = new GameBoardBuilder()
             .withDeckType(type)
             .withNumberOfCards(numberOfCards)
@@ -12,10 +12,13 @@ class Game {
         this.players = [];
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
+        this.gameResetClass = gameResetClass;
         // Keep track of the card pair selections that are waiting to be flipped back over or removed after a match
         // attempt. This way if the player makes a new selection before the time delay they can proceed without having
         // to wait and the actions that would happen after the timeout will happen immediately.
         this.pendingFlipOrRemovel = new Set();
+        this.numberOfCardsMatched = 0;
+        this.numberOfCards = numberOfCards;
     }
 
     /**
@@ -84,19 +87,15 @@ class Game {
     }
 
     /* private */
-    // TODO: keep state about remaining cards so that this is O(1) instead of O(p) where p is players
     isGameOver() {
-        return this.players.reduce(function(a, b) {
-            return a + b.getNumberOfMatches();
-        }, 0) >= this.gameBoard.getDeck().getNumberOfCards();
+        return this.numberOfCardsMatched >= this.numberOfCards;
     }
 
     /* private */
     handleGameOver() {
         this.pendingFlipOrRemovel = new Set();
         this.scoreBoard.displayWinners(this.getWinningPlayers());
-        // TODO: remove this hard coded class
-        $('.gameOver').css('display', 'inline-block');
+        $('.' + this.gameResetClass).css('display', 'inline-block');
     }
 
     /* private */
@@ -123,6 +122,7 @@ class Game {
     handleMatch(cards) {
         this.scoreBoard.updateStats(this.getCurrentPlayer());
         let self = this;
+        this.numberOfCardsMatched += 2;
         setTimeout(function () {
             self.getGameBoard().removeCards(cards);
             if (self.isGameOver()) {
