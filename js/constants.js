@@ -1,6 +1,7 @@
 // Game config
 const CARD_FLIP_DELAY_MS = 1500;
 const MAX_PLAYERS = 4;
+const PREVIEW_IMG_WIDTH = 1300;
 
 // DOM constants
 const BODY_TAG = 'body';

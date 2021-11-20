@@ -69,8 +69,9 @@ class GameConfigController {
      */
     renderForms(document) {
         this.view.buildGameControlForms(document);
-    }
 
+        this.setViewPort(PREVIEW_IMG_WIDTH + 50);
+    }
 
     /* private */
     handleGameOptionsEvent() {
@@ -121,12 +122,36 @@ class GameConfigController {
     updateCardsAndImagePreview() {
         let img = $('.' + this.gameOptionsFormClass).find('img');
         let input = $('input[name="' + this.numberOfCardsToUseName + '"]');
-        let isPicture = this.getFormDeckType() === 'picture';
 
-        input.val(isPicture ? PictureCardDeck.getNumberOfCardsInDeck() : PlayingCardDeck.getNumberOfCardsInDeck());
-        img.attr('src', isPicture ? PictureCardDeck.getDeckImage() : PlayingCardDeck.getDeckImage());
-        img.attr('width', '700px');
+        let deckMetadata = this.getDeckMetadata();
+        input.val(deckMetadata['numberOfCards']);
+        img.attr('src', deckMetadata['image']);
+        img.attr('width', PREVIEW_IMG_WIDTH + 'px');
     }
+
+    /* private */
+    getDeckMetadata() {
+        let numberOfCards = undefined;
+        let image = undefined;
+        switch(this.getFormDeckType()) {
+            case 'picture':
+                numberOfCards = PictureCardDeck.getNumberOfCardsInDeck();
+                image = PictureCardDeck.getDeckImage();
+                break;
+            case 'playing':
+                numberOfCards = PlayingCardDeck.getNumberOfCardsInDeck;
+                image = PlayingCardDeck.getDeckImage();
+                break;
+            default:
+                throw new Error(this.getFormDeckType() + ' is an unkonwn dec type');
+        }
+
+        return {
+            numberOfCards : numberOfCards,
+            image : image
+        }
+    }
+
 
     /* private */
     handleGameRestart() {
@@ -156,14 +181,30 @@ class GameConfigController {
         // show the game board
         this.getGame().getGameBoard().getNumberOfCardsPerRow();
 
+        let numberOfRows = this.getGame().getGameBoard().getNumberOfRows();
+        let numberOfCardsPerRow = this.getGame().getGameBoard().getNumberOfCardsPerRow();
+        let cardWidth = this.getGame().getGameBoard().getDeck().getCardWidth();
+        let cardHeight = this.getGame().getGameBoard().getDeck().getCardHeight();
+
         $('.' + this.gameBoardCss).css('display', 'block');
-        $('.' + this.gameBoardCss).css('height',
-            this.getGame().getGameBoard().getNumberOfRows() * this.getGame().getGameBoard().getDeck().getCardHeight());
-        $('.' + this.gameBoardCss).css('width',
-            this.getGame().getGameBoard().getNumberOfCardsPerRow() *
-                this.getGame().getGameBoard().getDeck().getCardWidth());
+        $('.' + this.gameBoardCss).css('height',numberOfRows * cardHeight);
+        $('.' + this.gameBoardCss).css('width', numberOfCardsPerRow * cardWidth);
+
+        // set the view port
+        this.setViewPort(numberOfRows * cardWidth);
 
         this.getGame().play(document);
+    }
+
+    setViewPort(screenWidth) {
+
+        let viewportMeta = document.querySelector('meta[name="viewport"]');
+        let width = $(window).width();
+        let height = $(window).height();
+        let scalingDimension = width;
+        viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
+            'initial-scale=' + (scalingDimension / screenWidth));
+
     }
 
     /* private */

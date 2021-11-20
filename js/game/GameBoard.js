@@ -8,22 +8,11 @@ class GameBoard {
         this.deckType = deckType;
         this.clickableClass = clickableClass;
 
-
         this.deck = this.getDeckByType(deckType, numberOfCards);
         this.deck.validateNumberOfCards(numberOfCards);
 
         this.numberOfRows = this.getNumOfRowsThatMakesBiggestRectangle();
         this.numberOfCardsPerRow = this.numberOfCards / this.numberOfRows;
-    }
-
-    getNumOfRowsThatMakesBiggestRectangle() {
-        // Let n be the number of cards n = a*b . We want to minimize b - a so that a and b are as large as possible.
-        // It follows that a is the largest divisor that is less than or equal to the square root.
-        let a = Math.floor(Math.sqrt(this.numberOfCards));
-        while(this.numberOfCards % a !== 0) {
-            a--;
-        }
-        return a;
     }
 
     /**
@@ -33,7 +22,6 @@ class GameBoard {
     renderGameBoard(document) {
         validateRequiredParams(this.renderGameBoard, arguments, 'document');
 
-        this.setViewPort();
         this.deck.shuffleCards();
         let cards = this.deck.getCards();
         let gridPositions = this.buildGrid();
@@ -111,18 +99,14 @@ class GameBoard {
         return gridPositions;
     }
 
-    /**
-     * private
-     *
-     * Set the scale of the screen for mobile browsers.
-     */
-    setViewPort() {
-        let viewportMeta = document.querySelector('meta[name="viewport"]');
-        let width = $(window).width();
-        let height = $(window).height();
-        let scalingDimension = width;
-        viewportMeta.content = viewportMeta.content.replace(/initial-scale=[^,]+/,
-            'initial-scale=' + (scalingDimension / (this.numberOfRows * this.deck.getCardWidth())));
-
+    /* private */
+    getNumOfRowsThatMakesBiggestRectangle() {
+        // Let n be the number of cards n = a*b . We want to minimize b - a so that a and b are as large as possible.
+        // It follows that a is the largest divisor that is less than or equal to the square root.
+        let a = Math.floor(Math.sqrt(this.numberOfCards));
+        while(this.numberOfCards % a !== 0) {
+            a--;
+        }
+        return a;
     }
 }
