@@ -4,12 +4,9 @@
 class Game {
     constructor(type, numberOfCards, clickableClass) {
 
-        let numberOfRows = type === 'playing' ? 4 : 6;
-
         this.gameBoard = new GameBoardBuilder()
             .withDeckType(type)
-            .withNumberOfCardsPerRow(Math.ceil(numberOfCards / numberOfRows))
-            .withNumberOfRows(numberOfRows)
+            .withNumberOfCards(numberOfCards)
             .withClickableClass(clickableClass).build();
 
         this.players = [];

@@ -34,8 +34,8 @@ class PlayingCardDeck extends Deck {
         let numCardsInDeck = PlayingCardDeck.getNumberOfCardsInDeck();
         if (this.numberOfCards !== 2 &&
             (this.numberOfCards / 2 % 2 !== 0 || numSelected < 0 || numSelected > numCardsInDeck)) {
-            throw new Error("In order to play with a playing card deck you must use between 2 and " + numCardsInDeck +
-                " cards. There must be an even number of pairs cards.");
+            throw new Error("In order for there to be an even number of matches you must use between 2 and "
+                + numCardsInDeck + " cards. There must be an even number of pairs cards.");
         }
     }
 

@@ -3,26 +3,18 @@
  */
 class GameBoardBuilder {
     constructor() {
-        this.numberOfRows = undefined;
-        this.numberOfCardsPerRow = undefined;
+        this.numberOfCards = undefined;
         this.deckType = undefined;
         this.clickableClass = undefined;
     }
 
+    withNumberOfCards(numberOfCards) {
+        this.numberOfCards = numberOfCards;
+        return this;
+    }
+
     withDeckType(type) {
         this.deckType = type;
-        return this;
-    }
-
-    withNumberOfRows(numberOfRows) {
-        validateRequiredParams(this.withNumberOfRows, arguments, 'numberOfRows');
-        this.numberOfRows = numberOfRows;
-        return this;
-    }
-
-    withNumberOfCardsPerRow(numberOfCardsPerRow) {
-        validateRequiredParams(this.withNumberOfCardsPerRow, arguments, 'numberOfCardsPerRow');
-        this.numberOfCardsPerRow = numberOfCardsPerRow;
         return this;
     }
 
@@ -32,6 +24,6 @@ class GameBoardBuilder {
     }
 
     build() {
-        return new GameBoard(this.deckType, this.numberOfRows, this.numberOfCardsPerRow, this.clickableClass);
+        return new GameBoard(this.numberOfCards, this.deckType, this.clickableClass);
     }
 }
