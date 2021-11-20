@@ -11,7 +11,6 @@ class PlayingCard extends Card {
             100,
             146,
             PlayingCardDeck.PLAYING_CARD_IMAGE, clickableClass);
-        console.log('Playing card:' + clickableClass);
         validateRequiredParams(this.constructor, arguments, 'rank', 'suit', 'x', 'y', 'clickableClass');
         this.rank = rank;
         this.suit = suit;

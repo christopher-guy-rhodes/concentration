@@ -8,7 +8,7 @@ class Game {
 
         this.gameBoard = new GameBoardBuilder()
             .withDeckType(type)
-            .withNumberOfCardsPerRow(numberOfCards / numberOfRows)
+            .withNumberOfCardsPerRow(Math.min(1, numberOfCards / numberOfRows))
             .withNumberOfRows(numberOfRows)
             .withClickableClass(clickableClass).build();
 

@@ -82,7 +82,7 @@ class GameBoard {
         }
         $('.gameBoard').css('display', 'block');
         $('.gameBoard').css('height', this.numberOfRows * this.deck.getCardHeight());
-        $('.gameBoard').css('width', this.numberOfCardsPerRow * this.deck.getCardWidth())
+        $('.gameBoard').css('width', this.numberOfCardsPerRow * this.deck.getCardWidth());
         return gridPositions;
     }
 

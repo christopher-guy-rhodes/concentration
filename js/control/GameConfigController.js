@@ -130,6 +130,7 @@ class GameConfigController {
     /* private */
     handleGameRestart() {
         this.getGame().getScoreBoard().hideScoreboard();
+        $('.gameBoard').css('display', 'none');
         $('.' + this.gameResetClass).css('display', 'none');
         $('.' + this.scoreBoardForm).css('display', 'none');
         $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
@@ -211,7 +212,6 @@ class GameConfigController {
     handleError(error) {
         alert(error.message);
         console.log("%o", error);
-
     }
 
     /* private */
