@@ -240,7 +240,7 @@ class GameConfigController {
 
     /* private */
     setFormOptionsFormVisibility(flag) {
-        $('.' + this.gameOptionsFormClass).css('display', flag ? 'block' : 'none');
+        $('.' + this.gameOptionsFormClass).css('display', flag ? 'inline-block' : 'none');
     }
 
     /* private */
