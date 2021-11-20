@@ -12,8 +12,6 @@ class GameBoard {
         this.deck = this.getDeckByType(deckType, numberOfCards);
         this.deck.validateNumberOfCards(numberOfCards);
 
-        console.log('the square root is: ' + Math.sqrt(this.numberOfCards));
-
         // If the cards fit into a square the number of rows will be the sqrt of the number of cards. Use that as the
         // number of rows or the ceiling of that if the cards don't fit into a nice square. If they don't fit into
         // a nice square there will be more cards in the row then the number of rows
@@ -22,7 +20,6 @@ class GameBoard {
     }
 
     getNumberOfRowsThatMaximizesNumberOfCardsPerRow() {
-
         // Let n be the number of cards n = a*b . We want to minimize b - a so that a and b are as large as possible.
         // It follows that a is the largest divisor that is less than or equal to the square root.
         let a = Math.floor(Math.sqrt(this.numberOfCards));
@@ -45,10 +42,6 @@ class GameBoard {
         let gridPositions = this.buildGrid();
 
         let gridPositionIndex = 0;
-        console.log('number of cards per row:' + this.numberOfCardsPerRow);
-        console.log('number of rows:' + this.numberOfRows);
-        console.log('cards:' + cards.length);
-        console.log('grid positions: %o', gridPositions);
         for (let card of cards) {
             card.setFaceDown();
             $('.' + card.getId()).css('display', 'block');
@@ -102,8 +95,6 @@ class GameBoard {
             }
         }
         $('.gameBoard').css('display', 'block');
-        console.log('setting width to ' + this.numberOfRows + 'x width');
-        console.log('setting height to ' + this.numberOfRows + 'x height');
 
         $('.gameBoard').css('height', this.numberOfRows * this.deck.getCardHeight());
         $('.gameBoard').css('width', this.numberOfCardsPerRow * this.deck.getCardWidth());
