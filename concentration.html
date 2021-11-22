@@ -2,8 +2,8 @@
 <html>
     <head>
         <link rel="stylesheet" href="css/concentration.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
         <script src="js/jquery.min.js"></script>
+        <script src="js/aws-sdk.min.js"></script>
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
     </head>
     <script>
@@ -12,6 +12,8 @@
 
             // Classes
             $.getScript('/js/util.js'                          , function() {
+            $.getScript('/js/dao/Dao.js'                       , function() {
+            $.getScript('/js/game/OnlineGamePlay.js'           , function() {
             $.getScript('/js/dom/Element.js'                   , function() {
             $.getScript('/js/dom/ElementBuilder.js'            , function() {
             $.getScript('/js/constants.js'                     , function() {
@@ -32,13 +34,24 @@
             $.getScript('/js/view/GameConfigViewBuilder.js'    , function() {
             $.getScript('/js/game/ScoreBoard.js'               , function() {
 
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const playerId = urlParams.get('playerId');
+            let getUrl = window.location;
+            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+
+            if (playerId == null) {
+                window.history.replaceState( {} , '', baseUrl);
+            }
+            //window.history.replaceState( {} , '', baseUrl);
+            //window.location = baseUrl;
 
             // Call the main event handler
             let gameController = new GameConfigController();
             gameController.renderForms(document);
             gameController.handleEvents(document);
 
-            })})})})})})})})})})})})})})})})})})})})});
+            })})})})})})})})})})})})})})})})})})})})})})});
 
 
     </script>

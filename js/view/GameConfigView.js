@@ -2,11 +2,11 @@ class GameConfigView {
     constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
                 scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm,
-                scoreBoardForm) {
+                scoreBoardForm, playOnlineCheckboxName) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
-            'playerNameForm', 'scoreBoardForm');
+            'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -19,6 +19,7 @@ class GameConfigView {
         this.nameInputPrefixClass = nameInputPrefixClass;
         this.playerNameForm = playerNameForm;
         this.scoreBoardForm = scoreBoardForm;
+        this.playOnlineCheckboxName = playOnlineCheckboxName;
     }
 
     /**
@@ -30,8 +31,27 @@ class GameConfigView {
         this.withTitleTag(document)
             .withGameOptionsForm(document)
             .withPlayerForm(document)
-            .withScoreBoardContent(document);
+            .withScoreBoardContent(document)
+            .withCurrentPlayerHiddenInput(document)
+            .withAllPlayersReadyHiddenInput(document);
         BODY_ELEMENT.appendChild(GAMEBOARD_ELEMENT);
+    }
+
+    withCurrentPlayerHiddenInput(document) {
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+            .withTag(INPUT_TAG)
+            .withAttribute("name", "currentPlayer")
+            .withAttribute("type", "hidden").build())
+        return this;
+    }
+
+    withAllPlayersReadyHiddenInput(document) {
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+            .withTag(INPUT_TAG)
+            .withAttribute("name", "allPlayersReady")
+            .withAttribute("type", "hidden")
+            .withAttribute("value", 0).build());
+        return this;
     }
 
     /* private */
@@ -78,12 +98,26 @@ class GameConfigView {
             .withAttribute('style', 'width: ' + PREVIEW_IMG_WIDTH + 'px')
             .build();
         this.withNumberOfPlayersSelect(document, form)
+            .withPlayOnlineCheckbox(document, form)
             .withDeckTypeSelect(document, form)
             .withNumberOfCardsInput(document, form)
             .withGameOptionsSubmit(document, form)
             .withDeckPreviewImage(document, form)
 
         BODY_ELEMENT.appendChild(form);
+        return this;
+    }
+
+    withPlayOnlineCheckbox(document, form) {
+        let div = new ElementBuilder(document)
+            .withTag(DIV_TAG).build()
+            .appendChild(new ElementBuilder(document)
+                .withTag(SPAN_TAG).withInnerText('Play online?').build())
+            .appendChild(new ElementBuilder(document)
+                .withTag(INPUT_TAG)
+                .withAttribute('type', 'checkbox')
+                .withAttribute('name', this.playOnlineCheckboxName).build());
+        form.appendChild(div);
         return this;
     }
 
@@ -176,6 +210,7 @@ class GameConfigView {
     /* private */
     withPlayerForm(document) {
         validateRequiredParams(this.withPlayerForm, arguments, 'document');
+
         let form = new ElementBuilder(document)
             .withClass(this.playerNameForm)
             // Force hard coded width that can be used as a reference to scale for mobile viewing

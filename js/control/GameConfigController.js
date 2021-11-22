@@ -19,6 +19,9 @@ class GameConfigController {
         this.playerNameForm = 'playerNameForm';
         this.scoreBoardForm = 'scoreBoardForm';
         this.gameBoardCss = 'gameBoard';
+        this.playOnlineCheckboxName = 'playOnlineCheckboxName';
+
+        this.onlineGamePlay = new OnlineGamePlay();
 
         this.scalingDimension = undefined;
 
@@ -35,6 +38,7 @@ class GameConfigController {
             .withNameInputPrefixClass(this.nameInputPrefixClass)
             .withPlayerNameForm(this.playerNameForm)
             .withScoreBoardForm(this.scoreBoardForm)
+            .withPlayOnlineCheckboxName(this.playOnlineCheckboxName)
             .build();
     }
 
@@ -44,6 +48,22 @@ class GameConfigController {
      * @param document the DOM document
      */
     handleEvents(document) {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const playerId = urlParams.get('playerId');
+        const gameId = urlParams.get('gameId');
+
+        if (playerId) {
+            this.onlineGamePlay.loadGameForPlayer(gameId, playerId);
+            /*
+            $('.' + this.gameOptionsFormClass).css('display', 'none');
+            $('.' + this.playerNameForm).css('display', 'inline-block');
+            $('.' + this.playerNamePrefixClass + playerId).css('display', 'block');
+            $('.' + this.playerNameSubmitButtonClass).css('display', 'block');
+
+             */
+        }
 
         // Handle number of players, deck type and number of cards selections
         this.handleGameOptionsEvent();
@@ -63,7 +83,52 @@ class GameConfigController {
         // Handle the initial number of cards in the form
         this.updateFormNumberOfCardsEvent();
 
+        // Handle the play online checkbox
+        this.handlePlayOnlineEvent();
+
     }
+
+    handlePlayOnlineEvent() {
+        let self = this;
+        let checkbox = $('input[name="' + this.playOnlineCheckboxName + '"]');
+        let getUrl = window.location;
+        let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+        let search = getUrl.search;
+
+        checkbox.click(function(e) {
+            if (checkbox.prop("checked")) {
+                $('.' + self.playerNamePrefixClass + '1').find('span').text('Your name');
+
+
+                let uuid = generateUuid();
+
+
+
+                window.history.replaceState( {} , '', baseUrl + '?gameId=' + uuid);
+
+                for (let i = 2; i <= MAX_PLAYERS; i++) {
+                    let span = $('.' + self.playerNamePrefixClass + i).find('span');
+                    $('.' + self.playerNamePrefixClass + i).find('input').css('display', 'none');
+                    span.text('Player ' + i + ' invitation link: ' + self.generateInvitationLink(i, baseUrl, uuid));
+                }
+            } else {
+                alert(search);
+                window.history.replaceState( {} , '', baseUrl);
+                $('.' + self.playerNamePrefixClass + '1').find('span').text('Player 1 name:');
+                for (let i = 2; i <= MAX_PLAYERS; i++) {
+                    let span = $('.' + self.playerNamePrefixClass + i).find('span');
+                    span.text('Player ' + i + ' name:');
+                    $('.' + self.playerNamePrefixClass + i).find('input').css('display', 'inline-block');
+                }
+            }
+        });
+    }
+
+    generateInvitationLink(playerNumber, baseUrl, uuid) {
+        return baseUrl + '?gameId=' + uuid + '&playerId=' + playerNumber;
+    }
+
+
 
     /**
      * Render the forms used to control the game settings.
@@ -161,6 +226,8 @@ class GameConfigController {
         $('.' + this.gameBoardCss).css('display', 'none');
         $('.' + this.gameResetClass).css('display', 'none');
         $('.' + this.scoreBoardForm).css('display', 'none');
+
+        // TODO: remove the next two lines, I don't think they do anything.
         $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
         $('.' + this.numPlayersSelectorClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
         this.setFormOptionsFormVisibility(true);
@@ -169,6 +236,13 @@ class GameConfigController {
     /* private */
     handleCardClick(e) {
         let clickedCardId = $(e.target).parent().attr('id');
+
+        let areAllPlayersReady = $('input[name=allPlayersReady]').val() === '1';
+
+        if (!areAllPlayersReady) {
+            alert('All players are not ready');
+            return;
+        }
 
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
         if (!card.getIsFaceUp()) {
@@ -212,22 +286,38 @@ class GameConfigController {
     /* private */
     handleGameOptions() {
         this.numberOfPlayers = this.getFormNumberOfPlayers();
-        this.setPlayerNamesVisibility(this.numberOfPlayers, true);
+
 
         let numCards = this.getFormNumberOfCards();
 
-        this.setFormOptionsFormVisibility(false);
-        this.setFormPlayerSubmitVisibility(true);
+
 
         try {
             this.deckType = this.getFormDeckType();
             this.game = new Game(this.deckType, numCards, this.clickableClass, this.gameResetClass,
                 this.scoreBoardPlayerPrefixClass);
+
         } catch (error) {
             this.handleError(error);
             this.setFormOptionsFormVisibility(true);
             this.setPlayerNamesVisibility(this.numberOfPlayers, false);
             this.setFormPlayerSubmitVisibility(false);
+        }
+        try {
+            // TODO: move this validation into a separate method
+            this.game.getGameBoard().getDeck().validateNumberOfCards(this.game.getGameBoard().getNumberOfCards());
+
+            let isOnline = $('input[name=' + this.playOnlineCheckboxName + ']').prop('checked');
+            let numPlayersSelected = $('.' + this.numPlayersSelectorClass).val();
+            if(isOnline && numPlayersSelected === '1') {
+                throw new Error('You must choose at least 2 players to play online');
+            }
+
+            this.setPlayerNamesVisibility(this.numberOfPlayers, true);
+            this.setFormOptionsFormVisibility(false);
+            this.setFormPlayerSubmitVisibility(true);
+        } catch (error) {
+            alert(error.message);
         }
     }
 
@@ -239,7 +329,8 @@ class GameConfigController {
             let name = '.' + this.nameInputPrefixClass + (i + 1);
             let playerName = $(name).val();
             if (playerName.trim().length < 1) {
-                playerName = 'Player ' + (i + 1);
+                let isOnline = $('input[name=' + this.playOnlineCheckboxName + ']').prop('checked');
+                playerName = (isOnline && i > 0) ? 'Waiting for player ' + (i + 1) : 'Player ' + (i + 1);
             }
             players.push(new Player(playerName, (i + 1)));
             $('.' + this.scoreBoardPlayerPrefixClass + (i + 1)).css('display', 'inline-block');

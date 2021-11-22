@@ -10,6 +10,7 @@ class Game {
             .withNumberOfCards(numberOfCards)
             .withClickableClass(clickableClass).build();
 
+        this.deckType = type;
         this.players = [];
         this.playerTurnIndex = 0;
         this.scoreBoard = undefined;
@@ -21,6 +22,7 @@ class Game {
         this.pendingFlipOrRemovel = new Set();
         this.numberOfCardsMatched = 0;
         this.numberOfCards = numberOfCards;
+        this.onlineGamePlay = new OnlineGamePlay();
     }
 
     /**
@@ -29,6 +31,25 @@ class Game {
      */
     play(document) {
         validateRequiredParams(this.play, arguments, 'document');
+
+        var url = new URL(window.location);
+        var gameId = url.searchParams.get("gameId");
+        console.log('==> gameId %o', gameId);
+        if (gameId !== null) {
+            console.log('a');
+            //let uuid = generateUuid();
+            $('input[name=currentPlayer]').val(1);
+            this.onlineGamePlay.createGameRecord(gameId, this.players.length, this.deckType, this.numberOfCards, this.players);
+
+            // poll for players to join
+            this.onlineGamePlay.pollForPlayersReady(gameId);
+        } else {
+            console.log('b');
+            console.log('setting all players ready');
+            $('input[name=allPlayersReady]').val(1);
+        }
+
+
         this.getScoreBoard().updateStats(this.getCurrentPlayer());
         this.getGameBoard().renderGameBoard(document);
     }

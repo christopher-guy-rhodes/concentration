@@ -9,7 +9,8 @@ class GameBoard {
         this.clickableClass = clickableClass;
 
         this.deck = this.getDeckByType(deckType, numberOfCards);
-        this.deck.validateNumberOfCards(numberOfCards);
+
+
         this.numberOfRows = this.getNumOfRowsThatMakesBiggestRectangle();
         this.numberOfCardsPerRow = this.numberOfCards / this.numberOfRows;
     }
@@ -34,6 +35,14 @@ class GameBoard {
             card.renderCard(document, x, y);
             gridPositionIndex++;
         }
+    }
+
+    /**
+     * Get the number of cards used on the game board
+     * @returns {number}
+     */
+    getNumberOfCards() {
+        return this.numberOfCards;
     }
 
     /**

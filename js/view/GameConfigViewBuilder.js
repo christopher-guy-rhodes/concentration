@@ -13,6 +13,12 @@ class GameConfigViewBuilder {
         this.nameInputPrefixClass = undefined;
         this.playerNameForm = undefined;
         this.scoreBoardForm = undefined;
+        this.playOnlineCheckboxName = undefined;
+    }
+
+    withPlayOnlineCheckboxName(playOnlineCheckboxName) {
+        this.playOnlineCheckboxName = playOnlineCheckboxName;
+        return this;
     }
 
     withScoreBoardForm(scoreBoardForm) {
@@ -79,6 +85,6 @@ class GameConfigViewBuilder {
         return new GameConfigView(this.gameOptionsFormClass, this.gameOptionsSubmitButtonClass,
             this.deckTypeSelectorClass, this.playerNameSubmitClass, this.gameResetClass, this.numPlayersSelectorClass,
             this.numberOfCardsToUseName, this.scoreBoardPlayerPrefixClass, this.playerNamePrefixClass,
-            this.nameInputPrefixClass, this.playerNameForm, this.scoreBoardForm);
+            this.nameInputPrefixClass, this.playerNameForm, this.scoreBoardForm, this.playOnlineCheckboxName);
     }
 }
