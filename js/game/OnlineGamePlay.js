@@ -3,7 +3,7 @@ class OnlineGamePlay extends Dao {
         super();
     }
 
-    createGameRecord(gameId, numberOfPlayers, deckType, numberOfCards, playersInput) {
+    createGameRecord(gameId, numberOfPlayers, deckType, numberOfCards, playersInput, cardIds) {
         let players = {};
         players[1] = {
             'playerName' : playersInput[0]['playerName'],
@@ -18,10 +18,10 @@ class OnlineGamePlay extends Dao {
             }
         }
         this.put(gameId, JSON.stringify(
-            {numberOfPlayers : numberOfPlayers, deckType : deckType, numberOfCards: numberOfCards, players: players}));
+            {numberOfPlayers : numberOfPlayers, deckType : deckType, numberOfCards: numberOfCards, players: players, cardIds: cardIds}));
     }
 
-    markPlayerReady(gameId, playerId, name) {
+    markPlayerReady(gameId, playerId, name, game) {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
@@ -29,6 +29,16 @@ class OnlineGamePlay extends Dao {
                 console.log('error: %o', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+
+                console.log('update game %o to cardIds %o', game, gameDetail['cardIds']);
+
+                let cards = [];
+                for (let cardId of gameDetail['cardIds']) {
+                    cards.push(game.gameBoard.deck.getCardById(cardId));
+                }
+                game.gameBoard.deck.cards = cards;
+                game.gameBoard.renderGameBoard(document);
+
                 gameDetail['players'][playerId]['playerName'] = name;
                 gameDetail['players'][playerId]['ready'] = true;
                 console.log('==> game detail: %o',gameDetail);

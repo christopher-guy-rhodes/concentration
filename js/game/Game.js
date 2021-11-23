@@ -35,19 +35,31 @@ class Game {
         let url = new URL(window.location);
         let gameId = url.searchParams.get("gameId");
         let playerId = url.searchParams.get("playerId");
+        this.getGameBoard().getDeck().shuffleCards();
 
         console.log('==> gameId %o', gameId);
         if (gameId !== null) {
+
             //let uuid = generateUuid();
             let currentPlayer = playerId == null ? '1' : playerId;
             $('input[name=currentPlayer]').val(currentPlayer);
 
             if (currentPlayer === '1') {
-                this.onlineGamePlay.createGameRecord(gameId, this.players.length, this.deckType, this.numberOfCards, this.players);
+                let cards = this.getGameBoard().getDeck().getCards();
+
+                let cardIds = [];
+                for (let card of cards) {
+                    cardIds.push(card.getId());
+                }
+
+                this.onlineGamePlay.createGameRecord(gameId, this.players.length, this.deckType, this.numberOfCards, this.players, cardIds);
             } else {
+
+
+
                 let name = $('.playerName' + currentPlayer).find('input').val();
                 name = name.length > 0 ? name : 'Player ' + currentPlayer;
-                this.onlineGamePlay.markPlayerReady(gameId, currentPlayer, name);
+                this.onlineGamePlay.markPlayerReady(gameId, currentPlayer, name, this);
             }
 
             // poll for players to join
