@@ -106,11 +106,22 @@ class GameConfigController {
 
                 window.history.replaceState( {} , '', baseUrl + '?gameId=' + uuid);
 
+
                 for (let i = 2; i <= MAX_PLAYERS; i++) {
                     let span = $('.' + self.playerNamePrefixClass + i).find('span');
                     $('.' + self.playerNamePrefixClass + i).find('input').css('display', 'none');
-                    span.text('Player ' + i + ' invitation link: ' + self.generateInvitationLink(i, baseUrl, uuid));
+                    //span.text('Player ' + i + ' invitation link: ' + self.generateInvitationLink(i, baseUrl, uuid));
+                    span.css('display', 'none');
                 }
+
+                let numPlayers = $('.numPlayers').val();
+
+                let html = '<strong>Invitation Links:</strong><br/>';
+                for (let i = 1; i <= numPlayers; i++) {
+                    html += 'Player ' + i + ' ' + self.generateInvitationLink(i, baseUrl, uuid) + '<br/>';
+                }
+                $('.invitationClass').html(html);
+
             } else {
                 alert(search);
                 window.history.replaceState( {} , '', baseUrl);

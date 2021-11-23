@@ -32,19 +32,27 @@ class Game {
     play(document) {
         validateRequiredParams(this.play, arguments, 'document');
 
-        var url = new URL(window.location);
-        var gameId = url.searchParams.get("gameId");
+        let url = new URL(window.location);
+        let gameId = url.searchParams.get("gameId");
+        let playerId = url.searchParams.get("playerId");
+
         console.log('==> gameId %o', gameId);
         if (gameId !== null) {
-            console.log('a');
             //let uuid = generateUuid();
-            $('input[name=currentPlayer]').val(1);
-            this.onlineGamePlay.createGameRecord(gameId, this.players.length, this.deckType, this.numberOfCards, this.players);
+            let currentPlayer = playerId == null ? '1' : playerId;
+            $('input[name=currentPlayer]').val(currentPlayer);
+
+            if (currentPlayer === '1') {
+                this.onlineGamePlay.createGameRecord(gameId, this.players.length, this.deckType, this.numberOfCards, this.players);
+            } else {
+                let name = $('.playerName' + currentPlayer).find('input').val();
+                name = name.length > 0 ? name : 'Player ' + currentPlayer;
+                this.onlineGamePlay.markPlayerReady(gameId, currentPlayer, name);
+            }
 
             // poll for players to join
             this.onlineGamePlay.pollForPlayersReady(gameId);
         } else {
-            console.log('b');
             console.log('setting all players ready');
             $('input[name=allPlayersReady]').val(1);
         }

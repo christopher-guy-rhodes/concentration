@@ -21,6 +21,29 @@ class OnlineGamePlay extends Dao {
             {numberOfPlayers : numberOfPlayers, deckType : deckType, numberOfCards: numberOfCards, players: players}));
     }
 
+    markPlayerReady(gameId, playerId, name) {
+        let self = this;
+        this.get(gameId, function(err, data) {
+            if (err) {
+                alert('Error polling for players ' + err.message + ', see console log for details');
+                console.log('error: %o', err);
+            } else {
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+                gameDetail['players'][playerId]['playerName'] = name;
+                gameDetail['players'][playerId]['ready'] = true;
+                console.log('==> game detail: %o',gameDetail);
+                self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
+                    if (err) {
+                        alert('Error marking players ready ' + err.message + ', see console log for details');
+                        console.log('error: %o', err);
+                    } else {
+                        console.log('successfully marked player ' + playerId + ' ready');
+                    }
+                });
+            }
+        })
+    }
+
     loadGameForPlayer(gameId, playerId) {
         console.log('load game for player ' + playerId + ' game id ' + gameId);
         this.get(gameId, function(err, data) {
@@ -44,8 +67,8 @@ class OnlineGamePlay extends Dao {
 
                 for (let pid of Object.keys(gameDetail['players'])) {
                     let name = gameDetail['players'][pid]['playerName'];
-                    $('.playerName' + pid).find('input').val(name);
                     if (pid !== playerId) {
+                        $('.playerName' + pid).find('input').val('Player ' + pid);
                         $('.playerName' + pid).find('input').attr('disabled', true);
                     } else {
                         $('.playerName' + pid).find('input').val('');
@@ -79,17 +102,29 @@ class OnlineGamePlay extends Dao {
                         allPlayersReady = false;
                     } else {
                         let name = gameDetail.players[id]['playerName'] + ' 0 matches in 0 turns';
-                        let nameOnForm = $('.player' + id).text();
+                        let nameOnForm = $('.player' + id).text().replace(/(<([^>]+)>)/gi, "");
+                        nameOnForm = nameOnForm.replace('>>', '');
+                        nameOnForm = nameOnForm.replace('<<', '');
+                        nameOnForm = nameOnForm.replace(/\s\s+/g, ' ');
                         if (name !== nameOnForm) {
-                            if($('input[name=currentPlayer]').val() !== id) {
+                            //if($('input[name=currentPlayer]').val() !== id) {
                                 console.log('setting ' + nameOnForm + ' to ' + name);
 
                                 console.log('==> currentPlayer %o', $('.currentPlayer'));
                                 console.log($('input[name=currentPlayer]').val()  + '!== ' + id)
                                 alert(gameDetail.players[id]['playerName'] + ' has joined!');
-                                $('.player' + id).text(name);
 
-                            }
+                                console.log('"' + name + '" !== "' + nameOnForm + '"');
+                                if ($('input[name=currentPlayer]').val() !== id) {
+                                    if (id === '1') {
+                                        $('.player' + id).html('<strong>&gt;&gt;' + gameDetail.players[id]['playerName'] + '&lt;&lt;</strong> 0 matches in 0 turns');
+                                    } else {
+                                        $('.player' + id).text(name);
+
+                                    }
+                                }
+
+                            //}
                         }
                     }
                 }

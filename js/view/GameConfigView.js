@@ -67,6 +67,8 @@ class GameConfigView {
                 .withInnerText('Player ' + i + ': 0 matches').build());
         }
 
+        div.appendChild(new ElementBuilder(document).withTag(DIV_TAG).withClass('invitationClass').build())
+
         div.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
             .withClass(this.gameResetClass)
