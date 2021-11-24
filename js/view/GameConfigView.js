@@ -33,7 +33,8 @@ class GameConfigView {
             .withPlayerForm(document)
             .withScoreBoardContent(document)
             .withCurrentPlayerHiddenInput(document)
-            .withAllPlayersReadyHiddenInput(document);
+            .withAllPlayersReadyHiddenInput(document)
+            .withGameLogIndex(document);
         BODY_ELEMENT.appendChild(GAMEBOARD_ELEMENT);
     }
 
@@ -41,6 +42,15 @@ class GameConfigView {
         BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(INPUT_TAG)
             .withAttribute("name", "currentPlayer")
+            .withAttribute("type", "hidden").build())
+        return this;
+    }
+
+    withGameLogIndex(document) {
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+            .withTag(INPUT_TAG)
+            .withAttribute("name", "gameLogReadIndex")
+            .withAttribute("value", 0)
             .withAttribute("type", "hidden").build())
         return this;
     }

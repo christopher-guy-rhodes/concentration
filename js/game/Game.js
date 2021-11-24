@@ -63,7 +63,7 @@ class Game {
             }
 
             // poll for players to join
-            this.onlineGamePlay.pollForPlayersReady(gameId);
+            //this.onlineGamePlay.pollForPlayersReady(gameId, this);
         } else {
             console.log('setting all players ready');
             $('input[name=allPlayersReady]').val(1);

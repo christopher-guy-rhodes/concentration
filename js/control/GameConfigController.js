@@ -179,7 +179,15 @@ class GameConfigController {
     handleCardClickEvent() {
         let self = this;
         $(document).on('click', '.' + this.clickableClass, function (e) {
-            self.handleCardClick(e);
+            let playerTurn = self.game.playerTurnIndex + 1;
+            let currentPlayer = $('input[name=currentPlayer]').val();
+            console.log('playerTurn:' + playerTurn + ' currentPlayer:' + currentPlayer);
+            if (playerTurn !== parseInt(currentPlayer)) {
+                alert('Sorry, it is not your turn yet');
+            } else {
+                let currentPlayer = $('input[name=currentPlayer]').val();
+                self.handleCardClick($(e.target).parent().attr('id'), currentPlayer, true);
+            }
         });
     }
 
@@ -245,8 +253,16 @@ class GameConfigController {
     }
 
     /* private */
-    handleCardClick(e) {
-        let clickedCardId = $(e.target).parent().attr('id');
+    handleCardClick(clickedCardId, player, isCurrentPlayer) {
+
+
+        let url = new URL(window.location);
+        let gameId = url.searchParams.get("gameId");
+
+        if (isCurrentPlayer) {
+            this.onlineGamePlay.logCardFlip(gameId, player, clickedCardId);
+        }
+
 
         let areAllPlayersReady = $('input[name=allPlayersReady]').val() === '1';
 
@@ -280,6 +296,10 @@ class GameConfigController {
         // set the view port
         this.setViewPort(PREVIEW_IMG_WIDTH + 50);
 
+        let url = new URL(window.location);
+        let gameId = url.searchParams.get("gameId");
+
+        this.onlineGamePlay.pollForPlayersReady(gameId, this);
         this.getGame().play(document);
     }
 

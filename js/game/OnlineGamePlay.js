@@ -1,6 +1,7 @@
 class OnlineGamePlay extends Dao {
     constructor() {
         super();
+        //this.gameConfigController = new GameConfigController();
     }
 
     createGameRecord(gameId, numberOfPlayers, deckType, numberOfCards, playersInput, cardIds) {
@@ -19,6 +20,7 @@ class OnlineGamePlay extends Dao {
         }
         this.put(gameId, JSON.stringify(
             {numberOfPlayers : numberOfPlayers, deckType : deckType, numberOfCards: numberOfCards, players: players, cardIds: cardIds}));
+        this.put(gameId + '-log', JSON.stringify([]));
     }
 
     markPlayerReady(gameId, playerId, name, game) {
@@ -78,7 +80,7 @@ class OnlineGamePlay extends Dao {
                 for (let pid of Object.keys(gameDetail['players'])) {
                     let name = gameDetail['players'][pid]['playerName'];
                     if (pid !== playerId) {
-                        $('.playerName' + pid).find('input').val('Player ' + pid);
+                        $('.playerName' + pid).find('input').val(name + ' (game owner)');
                         $('.playerName' + pid).find('input').attr('disabled', true);
                     } else {
                         $('.playerName' + pid).find('input').val('');
@@ -88,8 +90,25 @@ class OnlineGamePlay extends Dao {
         })
     }
 
-    async pollForPlayersReady(gameId, count = 0) {
-        console.log('count ' + count)
+    logCardFlip(gameId, currentPlayer, cardId) {
+        let self = this;
+        this.get(gameId + '-log', function (err, data) {
+            if  (err) {
+                alert('Error polling for players ' + err.message + ', see console log for details');
+                console.log('error: %o', err);
+            } else {
+                let gameLog = JSON.parse(data.Body.toString('utf-8'));
+                console.log('==> found game log: %o', gameLog);
+                gameLog.push({player : currentPlayer, cardId : cardId});
+                self.put(gameId + '-log', JSON.stringify(gameLog), function (err) {
+                    console.log('==> error writing to game log %o', err);
+                });
+            }
+        })
+    }
+
+    async pollForPlayersReady(gameId, gameController, count = 0) {
+        console.log('count ' + count);
         await this.sleep(5000);
 
         if (count >= 60) {
@@ -111,43 +130,91 @@ class OnlineGamePlay extends Dao {
                     if (gameDetail.players[id]['ready'] === false) {
                         allPlayersReady = false;
                     } else {
+                        gameController.game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
+                        console.log('want to update player ' + id + ', players: %o', gameController.game.players);
                         let name = gameDetail.players[id]['playerName'] + ' 0 matches in 0 turns';
                         let nameOnForm = $('.player' + id).text().replace(/(<([^>]+)>)/gi, "");
                         nameOnForm = nameOnForm.replace('>>', '');
                         nameOnForm = nameOnForm.replace('<<', '');
                         nameOnForm = nameOnForm.replace(/\s\s+/g, ' ');
                         if (name !== nameOnForm) {
-                            //if($('input[name=currentPlayer]').val() !== id) {
-                                console.log('setting ' + nameOnForm + ' to ' + name);
+                            console.log('setting ' + nameOnForm + ' to ' + name);
 
-                                console.log('==> currentPlayer %o', $('.currentPlayer'));
-                                console.log($('input[name=currentPlayer]').val()  + '!== ' + id)
-                                alert(gameDetail.players[id]['playerName'] + ' has joined!');
+                            console.log('==> currentPlayer %o', $('.currentPlayer'));
+                            console.log($('input[name=currentPlayer]').val()  + '!== ' + id)
+                            alert(gameDetail.players[id]['playerName'] + ' has joined!');
 
-                                console.log('"' + name + '" !== "' + nameOnForm + '"');
-                                if ($('input[name=currentPlayer]').val() !== id) {
-                                    if (id === '1') {
-                                        $('.player' + id).html('<strong>&gt;&gt;' + gameDetail.players[id]['playerName'] + '&lt;&lt;</strong> 0 matches in 0 turns');
-                                    } else {
-                                        $('.player' + id).text(name);
+                            console.log('"' + name + '" !== "' + nameOnForm + '"');
+                            if ($('input[name=currentPlayer]').val() !== id) {
+                                if (id === '1') {
 
-                                    }
+                                    $('.player' + id).html('<strong>&gt;&gt;' + gameDetail.players[id]['playerName'] + '&lt;&lt;</strong> 0 matches in 0 turns');
+                                } else {
+                                    $('.player' + id).text(name);
+
                                 }
+                                $('.name' + id).val(gameDetail.players[id]['playerName']);
+                            }
 
-                            //}
                         }
                     }
                 }
                 console.log('==> players: %o', gameDetail.players);
                 if (!allPlayersReady) {
                     count++;
-                    self.pollForPlayersReady(gameId, count);
+                    self.pollForPlayersReady(gameId, gameController, count);
                 } else {
                     console.log('all players are ready');
                     $('input[name=allPlayersReady]').val(1);
+
+                    self.pollForGameLog(gameId, gameController);
                 }
             }
         });
+    }
+
+    async pollForGameLog(gameId, gameController) {
+        await this.sleep(5000);
+
+        let self = this;
+
+        this.get(gameId + '-log', function (err, data) {
+            if (err) {
+                alert('Error polling for players ' + err.message + ', see console log for details');
+                console.log('error: %o', err);
+            } else {
+                let gameLog = JSON.parse(data.Body.toString('utf-8'));
+
+                let index = $('input[name=gameLogReadIndex]').val();
+                let currentPlayer = $('input[name=currentPlayer]').val();
+                console.log('==> is index:' +  index + ' < gameLog length:' + gameLog.length + ' ' + (index < gameLog.length));
+                if (index < gameLog.length) {
+                    console.log('getting ready to process');
+                    for (let i = index; i < gameLog.length; i++) {
+                        let logEntry = gameLog[i];
+                        console.log('processing entry: %o of %o', logEntry, gameLog);
+                        if (currentPlayer === logEntry['player']) {
+                            console.log('currentPlayer: ' + currentPlayer + ' is ' + logEntry['player'] + ' skip');
+                        } else {
+                            console.log('currentPlayer:' + currentPlayer + ' is not ' + logEntry['player'] + ' need to consume');
+                            gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
+                        }
+                        index++
+
+                    }
+                    console.log('==> marking new index as ' + (index));
+                    $('input[name=gameLogReadIndex]').val(index);
+                } else {
+                    console.log('no events needs to be consumed currentPlayer ' + currentPlayer + ' game log player ' + gameLog['player']);
+                }
+
+                if (!gameController.game.isGameOver()) {
+                    self.pollForGameLog(gameId, gameController);
+                }
+            }
+        });
+
+
     }
 
     sleep(ms) {
