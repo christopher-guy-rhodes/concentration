@@ -120,15 +120,22 @@ class OnlineGamePlay extends Dao {
         })
     }
 
-    logCardFlip(gameId, currentPlayer, cardId) {
+    logCardFlip(gameId, currentPlayer, cardId, game, count = 0) {
         let self = this;
-        this.get(gameId + '-log', function (err, data) {
+        this.get(gameId + '-log', async function (err, data) {
             if  (err) {
                 alert('Error polling for players ' + err.message + ', see console log for details');
                 console.log('error: %o', err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 console.log('==> found game log: %o', gameLog);
+                if (gameLog.length < (game.turnCounter  - 1)) {
+                    console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (game.turnCounter - 1) + ' retrying for the ' + count + 'time');
+                    await self.sleep(1000);
+                    if (count < 3) {
+                        self.logCardFlip(gameId, currentPlayer, cardId, game, ++count);
+                    }
+                }
                 gameLog.push({player : currentPlayer, cardId : cardId});
                 self.put(gameId + '-log', JSON.stringify(gameLog), function (err) {
                     console.log('==> error writing to game log %o', err);
@@ -219,7 +226,7 @@ class OnlineGamePlay extends Dao {
 
                 let index = $('input[name=gameLogReadIndex]').val();
                 if (index === '-1') {
-                    index = 0;
+                    index = '0';
                 }
                 let currentPlayer = $('input[name=currentPlayer]').val();
                 let playCatchUp = index === '0';
@@ -231,10 +238,11 @@ class OnlineGamePlay extends Dao {
 
                         // Don't handle the click from the game log if it was a local clieck
                         let localTurns = $('input[name=localBrowserTurns]').val().split(',');
-                        if (localTurns.includes(index)) {
+                        if (localTurns.includes(index.toString())) {
                             console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
                         } else {
                             console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                            console.log('%o does not contain %o',localTurns, index);
                             gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
                             await self.sleep(2000);
                         }

@@ -288,10 +288,7 @@ class GameConfigController {
 
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
 
-        if (isCurrentPlayer && gameId !== null) {
-            // only log the card flip if the player is caught up
-            this.onlineGamePlay.logCardFlip(gameId, player, clickedCardId);
-        }
+
 
 
         let areAllPlayersReady = $('input[name=allPlayersReady]').val() === '1';
@@ -302,6 +299,10 @@ class GameConfigController {
         }
 
         if (!card.getIsFaceUp()) {
+            if (isCurrentPlayer && gameId !== null) {
+                // only log the card flip if the player is caught up
+                this.onlineGamePlay.logCardFlip(gameId, player, clickedCardId, this.getGame());
+            }
             this.getGame().takePlayerTurn(card);
         }
     }
