@@ -37,14 +37,16 @@ class Game {
         let playerId = url.searchParams.get("playerId");
         this.getGameBoard().getDeck().shuffleCards();
 
-        console.log('==> gameId %o', gameId);
+        console.log('====> a')
+
         if (gameId !== null) {
 
+            console.log('==> b');
             //let uuid = generateUuid();
             let currentPlayer = playerId == null ? '1' : playerId;
             $('input[name=currentPlayer]').val(currentPlayer);
 
-            if (currentPlayer === '1') {
+            if (currentPlayer === '1' && playerId === null) {
                 let cards = this.getGameBoard().getDeck().getCards();
 
                 let cardIds = [];
@@ -53,8 +55,13 @@ class Game {
                 }
 
                 this.onlineGamePlay.createGameRecord(gameId, this.players.length, this.deckType, this.numberOfCards, this.players, cardIds);
-            } else {
+                let getUrl = window.location;
+                let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+                window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId + '&playerId=1');
 
+            } else {
+                console.log('===> c');
+                console.log('=========> marking player ' + currentPlayer + ' ready');
 
 
                 let name = $('.playerName' + currentPlayer).find('input').val();

@@ -156,6 +156,8 @@ class OnlineGamePlay extends Dao {
                                 $('.name' + id).val(gameDetail.players[id]['playerName']);
                             }
 
+                        } else {
+                            console.log('name is equal to name on form: ' + nameOnForm);
                         }
                     }
                 }

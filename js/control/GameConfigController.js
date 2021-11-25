@@ -302,12 +302,6 @@ class GameConfigController {
         let gameId = url.searchParams.get("gameId");
         let playerId = url.searchParams.get("playerId");
 
-        if (playerId === null) {
-            // ==>
-            let getUrl = window.location;
-            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
-            //window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId + '&playerId=1');
-        }
 
         this.onlineGamePlay.pollForPlayersReady(gameId, this);
         this.getGame().play(document);
