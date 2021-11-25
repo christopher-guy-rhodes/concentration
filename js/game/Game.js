@@ -16,6 +16,7 @@ class Game {
         this.scoreBoard = undefined;
         this.gameResetClass = gameResetClass;
         this.scoreBoardPlayerPrefixClass = scoreBoardPlayerPrefixClass;
+        this.turnCounter = 0;
         // Keep track of the card pair selections that are waiting to be flipped back over or removed after a match
         // attempt. This way if the player makes a new selection before the time delay they can proceed without having
         // to wait and the actions that would happen after the timeout will happen immediately.
@@ -92,6 +93,7 @@ class Game {
         if (card.getIsFaceUp()) {
             return;
         }
+        this.turnCounter++;
         card.setFaceUp();
         let chosenCards = this.getCurrentPlayer().takeTurn(card);
         if (chosenCards.length > 1) {

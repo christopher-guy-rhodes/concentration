@@ -185,8 +185,7 @@ class GameConfigController {
             }
             let cardClickId = $(e.target).parent().attr('id');
             let currentPlayer = $('input[name=currentPlayer]').val();
-            let turn = $('input[name=gameLogReadIndex]').val() === '-1' ? 0 : $('input[name=gameLogReadIndex]').val();
-            console.log('Local browser took turn ' +  $('input[name=gameLogReadIndex]').val());
+            let turn = self.game.turnCounter;
 
 
             let playerTurn = self.game.playerTurnIndex + 1;
