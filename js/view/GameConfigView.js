@@ -34,14 +34,33 @@ class GameConfigView {
             .withScoreBoardContent(document)
             .withCurrentPlayerHiddenInput(document)
             .withAllPlayersReadyHiddenInput(document)
-            .withGameLogIndex(document);
+            .withGameLogIndex(document)
+            .withGameLogCaughtUp(document)
+            .withLocalBrowserTurns(document);
         BODY_ELEMENT.appendChild(GAMEBOARD_ELEMENT);
+    }
+
+    withLocalBrowserTurns(document) {
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+            .withTag(INPUT_TAG)
+            .withAttribute("name", "localBrowserTurns")
+            .withAttribute("type", "hidden").build())
+        return this;
     }
 
     withCurrentPlayerHiddenInput(document) {
         BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(INPUT_TAG)
             .withAttribute("name", "currentPlayer")
+            .withAttribute("type", "hidden").build())
+        return this;
+    }
+
+    withGameLogCaughtUp(document) {
+        BODY_ELEMENT.appendChild(new ElementBuilder(document)
+            .withTag(INPUT_TAG)
+            .withAttribute("name", "gameLogCaughtUp")
+            .withAttribute("value", 0)
             .withAttribute("type", "hidden").build())
         return this;
     }

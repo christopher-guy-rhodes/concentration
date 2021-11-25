@@ -200,6 +200,7 @@ class OnlineGamePlay extends Dao {
                 }
                 if (index < gameLog.length) {
                     console.log('gameLog: %o', gameLog);
+                    $('input[name=gameLogCaughtUp]').val(0);
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
                         let replayCurrentPlayerHistory = playCatchUp && !(index === '0' && currentPlayer === '1');
@@ -217,6 +218,7 @@ class OnlineGamePlay extends Dao {
                     }
                     console.log('==> marking new index as ' + (index));
                     $('input[name=gameLogReadIndex]').val(index);
+                    $('input[name=gameLogCaughtUp]').val(1);
                 }
 
                 if (!gameController.game.isGameOver()) {

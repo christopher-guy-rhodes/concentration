@@ -75,6 +75,7 @@ class Game {
             console.log('setting all players ready');
             $('input[name="currentPlayer"]').val(1);
             $('input[name=allPlayersReady]').val(1);
+            $('input[name=gameLogCaughtUp]').val(1);
         }
 
 

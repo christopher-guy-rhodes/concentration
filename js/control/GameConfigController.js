@@ -179,14 +179,31 @@ class GameConfigController {
     handleCardClickEvent() {
         let self = this;
         $(document).on('click', '.' + this.clickableClass, function (e) {
-            let playerTurn = self.game.playerTurnIndex + 1;
+            if ($('input[name=gameLogCaughtUp]').val() !== '1' && $('input[name=gameLogReadIndex]').val() !== '-1') {
+                alert('Game events are catching up, please try again in a moment');
+                return;
+            }
+            let cardClickId = $(e.target).parent().attr('id');
             let currentPlayer = $('input[name=currentPlayer]').val();
+            let turn = $('input[name=gameLogReadIndex]').val() === '-1' ? 0 : $('input[name=gameLogReadIndex]').val();
+            console.log('Local browser took turn ' +  $('input[name=gameLogReadIndex]').val());
+
+            //localBrowserTurns
+            let existingTurns = $('input[name=localBrowserTurns]').val();
+            if (existingTurns === '') {
+                existingTurns = turn;
+            } else {
+                existingTurns += ',' + turn;
+            }
+            $('input[name=localBrowserTurns]').val(existingTurns);
+
+            let playerTurn = self.game.playerTurnIndex + 1;
             console.log('playerTurn:' + playerTurn + ' currentPlayer:' + currentPlayer);
             if (playerTurn !== parseInt(currentPlayer)) {
                 alert('Sorry, it is not your turn yet');
             } else {
                 let currentPlayer = $('input[name=currentPlayer]').val();
-                self.handleCardClick($(e.target).parent().attr('id'), currentPlayer, true);
+                self.handleCardClick(cardClickId, currentPlayer, true);
             }
         });
     }
