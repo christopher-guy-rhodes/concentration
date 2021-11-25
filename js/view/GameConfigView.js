@@ -50,7 +50,7 @@ class GameConfigView {
         BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(INPUT_TAG)
             .withAttribute("name", "gameLogReadIndex")
-            .withAttribute("value", 0)
+            .withAttribute("value", -1)
             .withAttribute("type", "hidden").build())
         return this;
     }

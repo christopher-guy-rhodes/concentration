@@ -142,10 +142,10 @@ class OnlineGamePlay extends Dao {
 
                             console.log('==> currentPlayer %o', $('.currentPlayer'));
                             console.log($('input[name=currentPlayer]').val()  + '!== ' + id)
-                            alert(gameDetail.players[id]['playerName'] + ' has joined!');
 
                             console.log('"' + name + '" !== "' + nameOnForm + '"');
                             if ($('input[name=currentPlayer]').val() !== id) {
+                                alert(gameDetail.players[id]['playerName'] + ' has joined!');
                                 if (id === '1') {
 
                                     $('.player' + id).html('<strong>&gt;&gt;' + gameDetail.players[id]['playerName'] + '&lt;&lt;</strong> 0 matches in 0 turns');
@@ -189,19 +189,26 @@ class OnlineGamePlay extends Dao {
 
                 let index = $('input[name=gameLogReadIndex]').val();
                 let currentPlayer = $('input[name=currentPlayer]').val();
-                let playCatchUp = parseInt(index) < gameLog.length - 1;
+                let playCatchUp = index === '0';
                 //if (playCatchUp) {
-                //    console.log('playing catch up on game log %o',gameLog);
+                //    console.log('playing catch up on game log %o',gameLog);s
                 //}
+                let bootstrap = false;
+                if (index === '-1') {
+                    bootstrap = true;
+                    index = 0;
+                }
                 if (index < gameLog.length) {
+                    console.log('gameLog: %o', gameLog);
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
-                        console.log('processing entry: %o of %o', logEntry, gameLog);
                         let replayCurrentPlayerHistory = playCatchUp && !(index === '0' && currentPlayer === '1');
-                        if (!replayCurrentPlayerHistory && currentPlayer === logEntry['player']) {
-                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' catch up? ' + (playCatchUp));
+                        // Don't bootstrap the very first move
+                        bootstrap = bootstrap && !(currentPlayer === '1' && gameLog.length === 2);
+                        if (!bootstrap && currentPlayer === logEntry['player']) {
+                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because we are bootstrapping');
                         } else {
-                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' bootstrap?' + bootstrap);
                             gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
                             await self.sleep(2000);
                         }
