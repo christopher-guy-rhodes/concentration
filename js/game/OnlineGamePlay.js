@@ -25,6 +25,10 @@ class OnlineGamePlay extends Dao {
 
     resetGame(gameId, currentPlayer) {
         this.put(gameId + '-log', JSON.stringify([]));
+        $('input[name=localBrowserTurns]').val('');
+        $('input[name=allPlayersReady]').val(0);
+        $('input[name=gameLogReadIndex]').val(-1);
+        $('input[name=gameLogCaughtUp]').val(0);
 
         /*
         this.get(gameId, function(err, data) {

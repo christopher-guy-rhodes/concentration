@@ -188,20 +188,23 @@ class GameConfigController {
             let turn = $('input[name=gameLogReadIndex]').val() === '-1' ? 0 : $('input[name=gameLogReadIndex]').val();
             console.log('Local browser took turn ' +  $('input[name=gameLogReadIndex]').val());
 
-            //localBrowserTurns
-            let existingTurns = $('input[name=localBrowserTurns]').val();
-            if (existingTurns === '') {
-                existingTurns = turn;
-            } else {
-                existingTurns += ',' + turn;
-            }
-            $('input[name=localBrowserTurns]').val(existingTurns);
 
             let playerTurn = self.game.playerTurnIndex + 1;
             console.log('playerTurn:' + playerTurn + ' currentPlayer:' + currentPlayer);
             if (playerTurn !== parseInt(currentPlayer)) {
                 alert('Sorry, it is not your turn yet');
             } else {
+
+                //localBrowserTurns
+                let existingTurns = $('input[name=localBrowserTurns]').val();
+                if (existingTurns === '') {
+                    existingTurns = turn;
+                } else {
+                    existingTurns += ',' + turn;
+                }
+                $('input[name=localBrowserTurns]').val(existingTurns);
+
+
                 let currentPlayer = $('input[name=currentPlayer]').val();
                 self.handleCardClick(cardClickId, currentPlayer, true);
             }
