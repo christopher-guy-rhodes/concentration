@@ -187,10 +187,12 @@ class GameConfigController {
             let currentPlayer = $('input[name=currentPlayer]').val();
             let turn = self.game.turnCounter;
 
+            let url = new URL(window.location);
+            let gameId = url.searchParams.get("gameId");
 
             let playerTurn = self.game.playerTurnIndex + 1;
             console.log('playerTurn:' + playerTurn + ' currentPlayer:' + currentPlayer);
-            if (playerTurn !== parseInt(currentPlayer)) {
+            if (gameId !== null && playerTurn !== parseInt(currentPlayer)) {
                 alert('Sorry, it is not your turn yet');
             } else {
 
