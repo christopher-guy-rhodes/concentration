@@ -23,6 +23,32 @@ class OnlineGamePlay extends Dao {
         this.put(gameId + '-log', JSON.stringify([]));
     }
 
+    resetGame(gameId, currentPlayer) {
+        this.put(gameId + '-log', JSON.stringify([]));
+
+        /*
+        this.get(gameId, function(err, data) {
+            if (err) {
+                alert('Error polling for players ' + err.message + ', see console log for details');
+                console.log('error: %o', err);
+            } else {
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+
+                gameDetail['players'][currentPlayer]['ready'] = false;
+
+                console.log('reset game %o', gameDetail);
+                this.put(gameId, JSON.stringify(gameDetail), function (err) {
+                    if (err) {
+                        alert('Error polling for players ' + err.message + ', see console log for details');
+                        console.log('error: %o', err);
+                    }
+                });
+            }
+        });
+
+         */
+    }
+
     markPlayerReady(gameId, playerId, name, game) {
         let self = this;
         this.get(gameId, function(err, data) {
@@ -188,28 +214,23 @@ class OnlineGamePlay extends Dao {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
 
                 let index = $('input[name=gameLogReadIndex]').val();
-                let currentPlayer = $('input[name=currentPlayer]').val();
-                let playCatchUp = index === '0';
-                //if (playCatchUp) {
-                //    console.log('playing catch up on game log %o',gameLog);s
-                //}
-                let bootstrap = false;
                 if (index === '-1') {
-                    bootstrap = true;
                     index = 0;
                 }
+                let currentPlayer = $('input[name=currentPlayer]').val();
+                let playCatchUp = index === '0';
                 if (index < gameLog.length) {
                     console.log('gameLog: %o', gameLog);
                     $('input[name=gameLogCaughtUp]').val(0);
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
-                        let replayCurrentPlayerHistory = playCatchUp && !(index === '0' && currentPlayer === '1');
-                        // Don't bootstrap the very first move
-                        bootstrap = bootstrap && !(currentPlayer === '1' && gameLog.length === 2);
-                        if (!bootstrap && currentPlayer === logEntry['player']) {
-                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because we are bootstrapping');
+
+                        // Don't handle the click from the game log if it was a local clieck
+                        let localTurns = $('input[name=localBrowserTurns]').val().split(',');
+                        if (localTurns.includes(index)) {
+                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
                         } else {
-                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' bootstrap?' + bootstrap);
+                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
                             gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
                             await self.sleep(2000);
                         }
