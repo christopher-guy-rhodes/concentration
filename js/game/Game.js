@@ -37,7 +37,7 @@ class Game {
         let playerId = url.searchParams.get("playerId");
         this.getGameBoard().getDeck().shuffleCards();
 
-        console.log('====> a')
+        console.log('====> a and game id is ' + (gameId));
 
         if (gameId !== null) {
 
@@ -73,6 +73,7 @@ class Game {
             //this.onlineGamePlay.pollForPlayersReady(gameId, this);
         } else {
             console.log('setting all players ready');
+            $('input[name="currentPlayer"]').val(1);
             $('input[name=allPlayersReady]').val(1);
         }
 

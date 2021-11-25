@@ -189,7 +189,7 @@ class OnlineGamePlay extends Dao {
 
                 let index = $('input[name=gameLogReadIndex]').val();
                 let currentPlayer = $('input[name=currentPlayer]').val();
-                let playCatchUp = index === '0';
+                let playCatchUp = parseInt(index) < gameLog.length - 1;
                 //if (playCatchUp) {
                 //    console.log('playing catch up on game log %o',gameLog);
                 //}
@@ -199,8 +199,9 @@ class OnlineGamePlay extends Dao {
                         console.log('processing entry: %o of %o', logEntry, gameLog);
                         let replayCurrentPlayerHistory = playCatchUp && !(index === '0' && currentPlayer === '1');
                         if (!replayCurrentPlayerHistory && currentPlayer === logEntry['player']) {
+                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' catch up? ' + (playCatchUp));
                         } else {
-                            console.log('replaying click from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
                             gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
                             await self.sleep(2000);
                         }
