@@ -117,7 +117,7 @@ class GameConfigController {
                 let numPlayers = $('.numPlayers').val();
 
                 let html = '<strong>Invitation Links:</strong><br/>';
-                for (let i = 1; i <= numPlayers; i++) {
+                for (let i = 2; i <= numPlayers; i++) {
                     html += 'Player ' + i + ' ' + self.generateInvitationLink(i, baseUrl, uuid) + '<br/>';
                 }
                 $('.invitationClass').html(html);
@@ -259,7 +259,10 @@ class GameConfigController {
         let url = new URL(window.location);
         let gameId = url.searchParams.get("gameId");
 
+        let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
+
         if (isCurrentPlayer) {
+            // only log the card flip if the player is caught up
             this.onlineGamePlay.logCardFlip(gameId, player, clickedCardId);
         }
 
@@ -271,7 +274,6 @@ class GameConfigController {
             return;
         }
 
-        let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
         if (!card.getIsFaceUp()) {
             this.getGame().takePlayerTurn(card);
         }
@@ -298,6 +300,14 @@ class GameConfigController {
 
         let url = new URL(window.location);
         let gameId = url.searchParams.get("gameId");
+        let playerId = url.searchParams.get("playerId");
+
+        if (playerId === null) {
+            // ==>
+            let getUrl = window.location;
+            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+            //window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId + '&playerId=1');
+        }
 
         this.onlineGamePlay.pollForPlayersReady(gameId, this);
         this.getGame().play(document);

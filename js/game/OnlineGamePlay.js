@@ -178,7 +178,7 @@ class OnlineGamePlay extends Dao {
 
         let self = this;
 
-        this.get(gameId + '-log', function (err, data) {
+        this.get(gameId + '-log', async function (err, data) {
             if (err) {
                 alert('Error polling for players ' + err.message + ', see console log for details');
                 console.log('error: %o', err);
@@ -187,25 +187,23 @@ class OnlineGamePlay extends Dao {
 
                 let index = $('input[name=gameLogReadIndex]').val();
                 let currentPlayer = $('input[name=currentPlayer]').val();
-                console.log('==> is index:' +  index + ' < gameLog length:' + gameLog.length + ' ' + (index < gameLog.length));
+                let playCatchUp = index === '0';
                 if (index < gameLog.length) {
-                    console.log('getting ready to process');
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
                         console.log('processing entry: %o of %o', logEntry, gameLog);
-                        if (currentPlayer === logEntry['player']) {
-                            console.log('currentPlayer: ' + currentPlayer + ' is ' + logEntry['player'] + ' skip');
+                        if (!playCatchUp && currentPlayer === logEntry['player']) {
+                            console.log('currentPlayer: ' + currentPlayer + ' is ' + logEntry['player'] + 'skip');
                         } else {
                             console.log('currentPlayer:' + currentPlayer + ' is not ' + logEntry['player'] + ' need to consume');
                             gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
+                            await self.sleep(2000);
                         }
                         index++
 
                     }
                     console.log('==> marking new index as ' + (index));
                     $('input[name=gameLogReadIndex]').val(index);
-                } else {
-                    console.log('no events needs to be consumed currentPlayer ' + currentPlayer + ' game log player ' + gameLog['player']);
                 }
 
                 if (!gameController.game.isGameOver()) {
