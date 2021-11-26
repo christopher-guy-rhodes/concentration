@@ -149,7 +149,14 @@ class Game {
     handleGameOver() {
         this.pendingFlipOrRemovel = new Set();
         this.scoreBoard.displayWinners(this.getWinningPlayers());
+        $('.' + this.gameResetClass).find('input').prop('disabled', true);
+        $('.' + this.gameResetClass).find('input').val('Waiting for game to wrap up');
         $('.' + this.gameResetClass).css('display', 'inline-block');
+        let self = this;
+        setTimeout(function () {
+            $('.' + self.gameResetClass).find('input').prop('disabled', false);
+            $('.' + self.gameResetClass).find('input').val('Play again!');
+        },10000);
     }
 
     /* private */
