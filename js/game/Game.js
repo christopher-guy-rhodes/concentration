@@ -47,7 +47,7 @@ class Game {
             let currentPlayer = playerId == null ? '1' : playerId;
             $('input[name=currentPlayer]').val(currentPlayer);
 
-            if (currentPlayer === '1' && playerId === null) {
+            if (currentPlayer === '1') {
                 let cards = this.getGameBoard().getDeck().getCards();
 
                 let cardIds = [];
