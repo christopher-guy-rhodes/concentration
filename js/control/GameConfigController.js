@@ -273,12 +273,14 @@ class GameConfigController {
         let currentPlayer = $('input[name=currentPlayer]').val();
         if (gameId !== null) {
             this.onlineGamePlay.resetGame(gameId, currentPlayer);
+            this.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer);
         }
 
         // TODO: remove the next two lines, I don't think they do anything.
         $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
         $('.' + this.numPlayersSelectorClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
         this.setFormOptionsFormVisibility(true);
+
     }
 
     /* private */
