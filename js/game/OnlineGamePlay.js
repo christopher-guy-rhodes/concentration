@@ -152,6 +152,7 @@ class OnlineGamePlay extends Dao {
             alert('Waited ' + (60*5 / 60) + ' minutes for players to join, giving up');
             return;
         }
+        let joinNotifications = {};
 
         let self = this;
         this.get(gameId, function(err, data) {
@@ -167,6 +168,13 @@ class OnlineGamePlay extends Dao {
                     if (gameDetail.players[id]['ready'] === false) {
                         allPlayersReady = false;
                     } else {
+                        // ==>
+                        let currentPlayer = $('input[name=currentPlayer]').val();
+                        if (currentPlayer !== id && !joinNotifications[id]) {
+                            alert(gameDetail.players[id]['playerName'] + ' has joined!');
+                            joinNotifications[id] = true;
+                        }
+
                         gameController.game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
                         console.log('want to update player ' + id + ', players: %o', gameController.game.players);
                         let name = gameDetail.players[id]['playerName'] + ' 0 matches in 0 turns';
@@ -182,7 +190,6 @@ class OnlineGamePlay extends Dao {
 
                             console.log('"' + name + '" !== "' + nameOnForm + '"');
                             if ($('input[name=currentPlayer]').val() !== id) {
-                                alert(gameDetail.players[id]['playerName'] + ' has joined!');
                                 if (id === '1') {
 
                                     $('.player' + id).html('<strong>&gt;&gt;' + gameDetail.players[id]['playerName'] + '&lt;&lt;</strong> 0 matches in 0 turns');
