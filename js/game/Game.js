@@ -149,14 +149,31 @@ class Game {
     handleGameOver() {
         this.pendingFlipOrRemovel = new Set();
         this.scoreBoard.displayWinners(this.getWinningPlayers());
-        $('.' + this.gameResetClass).find('input').prop('disabled', true);
-        $('.' + this.gameResetClass).find('input').val('Waiting for game to wrap up');
-        $('.' + this.gameResetClass).css('display', 'inline-block');
-        let self = this;
-        setTimeout(function () {
-            $('.' + self.gameResetClass).find('input').prop('disabled', false);
-            $('.' + self.gameResetClass).find('input').val('Play again!');
-        },10000);
+
+        let url = new URL(window.location);
+        let gameId = url.searchParams.get("gameId");
+        let playerId = url.searchParams.get("playerId");
+
+        if (gameId !== null) {
+            $('.' + this.gameResetClass).find('input').prop('disabled', true);
+            if (playerId === '1') {
+                $('.' + this.gameResetClass).find('input').val('Waiting 30 seconds for game to wrap up');
+            } else {
+                $('.' + this.gameResetClass).find('input').val('Waiting for game owner to restart');
+                this.onlineGamePlay.waitForGameRestart(gameId);
+            }
+            $('.' + this.gameResetClass).css('display', 'inline-block');
+            let self = this;
+
+            if (playerId === '1') {
+                // TODO: don't use hard coded time out. If there was a long streak of matches the game could take
+                // longer than that to play out. Instead use state in game object and poll for that to be done
+                setTimeout(function () {
+                    $('.' + self.gameResetClass).find('input').prop('disabled', false);
+                    $('.' + self.gameResetClass).find('input').val('Play again!');
+                }, 30000);
+            }
+        }
     }
 
     /* private */

@@ -120,6 +120,29 @@ class OnlineGamePlay extends Dao {
         })
     }
 
+    waitForGameRestart(gameId, count = 0) {
+        let self = this;
+        this.get(gameId + '-log', async function (err, data) {
+            await self.sleep(10000);
+            if (err) {
+                alert('Error polling for players ' + err.message + ', see console log for details');
+                console.log('error: %o', err);
+            } else {
+                let gameLog = JSON.parse(data.Body.toString('utf-8'));
+                console.log('==> waiting for owner to restart found game log %o', gameLog);
+
+                if (gameLog.length === 0) {
+                    $('.gameOver').find('input').val('Play again');
+                    $('.gameOver').find('input').prop('disabled', false);
+                } else if (count < 10) {
+                    self.waitForGameRestart(gameId, ++count);
+                } else {
+                    $('.gameOver').find('input').val('Game owner did not restart the game')
+                }
+            }
+        });
+    }
+
     logCardFlip(gameId, currentPlayer, cardId, game, count = 0) {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
