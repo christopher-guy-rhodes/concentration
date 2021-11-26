@@ -134,10 +134,10 @@ class OnlineGamePlay extends Dao {
                 if (gameLog.length === 0) {
                     $('.gameOver').find('input').val('Play again');
                     $('.gameOver').find('input').prop('disabled', false);
-                } else if (count < 10) {
+                } else if (count < 9) {
                     self.waitForGameRestart(gameId, ++count);
                 } else {
-                    $('.gameOver').find('input').val('Game owner did not restart the game')
+                    $('.gameOver').find('input').val('Game owner did not restart the game. Reload to play once the owner has restarted the game')
                 }
             }
         });
