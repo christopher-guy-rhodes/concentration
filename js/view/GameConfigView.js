@@ -96,7 +96,22 @@ class GameConfigView {
                 .withInnerText('Player ' + i + ': 0 matches').build());
         }
 
-        div.appendChild(new ElementBuilder(document).withTag(DIV_TAG).withClass('invitationClass').build())
+        div.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
+            .withAttribute('style', 'display: none')
+            .withClass('invitationClass').build());
+
+        let waitingDiv = new ElementBuilder(document)
+            .withTag(DIV_TAG)
+            .withClass('waiting')
+            .withAttribute('style', 'display: none').build()
+            .appendChild(new ElementBuilder(document).withTag(STRONG_TAG)
+                .withInnerText('Waiting for:').build());
+
+        for (let i = 1; i <= MAX_PLAYERS; i++) {
+            waitingDiv.appendChild(new ElementBuilder(document).withTag(SPAN_TAG).withClass('waitingOn' + i).build())
+        }
+
+        div.appendChild(waitingDiv);
 
         div.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)

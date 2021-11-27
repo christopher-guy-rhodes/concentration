@@ -20,6 +20,7 @@ const STYLE_TAG = 'style';
 const SPAN_TAG = 'span';
 const IMAGE_TAG = 'img';
 const PARAGRAPH_TAG = 'p';
+const STRONG_TAG = 'strong';
 
 // Css constants
 const FRONT_ID_SUFFIX = 'FRONT';

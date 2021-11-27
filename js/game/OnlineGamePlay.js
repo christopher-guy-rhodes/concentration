@@ -30,6 +30,12 @@ class OnlineGamePlay extends Dao {
         $('input[name=allPlayersReady]').val(0);
         $('input[name=gameLogReadIndex]').val(-1);
         $('input[name=gameLogCaughtUp]').val(0);
+        $('.waiting').css('display', 'block');
+        $('.invitationClass').css('display', 'block');
+
+        for (let i = 1; i <= MAX_PLAYERS; i++) {
+            $('.waitingOn' + i).css('display', 'inline-block');
+        }
 
         /*
         this.get(gameId, function(err, data) {

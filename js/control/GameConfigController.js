@@ -124,7 +124,6 @@ class GameConfigController {
 
                 $('.invitationClass').html(html);
             } else {
-                alert(search);
                 window.history.replaceState( {} , '', baseUrl);
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Player 1 name:');
                 for (let i = 2; i <= MAX_PLAYERS; i++) {
@@ -339,6 +338,20 @@ class GameConfigController {
 
         if (gameId !== null) {
             let self = this;
+
+            $('.waiting').css('display', 'block');
+            let currentPlayer = playerId === null ? '1' : playerId;
+
+            $('.invitationClass').css('display', 'block');
+
+            for (let i = 1; i <= this.game.players.length; i++) {
+                if (parseInt(currentPlayer) === i) {
+                    continue;
+                }
+                let name = this.game.players[i -1]['playerName'];
+                $('.waitingOn' + i).text(name);
+            }
+
             this.pollForPlayersReady(gameId, this).then(function(result) {
                 console.log('got response from pollForPlayersReady');
             });
@@ -355,6 +368,7 @@ class GameConfigController {
         }
 
         let self = this;
+        let currentPlayer = $('input[name=currentPlayer]').val();
         this.dao.get(gameId, async function(err, data) {
             if (err) {
                 alert('pollForPlayersReady: error "' + err.message + '", see console log for details');
@@ -367,9 +381,9 @@ class GameConfigController {
                     if (gameDetail.players[id]['ready'] === false) {
                         allPlayersReady = false;
                     } else {
-                        let currentPlayer = $('input[name=currentPlayer]').val();
+
                         if (currentPlayer !== id && !joinNotifications[id]) {
-                            alert(gameDetail.players[id]['playerName'] + ' has joined!');
+                            $('.waitingOn' + id).css('display', 'none');
                             joinNotifications[id] = true;
                         }
 
@@ -392,7 +406,11 @@ class GameConfigController {
                     count++;
                     return self.pollForPlayersReady(gameId, count, joinNotifications);
                 } else {
-                    console.log('all players are ready');
+                    alert('All players are ready!');
+                    $('.waiting').css('display', 'none');
+                    if (currentPlayer !== '1') {
+                        $('.invitationClass').css('display', 'none');
+                    }
                     $('input[name=allPlayersReady]').val(1);
                     return await self.pollForGameLog(gameId);
                 }
