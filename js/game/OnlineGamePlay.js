@@ -20,13 +20,34 @@ class OnlineGamePlay extends Dao {
                 }
             }
         }
-        this.put(gameId, JSON.stringify(
-            {numberOfPlayers : numberOfPlayers, deckType : deckType, numberOfCards: numberOfCards, players: players, cardIds: cardIds}));
-        this.put(gameId + '-log', JSON.stringify([]));
+
+        let gameDetails = {numberOfPlayers : numberOfPlayers,
+            deckType : deckType,
+            numberOfCards: numberOfCards,
+            players: players,
+            cardIds: cardIds};
+
+        this.put(gameId, JSON.stringify(gameDetails), function (err) {
+            if (err) {
+                alert('createGameRecord: error "' + err.message + '". See console log for details');
+                throw new Error(err);
+            }
+        });
+        this.put(gameId + '-log', JSON.stringify([]), function (err) {
+            if (err) {
+                alert('createGameRecord: error "' + err.message + '". See console log for details');
+                throw new Error(err);
+            }
+        });
     }
 
     resetGame(gameId, currentPlayer) {
-        this.put(gameId + '-log', JSON.stringify([]));
+        this.put(gameId + '-log', JSON.stringify([]), function (err) {
+            if (err) {
+                alert('createGameRecord: error "' + err.message + '". See console log for details');
+                throw new Error(err);
+            }
+        });
         $('input[name=localBrowserTurns]').val('');
         $('input[name=allPlayersReady]').val(0);
         $('input[name=gameLogReadIndex]').val(-1);
@@ -47,6 +68,8 @@ class OnlineGamePlay extends Dao {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
                 gameDetail['players'][currentPlayer]['ready'] = false;
+
+
 
                 console.log('reset game %o', gameDetail);
                 this.put(gameId, JSON.stringify(gameDetail), function (err) {
@@ -149,7 +172,7 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
 
-            if (count >= 10) {
+            if (count >= 30) {
                 let msg = 'something went wrong, game did not warp up';
                 alert(msg);
                 throw new Error(msg);
@@ -215,7 +238,7 @@ class OnlineGamePlay extends Dao {
                 console.log('==> found game log: %o', gameLog);
                 if (gameLog.length < (game.turnCounter  - 1)) {
                     console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (game.turnCounter - 1) + ' retrying for the ' + count + 'time');
-                    await self.sleep(1000);
+                    await self.sleep(100);
                     if (count < 3) {
                         self.logCardFlip(gameId, currentPlayer, cardId, game, ++count);
                     }

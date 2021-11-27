@@ -10,24 +10,7 @@ class Dao {
         this.stateDir = 'state'
     }
 
-    // TODO: deprecated put that takes no callback
-    put(key, value) {
-        console.log('putting: %o bucket: %s key: %o', JSON.parse(value), ' into bucket:' + this.bucket + '/' + this.stateDir, key);
-        this.s3.putObject({
-            Bucket: this.bucket + '/' + this.stateDir,
-            Key: key,
-            ContentType: 'application/json; charset=utf-8',
-            Body: value
-        }, function(err, data) {
-            if(err) {
-                alert('Failed to write data, see console log for details');
-                console.log('Failed to write data %o', err);
-            }
-        });
-
-    }
-
-    put2(key, value, fn) {
+    put(key, value, fn) {
         console.log('putting: %o bucket: %s key: %o', JSON.parse(value), ' into bucket:' + this.bucket + '/' + this.stateDir, key);
         this.s3.putObject({
             Bucket: this.bucket + '/' + this.stateDir,

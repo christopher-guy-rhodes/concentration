@@ -107,7 +107,7 @@ class GameConfigController {
                     let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                     gameDetail['players'][playerId]['ready'] = true;
                     console.log('in success block of get')
-                    self.dao.put2(gameId, JSON.stringify(gameDetail), function (err) {
+                    self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
                         if (err) {
                             alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
                             throw new Error(err);
