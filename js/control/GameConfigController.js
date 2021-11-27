@@ -387,14 +387,25 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.pollForPlayersReady(gameId).then(function(result) {
-                console.log('got response from pollForPlayersReady');
+            this.pollForPlayersReady(gameId, function(gameId, currentPlayer) {
+                self.handlePlayersReady(currentPlayer);
+                self.pollForGameLog(gameId);
             });
         }
         this.getGame().play(document);
     }
 
-    async pollForPlayersReady(gameId, count = 0, joinNotifications = {}) {
+    handlePlayersReady(currentPlayer) {
+        alert('All players are ready');
+        console.log('this is %o', this);
+        $('.waiting').css('display', 'none');
+        if (currentPlayer !== '1') {
+            $('.invitationClass').css('display', 'none');
+        }
+        $('input[name=allPlayersReady]').val(1);
+    }
+
+    async pollForPlayersReady(gameId, fn, count = 0, joinNotifications = {}) {
         await sleep(5000);
 
         let self = this;
@@ -406,7 +417,7 @@ class GameConfigController {
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                if (count >= 10) {
+                if (count >= 60) {
 
                     $('.waitLongerContainer').css('display', 'block');
 
@@ -448,15 +459,18 @@ class GameConfigController {
                 }
                 console.log('==> players: %o', gameDetail.players);
                 if (!allPlayersReady) {
-                    return self.pollForPlayersReady(gameId, ++count, joinNotifications);
+                    return self.pollForPlayersReady(gameId, fn, ++count, joinNotifications);
                 } else {
-                    alert('All players are ready!');
+                    fn(gameId, currentPlayer);
+                    /*
                     $('.waiting').css('display', 'none');
                     if (currentPlayer !== '1') {
                         $('.invitationClass').css('display', 'none');
                     }
                     $('input[name=allPlayersReady]').val(1);
                     return await self.pollForGameLog(gameId);
+
+                     */
                 }
             }
         });
