@@ -8,6 +8,7 @@ class OnlineGamePlay extends Dao {
         let players = {};
         players[1] = {
             'playerName' : playersInput[0]['playerName'],
+            'complete' : false,
             'ready' : true
         };
         if (playersInput.length > 1) {

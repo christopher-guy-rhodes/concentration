@@ -29,6 +29,7 @@ class GameConfigView {
     buildGameControlForms(document) {
         validateRequiredParams(this.buildGameControlForms, arguments, 'document');
         this.withTitleTag(document)
+            .withNavBar(document)
             .withGameOptionsForm(document)
             .withPlayerForm(document)
             .withScoreBoardContent(document)
@@ -36,7 +37,7 @@ class GameConfigView {
             .withAllPlayersReadyHiddenInput(document)
             .withGameLogIndex(document)
             .withGameLogCaughtUp(document)
-            .withLocalBrowserTurns(document);
+            .withLocalBrowserTurns(document)
         BODY_ELEMENT.appendChild(GAMEBOARD_ELEMENT);
     }
 
@@ -108,10 +109,24 @@ class GameConfigView {
                 .withInnerText('Waiting for:').build());
 
         for (let i = 1; i <= MAX_PLAYERS; i++) {
-            waitingDiv.appendChild(new ElementBuilder(document).withTag(SPAN_TAG).withClass('waitingOn' + i).build())
+            waitingDiv.appendChild(new ElementBuilder(document)
+                .withTag(SPAN_TAG)
+                .withClass('waitingOn' + i).build());
         }
 
         div.appendChild(waitingDiv);
+
+        let waitLongerDiv = new ElementBuilder(document).withTag(DIV_TAG)
+            .withClass('waitLongerContainer')
+            .withAttribute('style', 'display: none')
+            .withInnerText('Gave up waiting  ').build()
+            .appendChild(new ElementBuilder(document)
+                .withTag(INPUT_TAG)
+                .withClass('waitLonger')
+                .withAttribute('type', 'button')
+                .withAttribute('value', 'Wait longer').build());
+
+        div.appendChild(waitLongerDiv);
 
         div.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
@@ -131,6 +146,16 @@ class GameConfigView {
         BODY_ELEMENT.appendChild(new ElementBuilder(document)
             .withTag(H2_TAG)
             .withInnerText('Classic Concentration Memory Game').build());
+        return this;
+    }
+
+    /* private */
+    withNavBar(document) {
+        BODY_ELEMENT.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
+            .withClass('navBar').build()
+            .appendChild(new ElementBuilder(document).withTag(ANCHOR_TAG)
+                .withAttribute('href', '/concentration.html')
+                .withInnerText('New Game').build()));
         return this;
     }
 

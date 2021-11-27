@@ -87,6 +87,41 @@ class GameConfigController {
         // Handle the play online checkbox
         this.handlePlayOnlineEvent();
 
+        this.handleWaitLonger();
+
+    }
+
+    handleWaitLonger() {
+        let self = this;
+        $('.waitLonger').click(function (e) {
+            let url = new URL(window.location);
+            let gameId = url.searchParams.get("gameId");
+            let playerId = url.searchParams.get("playerId");
+
+
+            self.dao.get(gameId, function (err, data) {
+                if (err) {
+                    alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
+                    throw new Error(err);
+                } else {
+                    let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+                    gameDetail['players'][playerId]['ready'] = true;
+                    console.log('in success block of get')
+                    self.dao.put2(gameId, JSON.stringify(gameDetail), function (err) {
+                        if (err) {
+                            alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
+                            throw new Error(err);
+                        }
+                        console.log('in success block of put');
+                        self.pollForPlayersReady(gameId);
+
+                        $('.waitLongerContainer').css('display', 'none');
+                    });
+                }
+            })
+            //console.log('got a click on wait for longer, polling again');
+            //self.pollForGameLog(gameId);
+        });
     }
 
     handlePlayOnlineEvent() {
@@ -352,7 +387,7 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.pollForPlayersReady(gameId, this).then(function(result) {
+            this.pollForPlayersReady(gameId).then(function(result) {
                 console.log('got response from pollForPlayersReady');
             });
         }
@@ -362,11 +397,6 @@ class GameConfigController {
     async pollForPlayersReady(gameId, count = 0, joinNotifications = {}) {
         await sleep(5000);
 
-        if (count >= 60) {
-            alert('Waited ' + (60*5 / 60) + ' minutes for players to join, giving up');
-            return false;
-        }
-
         let self = this;
         let currentPlayer = $('input[name=currentPlayer]').val();
         this.dao.get(gameId, async function(err, data) {
@@ -375,6 +405,21 @@ class GameConfigController {
                 throw new Error(err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+
+                if (count >= 10) {
+
+                    $('.waitLongerContainer').css('display', 'block');
+
+                    gameDetail['players'][currentPlayer]['ready'] = false;
+                    self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
+                        if (err) {
+                            alert('pollForPlayersReady: error "' + err.message + '", see console loog for details');
+                            throw new Error(err);
+                        }
+                    });
+                    return false;
+                }
+
                 console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
                 let allPlayersReady = true;
                 for (let id of Object.keys(gameDetail.players)) {
@@ -403,8 +448,7 @@ class GameConfigController {
                 }
                 console.log('==> players: %o', gameDetail.players);
                 if (!allPlayersReady) {
-                    count++;
-                    return self.pollForPlayersReady(gameId, count, joinNotifications);
+                    return self.pollForPlayersReady(gameId, ++count, joinNotifications);
                 } else {
                     alert('All players are ready!');
                     $('.waiting').css('display', 'none');
