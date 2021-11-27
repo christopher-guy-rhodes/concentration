@@ -119,10 +119,10 @@ class GameConfigController {
 
                 let html = '<strong>Invitation Links:</strong><br/>';
                 for (let i = 2; i <= numPlayers; i++) {
-                    html += 'Player ' + i + ' ' + self.generateInvitationLink(i, baseUrl, uuid) + '<br/>';
+                    html += 'Player ' + i + ': ' + self.generateInvitationLink(i, baseUrl, uuid) + '<br/>';
                 }
-                $('.invitationClass').html(html);
 
+                $('.invitationClass').html(html);
             } else {
                 alert(search);
                 window.history.replaceState( {} , '', baseUrl);
@@ -137,7 +137,8 @@ class GameConfigController {
     }
 
     generateInvitationLink(playerNumber, baseUrl, uuid) {
-        return baseUrl + '?gameId=' + uuid + '&playerId=' + playerNumber;
+        let url = baseUrl + '?gameId=' + uuid + '&playerId=' + playerNumber;
+        return url + ' (<a href="' + url  +'">link</a>)';
     }
 
 

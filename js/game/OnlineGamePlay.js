@@ -14,7 +14,8 @@ class OnlineGamePlay extends Dao {
             for (let i = 2; i <= playersInput.length; i++) {
                 players[i] = {
                     'playerName' : playersInput[i-1]['playerName'],
-                    'ready' : false
+                    'ready' : false,
+                    'complete' : false
                 }
             }
         }
@@ -73,6 +74,7 @@ class OnlineGamePlay extends Dao {
 
                 gameDetail['players'][playerId]['playerName'] = name;
                 gameDetail['players'][playerId]['ready'] = true;
+                gameDetail['players'][playerId]['complete'] = false;
                 self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
                     if (err) {
                         alert('Error marking players ready ' + err.message + ', see console log for details');
@@ -118,24 +120,78 @@ class OnlineGamePlay extends Dao {
         })
     }
 
-    waitForGameRestart(gameId, count = 0) {
+    markGameCompleteForPlayer(gameId, playerId) {
         let self = this;
-        this.get(gameId + '-log', async function (err, data) {
-            await self.sleep(10000);
+        this.get(gameId, async function (err, data) {
             if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
+                alert('markGameCompleteForPlayer: error "' + err.message + '", see console log for details');
+                throw new Error(err);
             } else {
-                let gameLog = JSON.parse(data.Body.toString('utf-8'));
-                console.log('==> waiting for owner to restart found game log %o', gameLog);
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+                gameDetail['players'][playerId]['complete'] = true;
 
-                if (gameLog.length === 0) {
-                    $('.gameOver').find('input').val('Play again');
+                self.put(gameId, JSON.stringify(gameDetail), function (err) {
+                    alert('markGameCompleteForPlayer: error "' + err.message + '", see console log for details');
+                    throw new Error(err);
+                })
+            }
+        });
+    }
+
+    waitForGameWrapUp(gameId, playerId, count = 0) {
+        let self = this;
+        this.get(gameId, async function (err, data) {
+
+            if (count >= 10) {
+                let msg = 'something went wrong, game did not warp up';
+                alert(msg);
+                throw new Error(msg);
+            }
+
+            await self.sleep(5000);
+            if (err) {
+                alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
+                throw new Error(err);
+            } else {
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+
+                let allComplete = true;
+                for (let playerId of Object.keys(gameDetail['players'])) {
+                    if (!gameDetail['players'][playerId]['complete']) {
+                        allComplete = false;
+                        break;
+                    }
+                }
+
+                if (allComplete) {
+                    if (playerId == '1') {
+                        for (let playerId of Object.keys(gameDetail['players'])) {
+                            gameDetail['players'][playerId]['complete'] = false;
+                            gameDetail['players'][playerId]['ready'] = false;
+                        }
+
+                        self.put(gameId, JSON.stringify(gameDetail), function (err) {
+                            if (err) {
+                                alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
+                                throw new Error(err);
+                            };
+                        });
+                        self.put(gameId + '-log', JSON.stringify([]), function(err) {
+                            if (err) {
+                                alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
+                                throw new Error(err);
+                            };
+                        })
+                    } else {
+                        // give time for game to be reset
+                        await self.sleep(10000);
+                    }
+
                     $('.gameOver').find('input').prop('disabled', false);
-                } else if (count < 9) {
-                    self.waitForGameRestart(gameId, ++count);
+                    $('.gameOver').find('input').val('Play again!');
+
                 } else {
-                    $('.gameOver').find('input').val('Game owner did not restart the game. Reload to play once the owner has restarted the game')
+                    self.waitForGameWrapUp(gameId, playerId, ++count);
                 }
             }
         });

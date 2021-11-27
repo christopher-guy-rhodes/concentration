@@ -40,10 +40,10 @@ class Game {
 
         if (gameId !== null) {
 
-            let currentPlayer = playerId == null ? '1' : playerId;
+            let currentPlayer = playerId === null ? '1' : playerId;
             $('input[name=currentPlayer]').val(currentPlayer);
 
-            if (currentPlayer === '1') {
+            if (playerId === null) {
                 let cards = this.getGameBoard().getDeck().getCards();
 
                 let cardIds = [];
@@ -57,9 +57,9 @@ class Game {
                 window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId + '&playerId=1');
 
             } else {
-                let name = $('.playerName' + currentPlayer).find('input').val();
-                name = name.length > 0 ? name : 'Player ' + currentPlayer;
-                this.onlineGamePlay.markPlayerReady(gameId, currentPlayer, name, this);
+                let name = $('.playerName' + playerId).find('input').val();
+                name = name.length > 0 ? name : 'Player ' + playerId;
+                this.onlineGamePlay.markPlayerReady(gameId, playerId, name, this);
             }
         } else {
             $('input[name="currentPlayer"]').val(1);
@@ -143,24 +143,13 @@ class Game {
         let playerId = url.searchParams.get("playerId");
 
         if (gameId !== null) {
-            $('.' + this.gameResetClass).find('input').prop('disabled', true);
-            if (playerId === '1') {
-                $('.' + this.gameResetClass).find('input').val('Waiting 30 seconds for game to wrap up');
-            } else {
-                $('.' + this.gameResetClass).find('input').val('Waiting for game owner to restart');
-                this.onlineGamePlay.waitForGameRestart(gameId);
-            }
-            $('.' + this.gameResetClass).css('display', 'inline-block');
-            let self = this;
+            this.onlineGamePlay.markGameCompleteForPlayer(gameId, playerId);
 
-            if (playerId === '1') {
-                // TODO: don't use hard coded time out. If there was a long streak of matches the game could take
-                // longer than that to play out. Instead use state in game object and poll for that to be done
-                setTimeout(function () {
-                    $('.' + self.gameResetClass).find('input').prop('disabled', false);
-                    $('.' + self.gameResetClass).find('input').val('Play again!');
-                }, 30000);
-            }
+            $('.' + this.gameResetClass).find('input').prop('disabled', true);
+            $('.' + this.gameResetClass).find('input').val('Waiting for game to wrap up for other players');
+            $('.' + this.gameResetClass).css('display', 'inline-block');
+
+            this.onlineGamePlay.waitForGameWrapUp(gameId, playerId);
         }
     }
 
