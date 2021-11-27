@@ -11,7 +11,7 @@ class Dao {
     }
 
     put(key, value) {
-        console.log('putting bucket:' + this.bucket + '/' + this.stateDir + ' key:' + key);
+        console.log('putting: %o bucket: %s key: %o', JSON.parse(value), ' into bucket:' + this.bucket + '/' + this.stateDir, key);
         this.s3.putObject({
             Bucket: this.bucket + '/' + this.stateDir,
             Key: key,

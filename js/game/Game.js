@@ -38,12 +38,8 @@ class Game {
         let playerId = url.searchParams.get("playerId");
         this.getGameBoard().getDeck().shuffleCards();
 
-        console.log('====> a and game id is ' + (gameId));
-
         if (gameId !== null) {
 
-            console.log('==> b');
-            //let uuid = generateUuid();
             let currentPlayer = playerId == null ? '1' : playerId;
             $('input[name=currentPlayer]').val(currentPlayer);
 
@@ -61,19 +57,11 @@ class Game {
                 window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId + '&playerId=1');
 
             } else {
-                console.log('===> c');
-                console.log('=========> marking player ' + currentPlayer + ' ready');
-
-
                 let name = $('.playerName' + currentPlayer).find('input').val();
                 name = name.length > 0 ? name : 'Player ' + currentPlayer;
                 this.onlineGamePlay.markPlayerReady(gameId, currentPlayer, name, this);
             }
-
-            // poll for players to join
-            //this.onlineGamePlay.pollForPlayersReady(gameId, this);
         } else {
-            console.log('setting all players ready');
             $('input[name="currentPlayer"]').val(1);
             $('input[name=allPlayersReady]').val(1);
             $('input[name=gameLogCaughtUp]').val(1);

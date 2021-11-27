@@ -73,7 +73,6 @@ class OnlineGamePlay extends Dao {
 
                 gameDetail['players'][playerId]['playerName'] = name;
                 gameDetail['players'][playerId]['ready'] = true;
-                console.log('==> game detail: %o',gameDetail);
                 self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
                     if (err) {
                         alert('Error marking players ready ' + err.message + ', see console log for details');
@@ -87,14 +86,13 @@ class OnlineGamePlay extends Dao {
     }
 
     loadGameForPlayer(gameId, playerId) {
-        console.log('load game for player ' + playerId + ' game id ' + gameId);
         this.get(gameId, function(err, data) {
             if (err) {
                 alert('Error polling for players ' + err.message + ', see console log for details');
                 console.log('error: %o', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                console.log('gameDetail %o', gameDetail);
+                console.log('loadGameForPlayer: playerId: %s gameId: %s detail: %o', playerId , gameId, gameDetail);
                 $('input[name="currentPlayer"]').val(playerId);
                 $('.numPlayers').val(gameDetail['numberOfPlayers']);
                 $('.numPlayers').attr('disabled', true);
@@ -110,10 +108,10 @@ class OnlineGamePlay extends Dao {
                 for (let pid of Object.keys(gameDetail['players'])) {
                     let name = gameDetail['players'][pid]['playerName'];
                     if (pid !== playerId) {
-                        $('.playerName' + pid).find('input').val(name + ' (game owner)');
+                        $('.playerName' + pid).find('input').val(name);
                         $('.playerName' + pid).find('input').attr('disabled', true);
                     } else {
-                        $('.playerName' + pid).find('input').val('');
+                        //$('.playerName' + pid).find('input').val('');
                     }
                 }
             }
@@ -167,131 +165,6 @@ class OnlineGamePlay extends Dao {
         })
     }
 
-    async pollForPlayersReady(gameId, gameController, count = 0) {
-        console.log('count ' + count);
-        await this.sleep(5000);
-
-        if (count >= 60) {
-            alert('Waited ' + (60*5 / 60) + ' minutes for players to join, giving up');
-            return;
-        }
-        let joinNotifications = {};
-
-        let self = this;
-        this.get(gameId, function(err, data) {
-            if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
-            } else {
-                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                console.log('==> game detail: %o', gameDetail);
-                let playerIds = Object.keys(gameDetail.players);
-                let allPlayersReady = true;
-                for (let id of playerIds) {
-                    if (gameDetail.players[id]['ready'] === false) {
-                        allPlayersReady = false;
-                    } else {
-                        // ==>
-                        let currentPlayer = $('input[name=currentPlayer]').val();
-                        if (currentPlayer !== id && !joinNotifications[id]) {
-                            alert(gameDetail.players[id]['playerName'] + ' has joined!');
-                            joinNotifications[id] = true;
-                        }
-
-                        gameController.game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
-                        console.log('want to update player ' + id + ', players: %o', gameController.game.players);
-                        let name = gameDetail.players[id]['playerName'] + ' 0 matches in 0 turns';
-                        let nameOnForm = $('.player' + id).text().replace(/(<([^>]+)>)/gi, "");
-                        nameOnForm = nameOnForm.replace('>>', '');
-                        nameOnForm = nameOnForm.replace('<<', '');
-                        nameOnForm = nameOnForm.replace(/\s\s+/g, ' ');
-                        if (name !== nameOnForm) {
-                            console.log('setting ' + nameOnForm + ' to ' + name);
-
-                            console.log('==> currentPlayer %o', $('.currentPlayer'));
-                            console.log($('input[name=currentPlayer]').val()  + '!== ' + id)
-
-                            console.log('"' + name + '" !== "' + nameOnForm + '"');
-                            if ($('input[name=currentPlayer]').val() !== id) {
-                                if (id === '1') {
-
-                                    $('.player' + id).html('<strong>&gt;&gt;' + gameDetail.players[id]['playerName'] + '&lt;&lt;</strong> 0 matches in 0 turns');
-                                } else {
-                                    $('.player' + id).text(name);
-
-                                }
-                                $('.name' + id).val(gameDetail.players[id]['playerName']);
-                            }
-
-                        } else {
-                            console.log('name is equal to name on form: ' + nameOnForm);
-                        }
-                    }
-                }
-                console.log('==> players: %o', gameDetail.players);
-                if (!allPlayersReady) {
-                    count++;
-                    self.pollForPlayersReady(gameId, gameController, count);
-                } else {
-                    console.log('all players are ready');
-                    $('input[name=allPlayersReady]').val(1);
-
-                    self.pollForGameLog(gameId, gameController);
-                }
-            }
-        });
-    }
-
-    async pollForGameLog(gameId, gameController) {
-        await this.sleep(5000);
-
-        let self = this;
-
-        this.get(gameId + '-log', async function (err, data) {
-            if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
-            } else {
-                let gameLog = JSON.parse(data.Body.toString('utf-8'));
-
-                let index = $('input[name=gameLogReadIndex]').val();
-                if (index === '-1') {
-                    index = '0';
-                }
-                let currentPlayer = $('input[name=currentPlayer]').val();
-                let playCatchUp = index === '0';
-                if (index < gameLog.length) {
-                    console.log('gameLog: %o', gameLog);
-                    $('input[name=gameLogCaughtUp]').val(0);
-                    for (let i = index; i < gameLog.length; i++) {
-                        let logEntry = gameLog[i];
-
-                        // Don't handle the click from the game log if it was a local clieck
-                        let localTurns = $('input[name=localBrowserTurns]').val().split(',');
-                        if (localTurns.includes(index.toString())) {
-                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
-                        } else {
-                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
-                            console.log('%o does not contain %o',localTurns, index);
-                            gameController.handleCardClick(logEntry['cardId'], logEntry['player'], false);
-                            await self.sleep(2000);
-                        }
-                        index++
-
-                    }
-                    console.log('==> marking new index as ' + (index));
-                    $('input[name=gameLogReadIndex]').val(index);
-                    $('input[name=gameLogCaughtUp]').val(1);
-                }
-
-                if (!gameController.game.isGameOver()) {
-                    self.pollForGameLog(gameId, gameController);
-                }
-            }
-        });
-
-
-    }
 
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
