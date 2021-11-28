@@ -229,7 +229,7 @@ class OnlineGamePlay extends Dao {
         });
     }
 
-    logCardFlip(gameId, currentPlayer, cardId, game, count = 0) {
+    logCardFlip(gameId, currentPlayer, turn, cardId, game, count = 0) {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
             if  (err) {
@@ -242,11 +242,10 @@ class OnlineGamePlay extends Dao {
                     console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (game.turnCounter - 1) + ' retrying for the ' + count + 'time');
                     await self.sleep(100);
                     if (count < 3) {
-                        self.logCardFlip(gameId, currentPlayer, cardId, game, ++count);
+                        self.logCardFlip(gameId, currentPlayer, turn, cardId, game, ++count);
                     }
                 }
-                //gameLog.push({player : currentPlayer, cardId : cardId});
-                gameLog[game.turnCounter - 1] = {player : currentPlayer, cardId : cardId};
+                gameLog[turn] = {player : currentPlayer, cardId : cardId};
 
                 self.put(gameId + '-log', JSON.stringify(gameLog), function() {
                     if (err) {

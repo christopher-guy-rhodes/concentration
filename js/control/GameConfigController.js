@@ -20,6 +20,7 @@ class GameConfigController {
         this.scoreBoardForm = 'scoreBoardForm';
         this.gameBoardCss = 'gameBoard';
         this.playOnlineCheckboxName = 'playOnlineCheckboxName';
+        this.waitLongerContainerClass = 'waitLongerContainer';
 
         this.onlineGamePlay = new OnlineGamePlay();
         this.dao = new Dao();
@@ -39,6 +40,7 @@ class GameConfigController {
             .withNameInputPrefixClass(this.nameInputPrefixClass)
             .withPlayerNameForm(this.playerNameForm)
             .withScoreBoardForm(this.scoreBoardForm)
+            .withWaitLongerContainerClass(this.waitLongerContainerClass)
             .withPlayOnlineCheckboxName(this.playOnlineCheckboxName)
             .build();
     }
@@ -113,12 +115,12 @@ class GameConfigController {
                             throw new Error(err);
                         }
                         console.log('in success block of put');
-                        self.pollForPlayersReady(gameId, function(gameId, currentPlayer) {
+                        self.pollForPlayersReady(gameId, playerId, function(gameId, currentPlayer) {
                             self.handlePlayersReady(currentPlayer);
                             self.pollForGameLog(gameId);
                         });
 
-                        $('.waitLongerContainer').css('display', 'none');
+                        $('.' + self.waitLongerContainerClass).css('display', 'none');
                     });
                 }
             })
@@ -347,7 +349,7 @@ class GameConfigController {
         if (!card.getIsFaceUp()) {
             if (isCurrentPlayer && gameId !== null) {
                 // only log the card flip if the player is caught up
-                this.onlineGamePlay.logCardFlip(gameId, player, clickedCardId, this.getGame());
+                this.onlineGamePlay.logCardFlip(gameId, player, this.game.turnCounter, clickedCardId, this.getGame());
             }
             this.getGame().takePlayerTurn(card);
         }
@@ -393,7 +395,7 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.pollForPlayersReady(gameId, function(gameId, currentPlayer) {
+            this.pollForPlayersReady(gameId, currentPlayer, function(gameId, currentPlayer) {
                 self.handlePlayersReady(currentPlayer);
                 self.pollForGameLog(gameId);
             });
@@ -410,73 +412,62 @@ class GameConfigController {
         $('input[name=allPlayersReady]').val(1);
     }
 
-    async pollForPlayersReady(gameId, fn, count = 0, joinNotifications = {}) {
+    async pollForPlayersReady(gameId, currentPlayer, fn, count = 0, joinNotifications = {}) {
         await sleep(5000);
 
         let self = this;
-        let currentPlayer = $('input[name=currentPlayer]').val();
         this.dao.get(gameId, async function(err, data) {
             if (err) {
-                alert('pollForPlayersReady: error "' + err.message + '", see console log for details');
+                alert('pollForPlayersReady: error see console log for details.');
                 throw new Error(err);
-            } else {
-                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+            }
+            let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                if (count >= 30) {
+            if (count >= 30) {
 
-                    $('.waitLongerContainer').css('display', 'block');
-
-                    gameDetail['players'][currentPlayer]['ready'] = false;
-                    self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
-                        if (err) {
-                            alert('pollForPlayersReady: error "' + err.message + '", see console loog for details');
-                            throw new Error(err);
-                        }
-                    });
-                    return false;
-                }
-
-                console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
-                let allPlayersReady = true;
-                for (let id of Object.keys(gameDetail.players)) {
-                    if (gameDetail.players[id]['ready'] === false) {
-                        allPlayersReady = false;
-                    } else {
-
-                        if (currentPlayer !== id && !joinNotifications[id]) {
-                            $('.waitingOn' + id).css('display', 'none');
-                            joinNotifications[id] = true;
-                        }
-
-                        let nameInDetail = gameDetail.players[id]['playerName'];
-                        let nameInPlayerObject = self.game.players[id - 1]['playerName'];
-
-                        if (nameInDetail !== nameInPlayerObject) {
-                            console.log('setting ' + nameInPlayerObject + ' to ' + nameInDetail);
-                            self.game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
-
-
-                            self.game.scoreBoard.updateStats(self.game.players[0]);
-
-                        }
-                        $('.name' + id).val(nameInDetail);
+                $('.' + self.waitLongerContainerClass).css('display', 'block');
+                gameDetail['players'][currentPlayer]['ready'] = false;
+                self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
+                    if (err) {
+                        alert('pollForPlayersReady: error see console log for details.');
+                        throw new Error(err);
                     }
-                }
-                console.log('==> players: %o', gameDetail.players);
-                if (!allPlayersReady) {
-                    return self.pollForPlayersReady(gameId, fn, ++count, joinNotifications);
+                });
+                return false;
+            }
+
+            console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
+            let allPlayersReady = true;
+            for (let id of Object.keys(gameDetail.players)) {
+                if (gameDetail.players[id]['ready'] === false) {
+                    allPlayersReady = false;
+                    break;
                 } else {
-                    fn(gameId, currentPlayer);
-                    /*
-                    $('.waiting').css('display', 'none');
-                    if (currentPlayer !== '1') {
-                        $('.invitationClass').css('display', 'none');
-                    }
-                    $('input[name=allPlayersReady]').val(1);
-                    return await self.pollForGameLog(gameId);
 
-                     */
+                    if (currentPlayer !== id && !joinNotifications[id]) {
+                        $('.waitingOn' + id).css('display', 'none');
+                        joinNotifications[id] = true;
+                    }
+
+                    let nameInDetail = gameDetail.players[id]['playerName'];
+                    let nameInPlayerObject = self.game.players[id - 1]['playerName'];
+
+                    if (nameInDetail !== nameInPlayerObject) {
+                        console.log('setting ' + nameInPlayerObject + ' to ' + nameInDetail);
+                        self.game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
+
+
+                        self.game.scoreBoard.updateStats(self.game.players[0]);
+
+                    }
+                    $('.name' + id).val(nameInDetail);
                 }
+            }
+            console.log('==> players: %o', gameDetail.players);
+            if (!allPlayersReady) {
+                return self.pollForPlayersReady(gameId, currentPlayer, fn, ++count, joinNotifications);
+            } else {
+                fn(gameId, currentPlayer);
             }
         });
     }

@@ -2,11 +2,11 @@ class GameConfigView {
     constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
                 scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm,
-                scoreBoardForm, playOnlineCheckboxName) {
+                scoreBoardForm, playOnlineCheckboxName, waitLongerContainerClass) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
-            'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName');
+            'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName', 'waitLongerContainerClass');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -20,6 +20,7 @@ class GameConfigView {
         this.playerNameForm = playerNameForm;
         this.scoreBoardForm = scoreBoardForm;
         this.playOnlineCheckboxName = playOnlineCheckboxName;
+        this.waitLongerContainerClass = waitLongerContainerClass;
     }
 
     /**
@@ -117,7 +118,7 @@ class GameConfigView {
         div.appendChild(waitingDiv);
 
         let waitLongerDiv = new ElementBuilder(document).withTag(DIV_TAG)
-            .withClass('waitLongerContainer')
+            .withClass(this.waitLongerContainerClass)
             .withAttribute('style', 'display: none')
             .withInnerText('Gave up waiting  ').build()
             .appendChild(new ElementBuilder(document)
