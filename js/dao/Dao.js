@@ -31,10 +31,12 @@ class Dao {
             }
         };
 
+        /*
         let rand = Math.floor(Math.random() * 10);
         console.log('rand is ' + rand);
         let simulateError = rand <= 4;
-        //let simulateError = false;
+        */
+        let simulateError = false;
 
         this.s3.putObject({
             Bucket: this.bucket + '/' + this.stateDir,
@@ -64,10 +66,12 @@ class Dao {
             }
         };
 
+        /*
         let rand = Math.floor(Math.random() * 10);
         console.log('rand is ' + rand);
         let simulateError = rand <= 4;
-        //let simulateError = false;
+        */
+        let simulateError = false;
         this.s3.getObject({Bucket : this.bucket + '/' + this.stateDir, Key: simulateError ? undefined : key}, retryFn);
     }
 }
