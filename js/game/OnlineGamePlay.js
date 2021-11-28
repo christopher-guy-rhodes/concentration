@@ -244,8 +244,11 @@ class OnlineGamePlay extends Dao {
                     }
                 }
                 gameLog.push({player : currentPlayer, cardId : cardId});
-                self.put(gameId + '-log', JSON.stringify(gameLog), function (err) {
-                    console.log('==> error writing to game log %o', err);
+
+                self.put(gameId + '-log', JSON.stringify(gameLog), function() {
+                    if (err) {
+                        alert('need to handle this error');
+                    }
                 });
             }
         })

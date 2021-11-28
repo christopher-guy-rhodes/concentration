@@ -10,14 +10,40 @@ class Dao {
         this.stateDir = 'state'
     }
 
-    put(key, value, fn) {
-        console.log('putting: %o bucket: %s key: %o', JSON.parse(value), ' into bucket:' + this.bucket + '/' + this.stateDir, key);
+    put(key, value, fn, count = 0) {
+        let self = this;
+        console.log('put: value: %s bucket: %s key: %s', value, this.bucket + '/' + this.stateDir, key);
+        let retryFn = async function retry(err) {
+            if (err) {
+                if (count > 3) {
+                    fn(err);
+                } else {
+                    let backoff = Math.pow(2, count);
+                    console.log('put: Error key:%s value:%s, retrying with backoff:%d count:%d',
+                        key, value, backoff, count);
+                    await sleep(backoff);
+                    self.put(key, value, retry, ++count);
+                }
+            } else {
+                console.log('put successful: value: %s bucket: %s key: %s',
+                    value, this.bucket + '/' + this.stateDir, key);
+                fn();
+            }
+        };
+
+        /*
+        let rand = Math.floor(Math.random() * 10);
+        console.log('rand is ' + rand);
+        let simulateError = rand <= 4;
+        */
+        let simulateError = false;
+
         this.s3.putObject({
             Bucket: this.bucket + '/' + this.stateDir,
-            Key: key,
+            Key: simulateError ? undefined : key,
             ContentType: 'application/json; charset=utf-8',
             Body: value
-        }, fn);
+        }, retryFn);
 
     }
 

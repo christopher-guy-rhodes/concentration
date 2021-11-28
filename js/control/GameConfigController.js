@@ -487,6 +487,7 @@ class GameConfigController {
                 throw new Error(err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
+                console.log('polling for game log %o', gameLog);
 
                 let index = $('input[name=gameLogReadIndex]').val();
                 if (index === '-1') {
