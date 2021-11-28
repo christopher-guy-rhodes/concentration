@@ -113,7 +113,10 @@ class GameConfigController {
                             throw new Error(err);
                         }
                         console.log('in success block of put');
-                        self.pollForPlayersReady(gameId);
+                        self.pollForPlayersReady(gameId, function(gameId, currentPlayer) {
+                            self.handlePlayersReady(currentPlayer);
+                            self.pollForGameLog(gameId);
+                        });
 
                         $('.waitLongerContainer').css('display', 'none');
                     });
@@ -417,7 +420,7 @@ class GameConfigController {
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                if (count >= 60) {
+                if (count >= 30) {
 
                     $('.waitLongerContainer').css('display', 'block');
 
