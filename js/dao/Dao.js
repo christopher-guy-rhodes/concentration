@@ -12,21 +12,21 @@ class Dao {
 
     put(key, value, fn, count = 0) {
         let self = this;
-        console.log('put: value: %s bucket: %s key: %s', value, this.bucket + '/' + this.stateDir, key);
+        //console.log('put: value: %s bucket: %s key: %s', value, this.bucket + '/' + this.stateDir, key);
         let retryFn = async function retry(err) {
             if (err) {
                 if (count > 3) {
                     fn(err);
                 } else {
                     let backoff = Math.pow(2, count);
-                    console.log('put error: key:%s value:%s, retrying with backoff:%d count:%d',
-                        key, value, backoff, count);
+                    //console.log('put error: key:%s value:%s, retrying with backoff:%d count:%d',
+                    //    key, value, backoff, count);
                     await sleep(backoff);
                     self.put(key, value, retry, ++count);
                 }
             } else {
-                console.log('put successful: key: %s bucket: %s value: %s',
-                    key, self.bucket + '/' + self.stateDir, value);
+                //console.log('put successful: key: %s bucket: %s value: %s',
+                //    key, self.bucket + '/' + self.stateDir, value);
                 fn();
             }
         };
@@ -49,19 +49,19 @@ class Dao {
 
     get(key, fn, count = 0) {
         let self = this;
-        console.log('get: bucket: %s key: %s', this.bucket + '/' + this.stateDir, key);
+        //console.log('get: bucket: %s key: %s', this.bucket + '/' + this.stateDir, key);
         let retryFn = async function retry(err, data) {
             if (err) {
                 if (count > 3) {
                     fn(err);
                 } else {
                     let backoff = Math.pow(2, count);
-                    console.log('get error: key:%s retrying with backoff:%d count:%d', key, backoff, count);
+                    //console.log('get error: key:%s retrying with backoff:%d count:%d', key, backoff, count);
                     await sleep(backoff);
                     self.get(key, retry, ++count);
                 }
             } else {
-                console.log('get successful: key: %s bucket: %s', key, self.bucket + '/' + self.stateDir);
+                //console.log('get successful: key: %s bucket: %s', key, self.bucket + '/' + self.stateDir);
                 fn(undefined, data);
             }
         };

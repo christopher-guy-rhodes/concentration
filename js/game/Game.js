@@ -24,6 +24,7 @@ class Game {
         this.numberOfCardsMatched = 0;
         this.numberOfCards = numberOfCards;
         this.onlineGamePlay = new OnlineGamePlay();
+        this.matchPending = false;
     }
 
     /**
@@ -86,6 +87,9 @@ class Game {
         let chosenCards = this.getCurrentPlayer().takeTurn(card);
         if (chosenCards.length > 1) {
             this.pendingFlipOrRemovel.add(chosenCards);
+        }
+        if (chosenCards.length > 1) {
+            this.matchPending = true;
         }
         this.doCardsMatch(chosenCards) ? this.handleMatch(chosenCards) : this.handleFailedMatch(chosenCards);
     }
@@ -169,6 +173,7 @@ class Game {
         setTimeout(function() {
             self.pendingFlipOrRemovel.delete(cards);
             self.setSelectionFaceDown(cards);
+            self.matchPending = false;
         }, CARD_FLIP_DELAY_MS)
 
     }
@@ -183,6 +188,7 @@ class Game {
             if (self.isGameOver()) {
                 self.handleGameOver();
             }
+            self.matchPending = false;
         }, CARD_FLIP_DELAY_MS);
     }
 

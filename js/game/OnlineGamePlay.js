@@ -93,7 +93,7 @@ class OnlineGamePlay extends Dao {
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                console.log('update game %o to cardIds %o', game, gameDetail['cardIds']);
+                //console.log('update game %o to cardIds %o', game, gameDetail['cardIds']);
 
                 let cards = [];
                 for (let cardId of gameDetail['cardIds']) {
@@ -110,7 +110,7 @@ class OnlineGamePlay extends Dao {
                         alert('Error marking players ready ' + err.message + ', see console log for details');
                         console.log('error: %o', err);
                     } else {
-                        console.log('successfully marked player ' + playerId + ' ready');
+                        //console.log('successfully marked player ' + playerId + ' ready');
                     }
                 });
             }
@@ -124,7 +124,7 @@ class OnlineGamePlay extends Dao {
                 console.log('error: %o', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                console.log('loadGameForPlayer: playerId: %s gameId: %s detail: %o', playerId , gameId, gameDetail);
+                //console.log('loadGameForPlayer: playerId: %s gameId: %s detail: %o', playerId , gameId, gameDetail);
                 $('input[name="currentPlayer"]').val(playerId);
                 $('.numPlayers').val(gameDetail['numberOfPlayers']);
                 $('.numPlayers').attr('disabled', true);
@@ -161,8 +161,10 @@ class OnlineGamePlay extends Dao {
                 gameDetail['players'][playerId]['complete'] = true;
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
-                    alert('markGameCompleteForPlayer: error "' + err.message + '", see console log for details');
-                    throw new Error(err);
+                    if (err) {
+                        alert('markGameCompleteForPlayer: error see console log for details');
+                        throw new Error(err);
+                    }
                 })
             }
         });
@@ -243,7 +245,8 @@ class OnlineGamePlay extends Dao {
                         self.logCardFlip(gameId, currentPlayer, cardId, game, ++count);
                     }
                 }
-                gameLog.push({player : currentPlayer, cardId : cardId});
+                //gameLog.push({player : currentPlayer, cardId : cardId});
+                gameLog[game.turnCounter - 1] = {player : currentPlayer, cardId : cardId};
 
                 self.put(gameId + '-log', JSON.stringify(gameLog), function() {
                     if (err) {

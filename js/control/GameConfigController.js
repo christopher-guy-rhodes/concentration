@@ -332,7 +332,10 @@ class GameConfigController {
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
 
 
-
+        if (gameId !== null && this.game.matchPending) {
+            // wait for the match to complete before starting another to thottle in online mode
+            return;
+        }
 
         let areAllPlayersReady = $('input[name=allPlayersReady]').val() === '1';
 
@@ -400,7 +403,6 @@ class GameConfigController {
 
     handlePlayersReady(currentPlayer) {
         alert('All players are ready');
-        console.log('this is %o', this);
         $('.waiting').css('display', 'none');
         if (currentPlayer !== '1') {
             $('.invitationClass').css('display', 'none');
@@ -490,7 +492,7 @@ class GameConfigController {
                 throw new Error(err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
-                console.log('polling for game log %o', gameLog);
+                //console.log('polling for game log %o', gameLog);
 
                 let index = $('input[name=gameLogReadIndex]').val();
                 if (index === '-1') {
@@ -498,8 +500,9 @@ class GameConfigController {
                 }
                 let currentPlayer = $('input[name=currentPlayer]').val();
                 let playCatchUp = index === '0';
+                console.log('game log %o', gameLog);
                 if (index < gameLog.length) {
-                    console.log('gameLog: %o', gameLog);
+                    //console.log('gameLog: %o', gameLog);
                     $('input[name=gameLogCaughtUp]').val(0);
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
@@ -510,14 +513,14 @@ class GameConfigController {
                             console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
                         } else {
                             console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
-                            console.log('%o does not contain %o',localTurns, index);
+                            //console.log('%o does not contain %o',localTurns, index);
                             self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
                             await sleep(2000);
                         }
                         index++
 
                     }
-                    console.log('==> marking new index as ' + (index));
+                    //console.log('==> marking new index as ' + (index));
                     $('input[name=gameLogReadIndex]').val(index);
                     $('input[name=gameLogCaughtUp]').val(1);
                 }
