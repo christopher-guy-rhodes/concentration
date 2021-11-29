@@ -61,7 +61,7 @@ class Game {
             } else {
                 let name = $('.playerName' + playerId).find('input').val();
                 name = name.length > 0 ? name : 'Player ' + playerId;
-                this.onlineGamePlay.markPlayerReady(gameId, playerId, name,
+                this.onlineGamePlay.setupPlayerAndDealCards(gameId, playerId, name,
                     function(cardId) {
                         return self.gameBoard.getDeck().getCardById(cardId);
                 },

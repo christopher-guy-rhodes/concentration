@@ -37,7 +37,7 @@ class OnlineGamePlay extends Dao {
         });
     }
 
-    markPlayerReady(gameId, playerId, name, fnGetCardById, fnSuccess) {
+    setupPlayerAndDealCards(gameId, playerId, name, fnGetCardById, fnSuccess) {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
