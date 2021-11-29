@@ -120,8 +120,8 @@ class OnlineGamePlay extends Dao {
     loadGameForPlayer(gameId, playerId) {
         this.get(gameId, function(err, data) {
             if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
+                alert('Error polling for players. See console log for details');
+                throw new Error(err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 //console.log('loadGameForPlayer: playerId: %s gameId: %s detail: %o', playerId , gameId, gameDetail);
@@ -148,6 +148,60 @@ class OnlineGamePlay extends Dao {
                 }
             }
         })
+    }
+
+    async pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition) {
+        await sleep(5000);
+
+        let self = this;
+
+        this.get(gameId + '-log', async function (err, data) {
+            if (err) {
+                alert('Error polling for players. see console log for details');
+                throw new Error(err);
+            } else {
+                let gameLog = JSON.parse(data.Body.toString('utf-8'));
+                //console.log('polling for game log %o', gameLog);
+
+                let index = $('input[name=gameLogReadIndex]').val();
+                if (index === '-1') {
+                    index = '0';
+                }
+                let currentPlayer = $('input[name=currentPlayer]').val();
+                let playCatchUp = index === '0';
+                console.log('game log %o', gameLog);
+                if (index < gameLog.length) {
+                    //console.log('gameLog: %o', gameLog);
+                    $('input[name=gameLogCaughtUp]').val(0);
+                    for (let i = index; i < gameLog.length; i++) {
+                        let logEntry = gameLog[i];
+
+                        // Don't handle the click from the game log if it was a local clieck
+                        let localTurns = $('input[name=localBrowserTurns]').val().split(',');
+                        if (localTurns.includes(index.toString())) {
+                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
+                        } else {
+
+                            fnReplayHandler(logEntry, index);
+                            await sleep(2000);
+                        }
+                        index++
+
+                    }
+                    //console.log('==> marking new index as ' + (index));
+                    $('input[name=gameLogReadIndex]').val(index);
+                    $('input[name=gameLogCaughtUp]').val(1);
+                }
+
+                if (!fnTerminationCondition()) {
+                    self.pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition);
+                } else {
+                    return true;
+                }
+            }
+        });
+
+
     }
 
     markGameCompleteForPlayer(gameId, playerId) {

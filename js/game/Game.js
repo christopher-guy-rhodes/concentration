@@ -2,9 +2,9 @@
  * Class for playing classic concentration game.
  */
 class Game {
-    constructor(type, numberOfCards, clickableClass, gameResetClass, scoreBoardPlayerPrefixClass) {
-        validateRequiredParams(this.constructor, arguments, 'type', 'numberOfCards', 'clickableClass', 'gameResetClass',
-            'scoreBoardPlayerPrefixClass');
+    constructor(onlineGamePlay, type, numberOfCards, clickableClass, gameResetClass, scoreBoardPlayerPrefixClass) {
+        validateRequiredParams(this.constructor, arguments, 'onlineGamePlay', 'type', 'numberOfCards', 'clickableClass',
+            'gameResetClass', 'scoreBoardPlayerPrefixClass');
         this.gameBoard = new GameBoardBuilder()
             .withDeckType(type)
             .withNumberOfCards(numberOfCards)
@@ -23,7 +23,7 @@ class Game {
         this.pendingFlipOrRemovel = new Set();
         this.numberOfCardsMatched = 0;
         this.numberOfCards = numberOfCards;
-        this.onlineGamePlay = new OnlineGamePlay();
+        this.onlineGamePlay = onlineGamePlay;
         this.matchPending = false;
     }
 

@@ -21,8 +21,8 @@ class GameConfigController {
         this.gameBoardCss = 'gameBoard';
         this.playOnlineCheckboxName = 'playOnlineCheckboxName';
         this.waitLongerContainerClass = 'waitLongerContainer';
-
         this.onlineGamePlay = new OnlineGamePlay();
+
         this.dao = new Dao();
 
         this.scalingDimension = undefined;
@@ -115,9 +115,16 @@ class GameConfigController {
                             throw new Error(err);
                         }
                         console.log('in success block of put');
-                        self.onlineGamePlay.pollForPlayersReady(gameId, playerId, function(gameId, currentPlayer) {
-                            self.handlePlayersReady(currentPlayer);
-                            self.pollForGameLog(gameId);
+                        self.game.onlineGamePlay.pollForPlayersReady(gameId, playerId, function(gameId, currentPlayer) {
+                            self.handleAllPlayersReady(currentPlayer);
+                            self.onlineGamePlay.pollForGameLog(gameId,
+                                function (logEntry, index) {
+                                console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                                //console.log('%o does not contain %o',localTurns, index);
+                                self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
+                            }, function () {
+                                return self.game.isGameOver()
+                            });
                         });
 
                         $('.' + self.waitLongerContainerClass).css('display', 'none');
@@ -313,8 +320,8 @@ class GameConfigController {
 
         let currentPlayer = $('input[name=currentPlayer]').val();
         if (gameId !== null) {
-            this.onlineGamePlay.resetGame(gameId, currentPlayer);
-            this.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer);
+            this.game.onlineGamePlay.resetGame(gameId, currentPlayer);
+            this.game.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer);
         }
 
         // TODO: remove the next two lines, I don't think they do anything.
@@ -349,7 +356,7 @@ class GameConfigController {
         if (!card.getIsFaceUp()) {
             if (isCurrentPlayer && gameId !== null) {
                 // only log the card flip if the player is caught up
-                this.onlineGamePlay.logCardFlip(gameId, player, this.game.turnCounter, clickedCardId, this.getGame());
+                this.game.onlineGamePlay.logCardFlip(gameId, player, this.game.turnCounter, clickedCardId, this.getGame());
             }
             this.getGame().takePlayerTurn(card);
         }
@@ -395,10 +402,18 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
+            this.game.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
                 function(gameId, currentPlayer) {
-                self.handlePlayersReady(currentPlayer);
-                self.pollForGameLog(gameId);
+                self.handleAllPlayersReady(currentPlayer);
+                self.onlineGamePlay.pollForGameLog(gameId,
+                    function (logEntry, index) {
+                    console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                    //console.log('%o does not contain %o',localTurns, index);
+                    self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
+                },
+                    function() {
+                        return self.game.isGameOver();
+                    });
             },
                 function () {
                 self.showWaitLongerButton();
@@ -413,7 +428,7 @@ class GameConfigController {
         this.getGame().play(document);
     }
 
-    handlePlayersReady(currentPlayer) {
+    handleAllPlayersReady(currentPlayer) {
         alert('All players are ready');
         $('.waiting').css('display', 'none');
         if (currentPlayer !== '1') {
@@ -422,65 +437,8 @@ class GameConfigController {
         $('input[name=allPlayersReady]').val(1);
     }
 
-
-
     showWaitLongerButton() {
         $('.' + this.waitLongerContainerClass).css('display', 'block');
-    }
-
-    async pollForGameLog(gameId) {
-        await sleep(5000);
-
-        let self = this;
-
-        this.dao.get(gameId + '-log', async function (err, data) {
-            if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                throw new Error(err);
-            } else {
-                let gameLog = JSON.parse(data.Body.toString('utf-8'));
-                //console.log('polling for game log %o', gameLog);
-
-                let index = $('input[name=gameLogReadIndex]').val();
-                if (index === '-1') {
-                    index = '0';
-                }
-                let currentPlayer = $('input[name=currentPlayer]').val();
-                let playCatchUp = index === '0';
-                console.log('game log %o', gameLog);
-                if (index < gameLog.length) {
-                    //console.log('gameLog: %o', gameLog);
-                    $('input[name=gameLogCaughtUp]').val(0);
-                    for (let i = index; i < gameLog.length; i++) {
-                        let logEntry = gameLog[i];
-
-                        // Don't handle the click from the game log if it was a local clieck
-                        let localTurns = $('input[name=localBrowserTurns]').val().split(',');
-                        if (localTurns.includes(index.toString())) {
-                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
-                        } else {
-                            console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
-                            //console.log('%o does not contain %o',localTurns, index);
-                            self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
-                            await sleep(2000);
-                        }
-                        index++
-
-                    }
-                    //console.log('==> marking new index as ' + (index));
-                    $('input[name=gameLogReadIndex]').val(index);
-                    $('input[name=gameLogCaughtUp]').val(1);
-                }
-
-                if (!self.game.isGameOver()) {
-                    self.pollForGameLog(gameId);
-                } else {
-                    return true;
-                }
-            }
-        });
-
-
     }
 
     setViewPort(screenWidth) {
@@ -505,7 +463,7 @@ class GameConfigController {
 
         try {
             this.deckType = this.getFormDeckType();
-            this.game = new Game(this.deckType, numCards, this.clickableClass, this.gameResetClass,
+            this.game = new Game(this.onlineGamePlay, this.deckType, numCards, this.clickableClass, this.gameResetClass,
                 this.scoreBoardPlayerPrefixClass);
 
         } catch (error) {
