@@ -21,10 +21,10 @@ class GameConfigController {
         this.gameBoardCss = 'gameBoard';
         this.playOnlineCheckboxName = 'playOnlineCheckboxName';
         this.waitLongerContainerClass = 'waitLongerContainer';
+        this.waitLongerButtonClass = 'waitLonger';
+
+
         this.onlineGamePlay = new OnlineGamePlay();
-
-        this.dao = new Dao();
-
         this.scalingDimension = undefined;
 
         this.view = new GameConfigViewBuilder()
@@ -41,18 +41,9 @@ class GameConfigController {
             .withPlayerNameForm(this.playerNameForm)
             .withScoreBoardForm(this.scoreBoardForm)
             .withWaitLongerContainerClass(this.waitLongerContainerClass)
+            .withWaitLongerButtonClass(this.waitLongerButtonClass)
             .withPlayOnlineCheckboxName(this.playOnlineCheckboxName)
             .build();
-    }
-
-    getGameId() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('gameId') === null ? undefined : urlParams.get('gameId');
-    }
-
-    getPlayerId() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('playerId') === null ? undefined : urlParams.get('playerId');
     }
 
     /**
@@ -61,8 +52,8 @@ class GameConfigController {
      */
     handleEvents(document) {
 
-        let gameId = this.getGameId();
-        let playerId = this.getPlayerId();
+        let gameId = getUrlParam('gameId');
+        let playerId = getUrlParam('playerId');
         if (gameId && playerId) {
             this.onlineGamePlay.loadGameForPlayer(gameId, playerId);
         }
@@ -88,21 +79,14 @@ class GameConfigController {
         // Handle the play online checkbox
         this.handlePlayOnlineEvent();
 
-        this.handleWaitLonger();
+        this.handlePlayerWaitRestart();
 
     }
 
-    handleWaitLonger() {
+    handlePlayerWaitRestart() {
         let self = this;
-        $('.waitLonger').click(function (e) {
-            let url = new URL(window.location);
-            let gameId = url.searchParams.get("gameId");
-            let playerId = url.searchParams.get("playerId");
-
-
-            self.waitForPlayers(gameId, playerId)
-            //console.log('got a click on wait for longer, polling again');
-            //self.pollForGameLog(gameId);
+        $('.' + this.waitLongerButtonClass).click(function (e) {
+            self.waitForPlayers(getUrlParam('gameId'), getUrlParam('playerId'))
         });
     }
 
@@ -110,9 +94,8 @@ class GameConfigController {
         let self = this;
         this.onlineGamePlay.setPlayerReady(gameId, playerId, function() {
             $('.' + self.waitLongerContainerClass).css('display', 'none');
+            self.pollForPlayersReady(gameId, playerId);
         });
-
-        this.pollForPlayersReady(gameId, playerId);
     }
 
     handlePlayOnlineEvent() {
@@ -199,7 +182,7 @@ class GameConfigController {
     /* private */
     handleCardClickEvent() {
         let self = this;
-        $(document).on('click', '.' + this.clickableClass, function (e) {
+        $(document).on('click', '.' + this.clickableClass, throttled(CARD_FLIP_ANIMATION_TIME_MS, function (e) {
             if ($('input[name=gameLogCaughtUp]').val() !== '1' && $('input[name=gameLogReadIndex]').val() !== '-1') {
                 alert('Game events are catching up, please try again in a moment');
                 return;
@@ -230,7 +213,7 @@ class GameConfigController {
                 let currentPlayer = $('input[name=currentPlayer]').val();
                 self.handleCardClick(cardClickId, currentPlayer, true);
             }
-        });
+        }));
     }
 
     /* private */

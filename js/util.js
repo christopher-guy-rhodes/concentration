@@ -41,3 +41,20 @@ function generateUuid() {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function getUrlParam(param) {
+    let urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param) === null ? undefined : urlParams.get(param);
+}
+
+function throttled(delay, fn) {
+    let lastCall = 0;
+    return function (...args) {
+        const now = (new Date).getTime();
+        if (now - lastCall < delay) {
+            return;
+        }
+        lastCall = now;
+        return fn(...args);
+    }
+}

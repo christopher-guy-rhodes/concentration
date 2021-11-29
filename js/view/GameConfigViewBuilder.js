@@ -15,6 +15,7 @@ class GameConfigViewBuilder {
         this.scoreBoardForm = undefined;
         this.playOnlineCheckboxName = undefined;
         this.waitLongerContainerClass = undefined;
+        this.waitLongerButtonClass = undefined;
     }
 
     withPlayOnlineCheckboxName(playOnlineCheckboxName) {
@@ -87,11 +88,16 @@ class GameConfigViewBuilder {
         return this;
     }
 
+    withWaitLongerButtonClass(waitButton) {
+        this.waitLongerButtonClass = waitButton;
+        return this;
+    }
+
     build() {
         return new GameConfigView(this.gameOptionsFormClass, this.gameOptionsSubmitButtonClass,
             this.deckTypeSelectorClass, this.playerNameSubmitClass, this.gameResetClass, this.numPlayersSelectorClass,
             this.numberOfCardsToUseName, this.scoreBoardPlayerPrefixClass, this.playerNamePrefixClass,
             this.nameInputPrefixClass, this.playerNameForm, this.scoreBoardForm, this.playOnlineCheckboxName,
-            this.waitLongerContainerClass);
+            this.waitLongerContainerClass, this.waitLongerButtonClass);
     }
 }

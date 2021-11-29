@@ -2,11 +2,12 @@ class GameConfigView {
     constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
                 scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm,
-                scoreBoardForm, playOnlineCheckboxName, waitLongerContainerClass) {
+                scoreBoardForm, playOnlineCheckboxName, waitLongerContainerClass, waitLongerButtonClass) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
-            'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName', 'waitLongerContainerClass');
+            'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName', 'waitLongerContainerClass',
+            'waitLongerButtonClass');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -21,6 +22,7 @@ class GameConfigView {
         this.scoreBoardForm = scoreBoardForm;
         this.playOnlineCheckboxName = playOnlineCheckboxName;
         this.waitLongerContainerClass = waitLongerContainerClass;
+        this.waitLongerButtonClass = waitLongerButtonClass;
     }
 
     /**
@@ -123,7 +125,7 @@ class GameConfigView {
             .withInnerText('Gave up waiting  ').build()
             .appendChild(new ElementBuilder(document)
                 .withTag(INPUT_TAG)
-                .withClass('waitLonger')
+                .withClass(this.waitLongerButtonClass)
                 .withAttribute('type', 'button')
                 .withAttribute('value', 'Wait longer').build());
 

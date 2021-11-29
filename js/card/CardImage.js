@@ -71,7 +71,7 @@ class CardImage {
                 'left: ' + xPixelOffset + 'px;' +
                 'transform: rotateY(' + rotateY + 'deg);' +
                 'backface-visibility: hidden;' +
-                'transition: transform .5s linear 0s;' +
+                'transition: transform ' + (CARD_FLIP_ANIMATION_TIME_MS/1000) + 's linear 0s;' +
             '}').build();
     }
 
