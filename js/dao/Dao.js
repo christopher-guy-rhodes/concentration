@@ -10,6 +10,15 @@ class Dao {
         this.stateDir = 'state'
     }
 
+    putObject(key, value) {
+        this.put(key, JSON.stringify(value), function (err) {
+            if (err) {
+                alert('putObject: error see console log for details.');
+                throw new Error(err);
+            }
+        });
+    }
+
     put(key, value, fn, count = 0) {
         let self = this;
         //console.log('put: value: %s bucket: %s key: %s', value, this.bucket + '/' + this.stateDir, key);

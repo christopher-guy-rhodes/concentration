@@ -115,7 +115,7 @@ class GameConfigController {
                             throw new Error(err);
                         }
                         console.log('in success block of put');
-                        self.pollForPlayersReady(gameId, playerId, function(gameId, currentPlayer) {
+                        self.onlineGamePlay.pollForPlayersReady(gameId, this.game, playerId, function(gameId, currentPlayer) {
                             self.handlePlayersReady(currentPlayer);
                             self.pollForGameLog(gameId);
                         });
@@ -395,9 +395,17 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.pollForPlayersReady(gameId, currentPlayer, function(gameId, currentPlayer) {
+            this.onlineGamePlay.pollForPlayersReady(gameId, this.game, currentPlayer,
+                function(gameId, currentPlayer) {
                 self.handlePlayersReady(currentPlayer);
                 self.pollForGameLog(gameId);
+            },
+                function () {
+                self.showWaitLongerButton();
+            },
+                function (id, name) {
+                    $('.waitingOn' + id).css('display', 'none');
+                    $('.name' + id).val(name);
             });
         }
         this.getGame().play(document);
@@ -412,64 +420,10 @@ class GameConfigController {
         $('input[name=allPlayersReady]').val(1);
     }
 
-    async pollForPlayersReady(gameId, currentPlayer, fn, count = 0, joinNotifications = {}) {
-        await sleep(5000);
-
-        let self = this;
-        this.dao.get(gameId, async function(err, data) {
-            if (err) {
-                alert('pollForPlayersReady: error see console log for details.');
-                throw new Error(err);
-            }
-            let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-
-            if (count >= 30) {
-
-                $('.' + self.waitLongerContainerClass).css('display', 'block');
-                gameDetail['players'][currentPlayer]['ready'] = false;
-                self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
-                    if (err) {
-                        alert('pollForPlayersReady: error see console log for details.');
-                        throw new Error(err);
-                    }
-                });
-                return false;
-            }
-
-            console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
-            let allPlayersReady = true;
-            for (let id of Object.keys(gameDetail.players)) {
-                if (gameDetail.players[id]['ready'] === false) {
-                    allPlayersReady = false;
-                    break;
-                } else {
-
-                    if (currentPlayer !== id && !joinNotifications[id]) {
-                        $('.waitingOn' + id).css('display', 'none');
-                        joinNotifications[id] = true;
-                    }
-
-                    let nameInDetail = gameDetail.players[id]['playerName'];
-                    let nameInPlayerObject = self.game.players[id - 1]['playerName'];
-
-                    if (nameInDetail !== nameInPlayerObject) {
-                        console.log('setting ' + nameInPlayerObject + ' to ' + nameInDetail);
-                        self.game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
 
 
-                        self.game.scoreBoard.updateStats(self.game.players[0]);
-
-                    }
-                    $('.name' + id).val(nameInDetail);
-                }
-            }
-            console.log('==> players: %o', gameDetail.players);
-            if (!allPlayersReady) {
-                return self.pollForPlayersReady(gameId, currentPlayer, fn, ++count, joinNotifications);
-            } else {
-                fn(gameId, currentPlayer);
-            }
-        });
+    showWaitLongerButton() {
+        $('.' + this.waitLongerContainerClass).css('display', 'block');
     }
 
     async pollForGameLog(gameId) {

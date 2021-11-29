@@ -256,6 +256,61 @@ class OnlineGamePlay extends Dao {
         })
     }
 
+    async pollForPlayersReady(gameId, game, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, count = 0, joinNotifications = {}) {
+        await sleep(POLL_PLAYERS_DELAY);
+
+        let self = this;
+        this.get(gameId, async function(err, data) {
+            if (err) {
+                alert('pollForPlayersReady: error see console log for details.');
+                throw new Error(err);
+            }
+            let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+
+            if (count >= POLL_PLAYERS_ITERATIONS) {
+
+                // Giving up waiting on other players. Mark this player not ready and surface try again button.
+
+                fnTimeout();
+                gameDetail['players'][currentPlayer]['ready'] = false;
+                self.putObject(gameId, gameDetail);
+                return;
+            }
+
+            console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
+            let allPlayersReady = true;
+            for (let id of Object.keys(gameDetail.players)) {
+                if (gameDetail.players[id]['ready'] === false) {
+                    allPlayersReady = false;
+                    break;
+                } else {
+
+                    let nameInDetail = gameDetail.players[id]['playerName'];
+                    if (!joinNotifications[id]) {
+                        fnPlayerReady(id, nameInDetail);
+                        joinNotifications[id] = true;
+                    }
+
+                    let nameInPlayerObject = game.players[id - 1]['playerName'];
+
+                    if (nameInDetail !== nameInPlayerObject) {
+                        console.log('setting ' + nameInPlayerObject + ' to ' + nameInDetail);
+                        game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
+
+
+                        game.scoreBoard.updateStats(game.players[0]);
+
+                    }
+                }
+            }
+            console.log('==> players: %o', gameDetail.players);
+            if (!allPlayersReady) {
+                return self.pollForPlayersReady(gameId, game, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
+            } else {
+                fnSuccess(gameId, currentPlayer);
+            }
+        });
+    }
 
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));

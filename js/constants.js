@@ -4,6 +4,10 @@ const MAX_PLAYERS = 4;
 const PREVIEW_IMG_WIDTH = 1300;
 const PLAYER_FORM_WIDTH = 1000;
 
+// Online game config
+const POLL_PLAYERS_DELAY = 5000;
+const POLL_PLAYERS_ITERATIONS = 30;
+
 // DOM constants
 const BODY_TAG = 'body';
 const HEAD_TAG = 'head';
