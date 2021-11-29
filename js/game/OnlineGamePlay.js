@@ -150,6 +150,26 @@ class OnlineGamePlay extends Dao {
         })
     }
 
+    setPlayerReady(gameId, playerId, fn) {
+        let self = this;
+        this.get(gameId, function (err, data) {
+            if (err) {
+                alert('setPlayerReady error . See console log for details');
+                throw new Error(err);
+            } else {
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+                gameDetail['players'][playerId]['ready'] = true;
+                self.put(gameId, JSON.stringify(gameDetail), function (err) {
+                    if (err) {
+                        alert('setPlayerReady error . See console log for details');
+                        throw new Error(err);
+                    }
+                    fn();
+                });
+            }
+        })
+    }
+
     async pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition) {
         await sleep(5000);
 

@@ -108,24 +108,11 @@ class GameConfigController {
 
     waitForPlayers(gameId, playerId) {
         let self = this;
-        this.dao.get(gameId, function (err, data) {
-            if (err) {
-                alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
-                throw new Error(err);
-            } else {
-                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                gameDetail['players'][playerId]['ready'] = true;
-                self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
-                    if (err) {
-                        alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
-                        throw new Error(err);
-                    }
+        this.onlineGamePlay.setPlayerReady(gameId, playerId, function() {
+            $('.' + self.waitLongerContainerClass).css('display', 'none');
+        });
 
-                    self.pollForPlayersReady(gameId, playerId);
-                    $('.' + self.waitLongerContainerClass).css('display', 'none');
-                });
-            }
-        })
+        this.pollForPlayersReady(gameId, playerId);
     }
 
     handlePlayOnlineEvent() {
@@ -147,7 +134,6 @@ class GameConfigController {
                 for (let i = 2; i <= MAX_PLAYERS; i++) {
                     let span = $('.' + self.playerNamePrefixClass + i).find('span');
                     $('.' + self.playerNamePrefixClass + i).find('input').css('display', 'none');
-                    //span.text('Player ' + i + ' invitation link: ' + self.generateInvitationLink(i, baseUrl, uuid));
                     span.css('display', 'none');
                 }
 
@@ -175,8 +161,6 @@ class GameConfigController {
         let url = baseUrl + '?gameId=' + uuid + '&playerId=' + playerNumber;
         return url + ' (<a href="' + url  +'">link</a>)';
     }
-
-
 
     /**
      * Render the forms used to control the game settings.
@@ -295,7 +279,6 @@ class GameConfigController {
             image : image
         }
     }
-
 
     /* private */
     handleGameRestart() {
