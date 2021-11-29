@@ -115,7 +115,7 @@ class GameConfigController {
                             throw new Error(err);
                         }
                         console.log('in success block of put');
-                        self.onlineGamePlay.pollForPlayersReady(gameId, this.game, playerId, function(gameId, currentPlayer) {
+                        self.onlineGamePlay.pollForPlayersReady(gameId, playerId, function(gameId, currentPlayer) {
                             self.handlePlayersReady(currentPlayer);
                             self.pollForGameLog(gameId);
                         });
@@ -395,7 +395,7 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.onlineGamePlay.pollForPlayersReady(gameId, this.game, currentPlayer,
+            this.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
                 function(gameId, currentPlayer) {
                 self.handlePlayersReady(currentPlayer);
                 self.pollForGameLog(gameId);
@@ -406,7 +406,9 @@ class GameConfigController {
                 function (id, name) {
                     $('.waitingOn' + id).css('display', 'none');
                     $('.name' + id).val(name);
-            });
+                    self.game.players[id - 1]['playerName'] = name;
+                    self.game.scoreBoard.updateStats(self.game.players[0]);
+                });
         }
         this.getGame().play(document);
     }

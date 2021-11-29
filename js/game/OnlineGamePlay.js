@@ -256,7 +256,7 @@ class OnlineGamePlay extends Dao {
         })
     }
 
-    async pollForPlayersReady(gameId, game, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, count = 0, joinNotifications = {}) {
+    async pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, count = 0, joinNotifications = {}) {
         await sleep(POLL_PLAYERS_DELAY);
 
         let self = this;
@@ -291,21 +291,11 @@ class OnlineGamePlay extends Dao {
                         joinNotifications[id] = true;
                     }
 
-                    let nameInPlayerObject = game.players[id - 1]['playerName'];
-
-                    if (nameInDetail !== nameInPlayerObject) {
-                        console.log('setting ' + nameInPlayerObject + ' to ' + nameInDetail);
-                        game.players[id - 1]['playerName'] = gameDetail.players[id]['playerName'];
-
-
-                        game.scoreBoard.updateStats(game.players[0]);
-
-                    }
                 }
             }
             console.log('==> players: %o', gameDetail.players);
             if (!allPlayersReady) {
-                return self.pollForPlayersReady(gameId, game, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
+                return self.pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
             } else {
                 fnSuccess(gameId, currentPlayer);
             }
