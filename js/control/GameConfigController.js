@@ -52,11 +52,8 @@ class GameConfigController {
      */
     handleEvents(document) {
 
-        let gameId = getUrlParam('gameId');
-        let playerId = getUrlParam('playerId');
-        if (gameId && playerId) {
-            this.onlineGamePlay.loadGameForPlayer(gameId, playerId);
-        }
+        // Handle specific settings for online game play
+        this.handleOnlineGamePlay();
 
         // Handle number of players, deck type and number of cards selections
         this.handleGameOptionsEvent();
@@ -81,6 +78,37 @@ class GameConfigController {
 
         this.handlePlayerWaitRestart();
 
+    }
+
+    handleOnlineGamePlay() {
+        let gameId = getUrlParam('gameId');
+        let playerId = getUrlParam('playerId');
+        if (gameId && playerId) {
+            this.onlineGamePlay.loadGameForPlayer(gameId, playerId, this.loadGameForPlayer);
+        }
+
+    }
+
+    loadGameForPlayer(gameDetail, playerId) {
+        $('input[name="currentPlayer"]').val(playerId);
+        $('.numPlayers').val(gameDetail['numberOfPlayers']);
+        $('.numPlayers').attr('disabled', true);
+        $('input[name="playOnlineCheckboxName"]').prop('checked', true);
+        $('input[name="playOnlineCheckboxName"]').attr('disabled', true);
+        $('.deckType').val(gameDetail['deckType']);
+        $('.deckType').attr('disabled', true);
+        let img = $('.gameOptionsForm').find('img');
+        img.attr('src', gameDetail['deckType'] === 'picture' ? PictureCardDeck.getDeckImage() : PlayingCardDeck.getDeckImage());
+        $('input[name="' + 'numberOfCardsToUse' + '"]').val(gameDetail['numberOfCards']);
+        $('input[name="' + 'numberOfCardsToUse' + '"]').attr('disabled', true);
+
+        for (let pid of Object.keys(gameDetail['players'])) {
+            let name = gameDetail['players'][pid]['playerName'];
+            if (pid !== playerId) {
+                $('.playerName' + pid).find('input').val(name);
+                $('.playerName' + pid).find('input').attr('disabled', true);
+            }
+        }
     }
 
     handlePlayerWaitRestart() {
@@ -109,7 +137,6 @@ class GameConfigController {
             if (checkbox.prop("checked")) {
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Your name');
 
-
                 let gameId = generateUuid();
                 window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId);
 
@@ -133,8 +160,8 @@ class GameConfigController {
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Player 1 name:');
                 for (let i = 2; i <= MAX_PLAYERS; i++) {
                     let span = $('.' + self.playerNamePrefixClass + i).find('span');
-                    span.text('Player ' + i + ' name:');
                     $('.' + self.playerNamePrefixClass + i).find('input').css('display', 'inline-block');
+                    span.text('Player ' + i + ' name:');
                 }
             }
         });
@@ -275,8 +302,19 @@ class GameConfigController {
 
         let currentPlayer = $('input[name=currentPlayer]').val();
         if (gameId !== null) {
-            this.game.onlineGamePlay.resetGame(gameId, currentPlayer);
-            this.game.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer);
+            this.game.onlineGamePlay.resetGame(gameId, currentPlayer, function() {
+                $('input[name=localBrowserTurns]').val('');
+                $('input[name=allPlayersReady]').val(0);
+                $('input[name=gameLogReadIndex]').val(-1);
+                $('input[name=gameLogCaughtUp]').val(0);
+                $('.waiting').css('display', 'block');
+                $('.invitationClass').css('display', 'block');
+
+                for (let i = 1; i <= MAX_PLAYERS; i++) {
+                    $('.waitingOn' + i).css('display', 'inline-block');
+                }
+            });
+            this.game.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer, this.loadGameForPlayer);
         }
 
         // TODO: remove the next two lines, I don't think they do anything.

@@ -34,6 +34,7 @@ class Game {
     play(document) {
         validateRequiredParams(this.play, arguments, 'document');
 
+        let self = this;
         let url = new URL(window.location);
         let gameId = url.searchParams.get("gameId");
         let playerId = url.searchParams.get("playerId");
@@ -60,7 +61,14 @@ class Game {
             } else {
                 let name = $('.playerName' + playerId).find('input').val();
                 name = name.length > 0 ? name : 'Player ' + playerId;
-                this.onlineGamePlay.markPlayerReady(gameId, playerId, name, this);
+                this.onlineGamePlay.markPlayerReady(gameId, playerId, name,
+                    function(cardId) {
+                        return self.gameBoard.getDeck().getCardById(cardId);
+                },
+                    function(cards) {
+                        self.gameBoard.deck.cards = cards;
+                        self.gameBoard.renderGameBoard(document);
+                });
             }
         } else {
             $('input[name="currentPlayer"]').val(1);
@@ -153,7 +161,10 @@ class Game {
             $('.' + this.gameResetClass).find('input').val('Waiting for game to wrap up for other players');
             $('.' + this.gameResetClass).css('display', 'inline-block');
 
-            this.onlineGamePlay.waitForGameWrapUp(gameId, playerId);
+            this.onlineGamePlay.waitForGameWrapUp(gameId, playerId, function() {
+                $('.gameOver').find('input').prop('disabled', false);
+                $('.gameOver').find('input').val('Play again!');
+            });
         }
     }
 

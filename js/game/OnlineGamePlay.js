@@ -1,151 +1,79 @@
 class OnlineGamePlay extends Dao {
     constructor() {
         super();
-        //this.gameConfigController = new GameConfigController();
     }
 
     createGameRecord(gameId, numberOfPlayers, deckType, numberOfCards, playersInput, cardIds) {
         let players = {};
-        players[1] = {
-            'playerName' : playersInput[0]['playerName'],
-            'complete' : false,
-            'ready' : true
-        };
         if (playersInput.length > 1) {
-            for (let i = 2; i <= playersInput.length; i++) {
+            for (let i = 1; i <= playersInput.length; i++) {
                 players[i] = {
                     'playerName' : playersInput[i-1]['playerName'],
-                    'ready' : false,
+                    'ready' : i == 1 ? true : false,
                     'complete' : false
                 }
             }
         }
 
-        let gameDetails = {numberOfPlayers : numberOfPlayers,
+        let gameDetails = {
+            numberOfPlayers : numberOfPlayers,
             deckType : deckType,
             numberOfCards: numberOfCards,
             players: players,
-            cardIds: cardIds};
+            cardIds: cardIds
+        };
 
-        this.put(gameId, JSON.stringify(gameDetails), function (err) {
-            if (err) {
-                alert('createGameRecord: error "' + err.message + '". See console log for details');
-                throw new Error(err);
-            }
-        });
+        this.putObject(gameId, gameDetails);
+        this.putObject(gameId + '-log', []);
+    }
+
+    resetGame(gameId, currentPlayer, fn) {
         this.put(gameId + '-log', JSON.stringify([]), function (err) {
             if (err) {
                 alert('createGameRecord: error "' + err.message + '". See console log for details');
                 throw new Error(err);
             }
+            fn();
         });
     }
 
-    resetGame(gameId, currentPlayer) {
-        this.put(gameId + '-log', JSON.stringify([]), function (err) {
-            if (err) {
-                alert('createGameRecord: error "' + err.message + '". See console log for details');
-                throw new Error(err);
-            }
-        });
-        $('input[name=localBrowserTurns]').val('');
-        $('input[name=allPlayersReady]').val(0);
-        $('input[name=gameLogReadIndex]').val(-1);
-        $('input[name=gameLogCaughtUp]').val(0);
-        $('.waiting').css('display', 'block');
-        $('.invitationClass').css('display', 'block');
-
-        for (let i = 1; i <= MAX_PLAYERS; i++) {
-            $('.waitingOn' + i).css('display', 'inline-block');
-        }
-
-        /*
-        this.get(gameId, function(err, data) {
-            if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
-            } else {
-                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-
-                gameDetail['players'][currentPlayer]['ready'] = false;
-
-
-
-                console.log('reset game %o', gameDetail);
-                this.put(gameId, JSON.stringify(gameDetail), function (err) {
-                    if (err) {
-                        alert('Error polling for players ' + err.message + ', see console log for details');
-                        console.log('error: %o', err);
-                    }
-                });
-            }
-        });
-
-         */
-    }
-
-    markPlayerReady(gameId, playerId, name, game) {
+    markPlayerReady(gameId, playerId, name, fnGetCardById, fnSuccess) {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
+                alert('markPlayerReady error. See console log for details');
+                throw new Error(err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                //console.log('update game %o to cardIds %o', game, gameDetail['cardIds']);
-
                 let cards = [];
                 for (let cardId of gameDetail['cardIds']) {
-                    cards.push(game.gameBoard.deck.getCardById(cardId));
+                    cards.push(fnGetCardById(cardId));
                 }
-                game.gameBoard.deck.cards = cards;
-                game.gameBoard.renderGameBoard(document);
 
                 gameDetail['players'][playerId]['playerName'] = name;
                 gameDetail['players'][playerId]['ready'] = true;
                 gameDetail['players'][playerId]['complete'] = false;
+
                 self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
                     if (err) {
-                        alert('Error marking players ready ' + err.message + ', see console log for details');
-                        console.log('error: %o', err);
-                    } else {
-                        //console.log('successfully marked player ' + playerId + ' ready');
+                        alert('markPlayerReady error. See console log for details');
+                        throw new Error(err);
                     }
+                    fnSuccess(cards);
                 });
             }
         })
     }
 
-    loadGameForPlayer(gameId, playerId) {
+    loadGameForPlayer(gameId, playerId, fn) {
         this.get(gameId, function(err, data) {
             if (err) {
                 alert('Error polling for players. See console log for details');
                 throw new Error(err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                //console.log('loadGameForPlayer: playerId: %s gameId: %s detail: %o', playerId , gameId, gameDetail);
-                $('input[name="currentPlayer"]').val(playerId);
-                $('.numPlayers').val(gameDetail['numberOfPlayers']);
-                $('.numPlayers').attr('disabled', true);
-                $('input[name="playOnlineCheckboxName"]').prop('checked', true);
-                $('input[name="playOnlineCheckboxName"]').attr('disabled', true);
-                $('.deckType').val(gameDetail['deckType']);
-                $('.deckType').attr('disabled', true);
-                let img = $('.gameOptionsForm').find('img');
-                img.attr('src', gameDetail['deckType'] === 'picture' ? PictureCardDeck.getDeckImage() : PlayingCardDeck.getDeckImage());
-                $('input[name="' + 'numberOfCardsToUse' + '"]').val(gameDetail['numberOfCards']);
-                $('input[name="' + 'numberOfCardsToUse' + '"]').attr('disabled', true);
-
-                for (let pid of Object.keys(gameDetail['players'])) {
-                    let name = gameDetail['players'][pid]['playerName'];
-                    if (pid !== playerId) {
-                        $('.playerName' + pid).find('input').val(name);
-                        $('.playerName' + pid).find('input').attr('disabled', true);
-                    } else {
-                        //$('.playerName' + pid).find('input').val('');
-                    }
-                }
+                fn(gameDetail, playerId);
             }
         })
     }
@@ -208,7 +136,8 @@ class OnlineGamePlay extends Dao {
                         index++
 
                     }
-                    //console.log('==> marking new index as ' + (index));
+
+                    // TODO: use class variables to store this instead of the DOM
                     $('input[name=gameLogReadIndex]').val(index);
                     $('input[name=gameLogCaughtUp]').val(1);
                 }
@@ -244,62 +173,52 @@ class OnlineGamePlay extends Dao {
         });
     }
 
-    waitForGameWrapUp(gameId, playerId, count = 0) {
+    waitForGameWrapUp(gameId, playerId, fn, count = 0) {
         let self = this;
         this.get(gameId, async function (err, data) {
-
-            if (count >= 30) {
-                let msg = 'something went wrong, game did not warp up';
-                alert(msg);
-                throw new Error(msg);
-            }
-
-            await self.sleep(5000);
             if (err) {
                 alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
                 throw new Error(err);
-            } else {
-                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+            }
 
-                let allComplete = true;
-                for (let playerId of Object.keys(gameDetail['players'])) {
-                    if (!gameDetail['players'][playerId]['complete']) {
-                        allComplete = false;
-                        break;
-                    }
-                }
 
-                if (allComplete) {
-                    if (playerId == '1') {
-                        for (let playerId of Object.keys(gameDetail['players'])) {
-                            gameDetail['players'][playerId]['complete'] = false;
-                            gameDetail['players'][playerId]['ready'] = false;
-                        }
+            if (count >= GAME_WRAP_UP_ITERATIONS) {
+                alert("waitForGameWrapUp error. See console log for details.")
+                throw new Error(msg);
+            }
 
-                        self.put(gameId, JSON.stringify(gameDetail), function (err) {
-                            if (err) {
-                                alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
-                                throw new Error(err);
-                            };
-                        });
-                        self.put(gameId + '-log', JSON.stringify([]), function(err) {
-                            if (err) {
-                                alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
-                                throw new Error(err);
-                            };
-                        })
-                    } else {
-                        // give time for game to be reset
-                        await self.sleep(10000);
-                    }
+            await sleep(GAME_WRAP_UP_DELAY_MS);
 
-                    $('.gameOver').find('input').prop('disabled', false);
-                    $('.gameOver').find('input').val('Play again!');
+            let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                } else {
-                    self.waitForGameWrapUp(gameId, playerId, ++count);
+            let allComplete = true;
+            for (let playerId of Object.keys(gameDetail['players'])) {
+                if (!gameDetail['players'][playerId]['complete']) {
+                    allComplete = false;
+                    break;
                 }
             }
+
+            if (allComplete) {
+                if (playerId == '1') {
+                    // If it is the game owner reset all the state
+                    for (let playerId of Object.keys(gameDetail['players'])) {
+                        gameDetail['players'][playerId]['complete'] = false;
+                        gameDetail['players'][playerId]['ready'] = false;
+                    }
+
+                    self.putObject(gameId, gameDetail);
+                    self.putObject(gameId + '-log', []);
+                } else {
+                    // If it is not the owner give time for the owner to reset the state
+                    await sleep(GAME_RESET_NON_OWNER_DELAY);
+                }
+                fn();
+
+            } else {
+                self.waitForGameWrapUp(gameId, playerId, fn, ++count);
+            }
+
         });
     }
 
@@ -307,25 +226,24 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
             if  (err) {
-                alert('Error polling for players ' + err.message + ', see console log for details');
-                console.log('error: %o', err);
+                alert('logCardFlip error. See console log for details.');
+                throw new Error(err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 console.log('==> found game log: %o', gameLog);
                 if (gameLog.length < (game.turnCounter  - 1)) {
                     console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (game.turnCounter - 1) + ' retrying for the ' + count + 'time');
-                    await self.sleep(100);
-                    if (count < 3) {
+                    await sleep(LOG_CARD_FLIP_RETRY_DELAY);
+                    if (count < LOG_CARD_FLIP_RETRIES) {
                         self.logCardFlip(gameId, currentPlayer, turn, cardId, game, ++count);
+                    } else {
+                        alert("logCardFlip error. See console log for details.")
+                        throw new Error("logCardFlip: Log size is not the expected size after all retries");
                     }
                 }
                 gameLog[turn] = {player : currentPlayer, cardId : cardId};
 
-                self.put(gameId + '-log', JSON.stringify(gameLog), function() {
-                    if (err) {
-                        alert('need to handle this error');
-                    }
-                });
+                self.putObject(gameId + '-log', gameLog);
             }
         })
     }
@@ -374,9 +292,5 @@ class OnlineGamePlay extends Dao {
                 fnSuccess(gameId, currentPlayer);
             }
         });
-    }
-
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
