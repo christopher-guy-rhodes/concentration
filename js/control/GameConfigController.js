@@ -45,6 +45,15 @@ class GameConfigController {
             .build();
     }
 
+    getGameId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('gameId') === null ? undefined : urlParams.get('gameId');
+    }
+
+    getPlayerId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('playerId') === null ? undefined : urlParams.get('playerId');
+    }
 
     /**
      * Handle events related to the control flow of the forms used to configure and start the game.
@@ -52,20 +61,10 @@ class GameConfigController {
      */
     handleEvents(document) {
 
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const playerId = urlParams.get('playerId');
-        const gameId = urlParams.get('gameId');
-
-        if (playerId) {
+        let gameId = this.getGameId();
+        let playerId = this.getPlayerId();
+        if (gameId && playerId) {
             this.onlineGamePlay.loadGameForPlayer(gameId, playerId);
-            /*
-            $('.' + this.gameOptionsFormClass).css('display', 'none');
-            $('.' + this.playerNameForm).css('display', 'inline-block');
-            $('.' + this.playerNamePrefixClass + playerId).css('display', 'block');
-            $('.' + this.playerNameSubmitButtonClass).css('display', 'block');
-
-             */
         }
 
         // Handle number of players, deck type and number of cards selections
@@ -101,39 +100,32 @@ class GameConfigController {
             let playerId = url.searchParams.get("playerId");
 
 
-            self.dao.get(gameId, function (err, data) {
-                if (err) {
-                    alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
-                    throw new Error(err);
-                } else {
-                    let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                    gameDetail['players'][playerId]['ready'] = true;
-                    console.log('in success block of get')
-                    self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
-                        if (err) {
-                            alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
-                            throw new Error(err);
-                        }
-                        console.log('in success block of put');
-                        self.game.onlineGamePlay.pollForPlayersReady(gameId, playerId, function(gameId, currentPlayer) {
-                            self.handleAllPlayersReady(currentPlayer);
-                            self.onlineGamePlay.pollForGameLog(gameId,
-                                function (logEntry, index) {
-                                console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
-                                //console.log('%o does not contain %o',localTurns, index);
-                                self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
-                            }, function () {
-                                return self.game.isGameOver()
-                            });
-                        });
-
-                        $('.' + self.waitLongerContainerClass).css('display', 'none');
-                    });
-                }
-            })
+            self.waitForPlayers(gameId, playerId)
             //console.log('got a click on wait for longer, polling again');
             //self.pollForGameLog(gameId);
         });
+    }
+
+    waitForPlayers(gameId, playerId) {
+        let self = this;
+        this.dao.get(gameId, function (err, data) {
+            if (err) {
+                alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
+                throw new Error(err);
+            } else {
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+                gameDetail['players'][playerId]['ready'] = true;
+                self.dao.put(gameId, JSON.stringify(gameDetail), function (err) {
+                    if (err) {
+                        alert('handleWaitLonger(1): error "' + err.message + '". See console log for details');
+                        throw new Error(err);
+                    }
+
+                    self.pollForPlayersReady(gameId, playerId);
+                    $('.' + self.waitLongerContainerClass).css('display', 'none');
+                });
+            }
+        })
     }
 
     handlePlayOnlineEvent() {
@@ -148,11 +140,8 @@ class GameConfigController {
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Your name');
 
 
-                let uuid = generateUuid();
-
-
-
-                window.history.replaceState( {} , '', baseUrl + '?gameId=' + uuid);
+                let gameId = generateUuid();
+                window.history.replaceState( {} , '', baseUrl + '?gameId=' + gameId);
 
 
                 for (let i = 2; i <= MAX_PLAYERS; i++) {
@@ -166,7 +155,7 @@ class GameConfigController {
 
                 let html = '<strong>Invitation Links:</strong><br/>';
                 for (let i = 2; i <= numPlayers; i++) {
-                    html += 'Player ' + i + ': ' + self.generateInvitationLink(i, baseUrl, uuid) + '<br/>';
+                    html += 'Player ' + i + ': ' + self.generateInvitationLink(i, baseUrl, gameId) + '<br/>';
                 }
 
                 $('.invitationClass').html(html);
@@ -402,30 +391,35 @@ class GameConfigController {
                 $('.waitingOn' + i).text(name);
             }
 
-            this.game.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
-                function(gameId, currentPlayer) {
+            this.pollForPlayersReady(gameId, currentPlayer);
+        }
+        this.getGame().play(document);
+    }
+
+    pollForPlayersReady(gameId, currentPlayer) {
+        let self = this;
+        this.game.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
+            function(gameId, currentPlayer) {
                 self.handleAllPlayersReady(currentPlayer);
                 self.onlineGamePlay.pollForGameLog(gameId,
                     function (logEntry, index) {
-                    console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
-                    //console.log('%o does not contain %o',localTurns, index);
-                    self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
-                },
+                        console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                        //console.log('%o does not contain %o',localTurns, index);
+                        self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
+                    },
                     function() {
                         return self.game.isGameOver();
                     });
             },
-                function () {
+            function () {
                 self.showWaitLongerButton();
             },
-                function (id, name) {
-                    $('.waitingOn' + id).css('display', 'none');
-                    $('.name' + id).val(name);
-                    self.game.players[id - 1]['playerName'] = name;
-                    self.game.scoreBoard.updateStats(self.game.players[0]);
-                });
-        }
-        this.getGame().play(document);
+            function (id, name) {
+                $('.waitingOn' + id).css('display', 'none');
+                $('.name' + id).val(name);
+                self.game.players[id - 1]['playerName'] = name;
+                self.game.scoreBoard.updateStats(self.game.players[0]);
+            });
     }
 
     handleAllPlayersReady(currentPlayer) {
