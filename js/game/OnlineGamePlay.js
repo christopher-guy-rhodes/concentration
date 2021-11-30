@@ -1,43 +1,60 @@
 class OnlineGamePlay extends Dao {
     constructor() {
         super();
+        this.gameLogReadIndex = -1;
+        this.gameLogCaughtUp = false;
     }
 
-    createGameRecord(gameId, numberOfPlayers, deckType, numberOfCards, playersInput, cardIds) {
-        let players = {};
-        if (playersInput.length > 1) {
-            for (let i = 1; i <= playersInput.length; i++) {
-                players[i] = {
-                    'playerName' : playersInput[i-1]['playerName'],
-                    'ready' : i == 1 ? true : false,
-                    'complete' : false
-                }
-            }
-        }
-
-        let gameDetails = {
+    /**
+     * Creates a game record for online play. Always marks the owner of the game record (player 1) as ready.
+     * @param gameId the game id
+     * @param numberOfPlayers the number of players in the game
+     * @param deckType the type of deck
+     * @param numberOfCards the number of cards in use
+     * @param players the list of player objects from the game
+     * @param cardIds the shuffled cards identifiers to use in the game
+     */
+    createGameRecord(gameId, numberOfPlayers, deckType, numberOfCards, players, cardIds) {
+        this.putObject(gameId, {
             numberOfPlayers : numberOfPlayers,
             deckType : deckType,
             numberOfCards: numberOfCards,
-            players: players,
+            players: players.reduce((result, item) => {
+                return { ...result, [ item.playerNumber ] : {
+                        'playerName' : item.playerName,
+                        'ready' : item.playerNumber === 1 ? true : false,
+                        'complete' : false
+                    } };
+            }, {}),
             cardIds: cardIds
-        };
-
-        this.putObject(gameId, gameDetails);
+        });
         this.putObject(gameId + '-log', []);
     }
 
-    resetGame(gameId, currentPlayer, fn) {
+    /**
+     * Reset the game log for the online game.
+     * @param gameId the game identifier
+     * @param callback the callback function to call after the game is reset
+     */
+    resetGame(gameId, callback) {
         this.put(gameId + '-log', JSON.stringify([]), function (err) {
             if (err) {
-                alert('createGameRecord: error "' + err.message + '". See console log for details');
+                alert('createGameRecord: error. See console log for details');
                 throw new Error(err);
             }
-            fn();
+            callback();
         });
     }
 
-    setupPlayerAndDealCards(gameId, playerId, name, fnGetCardById, fnSuccess) {
+    /**
+     * Records player details in the online data store and deal the cards for the game.
+     * @param gameId the game identifier
+     * @param playerId the player that is being set up
+     * @param name the player name
+     * @param fnGetCardById call provided function to fetch a card object given the card id
+     * @param callback the callback function to call upon success
+     */
+    setupPlayerAndDealCards(gameId, playerId, name, fnGetCardById, callback) {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
@@ -46,39 +63,46 @@ class OnlineGamePlay extends Dao {
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
-                let cards = [];
-                for (let cardId of gameDetail['cardIds']) {
-                    cards.push(fnGetCardById(cardId));
-                }
-
                 gameDetail['players'][playerId]['playerName'] = name;
                 gameDetail['players'][playerId]['ready'] = true;
                 gameDetail['players'][playerId]['complete'] = false;
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
                     if (err) {
-                        alert('markPlayerReady error. See console log for details');
+                        alert('markPlayerReady error. See console log for details.');
                         throw new Error(err);
                     }
-                    fnSuccess(cards);
+                    callback(gameDetail['cardIds'].map(cid => fnGetCardById(cid)));
                 });
             }
         })
     }
 
-    loadGameForPlayer(gameId, playerId, fn) {
+    /**
+     * Load the online game details for a player.
+     * @param gameId the game id
+     * @param playerId the player to load the game for
+     * @param callback the callback function to call with the game detail
+     */
+    loadGameForPlayer(gameId, playerId, callback) {
         this.get(gameId, function(err, data) {
             if (err) {
                 alert('Error polling for players. See console log for details');
                 throw new Error(err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-                fn(gameDetail, playerId);
+                callback(gameDetail, playerId);
             }
         })
     }
 
-    setPlayerReady(gameId, playerId, fn) {
+    /**
+     * Set an online player state to ready.
+     * @param gameId the game id
+     * @param playerId the player to load the game for
+     * @param callback the callback function to call with the game detail
+     */
+    setPlayerReady(gameId, playerId, callback) {
         let self = this;
         this.get(gameId, function (err, data) {
             if (err) {
@@ -92,12 +116,20 @@ class OnlineGamePlay extends Dao {
                         alert('setPlayerReady error . See console log for details');
                         throw new Error(err);
                     }
-                    fn();
+                    callback();
                 });
             }
         })
     }
 
+    /**
+     * Polls for game log changes for all the players so that the changes can be applied for each players local
+     * instance.
+     * @param gameId the game id
+     * @param fnReplayHandler the callback function that is called with a game log entry to process
+     * @param fnTerminationCondition the callback function to determine when to terminate the polling
+     * @returns {Promise<void>} a void promise that can be ignored
+     */
     async pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition) {
         await sleep(5000);
 
@@ -139,18 +171,18 @@ class OnlineGamePlay extends Dao {
 
                     // TODO: use class variables to store this instead of the DOM
                     $('input[name=gameLogReadIndex]').val(index);
+                    this.gameLogReadIndex = index;
                     $('input[name=gameLogCaughtUp]').val(1);
+                    this.gameLogCaughtUp = true;
                 }
 
                 if (!fnTerminationCondition()) {
                     self.pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition);
                 } else {
-                    return true;
+                    return;
                 }
             }
         });
-
-
     }
 
     markGameCompleteForPlayer(gameId, playerId) {

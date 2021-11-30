@@ -300,9 +300,8 @@ class GameConfigController {
         let url = new URL(window.location);
         let gameId = url.searchParams.get("gameId");
 
-        let currentPlayer = $('input[name=currentPlayer]').val();
         if (gameId !== null) {
-            this.game.onlineGamePlay.resetGame(gameId, currentPlayer, function() {
+            this.game.onlineGamePlay.resetGame(gameId, function() {
                 $('input[name=localBrowserTurns]').val('');
                 $('input[name=allPlayersReady]').val(0);
                 $('input[name=gameLogReadIndex]').val(-1);
@@ -314,6 +313,7 @@ class GameConfigController {
                     $('.waitingOn' + i).css('display', 'inline-block');
                 }
             });
+            let currentPlayer = $('input[name=currentPlayer]').val();
             this.game.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer, this.loadGameForPlayer);
         }
 
