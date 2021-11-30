@@ -210,7 +210,7 @@ class GameConfigController {
     handleCardClickEvent() {
         let self = this;
         $(document).on('click', '.' + this.clickableClass, throttled(CARD_FLIP_ANIMATION_TIME_MS, function (e) {
-            if ($('input[name=gameLogCaughtUp]').val() !== '1' && $('input[name=gameLogReadIndex]').val() !== '-1') {
+            if (!self.onlineGamePlay.getGameLogCaughtUp() && self.onlineGamePlay.getGameLogReadIndex() !== -1) {
                 alert('Game events are catching up, please try again in a moment');
                 return;
             }
@@ -304,8 +304,8 @@ class GameConfigController {
             this.game.onlineGamePlay.resetGame(gameId, function() {
                 $('input[name=localBrowserTurns]').val('');
                 $('input[name=allPlayersReady]').val(0);
-                $('input[name=gameLogReadIndex]').val(-1);
-                $('input[name=gameLogCaughtUp]').val(0);
+                this.onlineGamePlay.setGameLogReadIndex(-1);
+                this.onlineGamePlay.setGameLogCaughtUp(false);
                 $('.waiting').css('display', 'block');
                 $('.invitationClass').css('display', 'block');
 

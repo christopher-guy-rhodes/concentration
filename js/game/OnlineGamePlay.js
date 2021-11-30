@@ -143,16 +143,15 @@ class OnlineGamePlay extends Dao {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 //console.log('polling for game log %o', gameLog);
 
-                let index = $('input[name=gameLogReadIndex]').val();
-                if (index === '-1') {
-                    index = '0';
+                let index = self.gameLogReadIndex;
+                if (index === -1) {
+                    index = 0;
                 }
                 let currentPlayer = $('input[name=currentPlayer]').val();
-                let playCatchUp = index === '0';
+                let playCatchUp = index === 0;
                 console.log('game log %o', gameLog);
                 if (index < gameLog.length) {
-                    //console.log('gameLog: %o', gameLog);
-                    $('input[name=gameLogCaughtUp]').val(0);
+                    self.gameLogCaughtUp = false;
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
 
@@ -166,14 +165,11 @@ class OnlineGamePlay extends Dao {
                             await sleep(2000);
                         }
                         index++
-
                     }
 
                     // TODO: use class variables to store this instead of the DOM
-                    $('input[name=gameLogReadIndex]').val(index);
-                    this.gameLogReadIndex = index;
-                    $('input[name=gameLogCaughtUp]').val(1);
-                    this.gameLogCaughtUp = true;
+                    self.gameLogReadIndex = index;
+                    self.gameLogCaughtUp = true;
                 }
 
                 if (!fnTerminationCondition()) {
@@ -325,4 +321,37 @@ class OnlineGamePlay extends Dao {
             }
         });
     }
+
+    /**
+     * Get the current position of the game log read state.
+     * @returns {number} the game log read index
+     */
+    getGameLogReadIndex() {
+        return this.gameLogReadIndex;
+    }
+
+    /**
+     * Set the current position of the game log read state.
+     * @param val the value to set the game log index to
+     */
+    setGameLogReadIndex(val) {
+        this.gameLogReadIndex = val;
+    }
+
+    /**
+     * Determine if the game log is caught up.
+     * @returns {boolean} true if the game log is caught up, false otherwise
+     */
+    getGameLogCaughtUp() {
+        return this.gameLogCaughtUp;
+    }
+
+    /**
+     * Set whether the game log is caught up
+     * @param flag true if the game log is caught up, false otherwise
+     */
+    setGameLogCaughtUp(flag) {
+        this.gameLogCaughtUp = flag;
+    }
+
 }

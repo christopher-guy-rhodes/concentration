@@ -73,7 +73,7 @@ class Game {
         } else {
             $('input[name="currentPlayer"]').val(1);
             $('input[name=allPlayersReady]').val(1);
-            $('input[name=gameLogCaughtUp]').val(1);
+            this.onlineGamePlay.setGameLogCaughtUp(true);
         }
 
 
