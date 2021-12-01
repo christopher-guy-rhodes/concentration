@@ -36,35 +36,7 @@ class GameConfigView {
             .withGameOptionsForm(document)
             .withPlayerForm(document)
             .withScoreBoardContent(document)
-            .withCurrentPlayerHiddenInput(document)
-            .withAllPlayersReadyHiddenInput(document)
-            .withLocalBrowserTurns(document)
         BODY_ELEMENT.appendChild(GAMEBOARD_ELEMENT);
-    }
-
-    withLocalBrowserTurns(document) {
-        BODY_ELEMENT.appendChild(new ElementBuilder(document)
-            .withTag(INPUT_TAG)
-            .withAttribute("name", "localBrowserTurns")
-            .withAttribute("type", "hidden").build())
-        return this;
-    }
-
-    withCurrentPlayerHiddenInput(document) {
-        BODY_ELEMENT.appendChild(new ElementBuilder(document)
-            .withTag(INPUT_TAG)
-            .withAttribute("name", "currentPlayer")
-            .withAttribute("type", "hidden").build())
-        return this;
-    }
-
-    withAllPlayersReadyHiddenInput(document) {
-        BODY_ELEMENT.appendChild(new ElementBuilder(document)
-            .withTag(INPUT_TAG)
-            .withAttribute("name", "allPlayersReady")
-            .withAttribute("type", "hidden")
-            .withAttribute("value", 0).build());
-        return this;
     }
 
     /* private */

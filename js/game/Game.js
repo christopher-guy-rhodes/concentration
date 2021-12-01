@@ -43,7 +43,7 @@ class Game {
         if (gameId !== null) {
 
             let currentPlayer = playerId === null ? '1' : playerId;
-            $('input[name=currentPlayer]').val(currentPlayer);
+            this.onlineGamePlay.setCurrentPlayer(currentPlayer);
 
             if (playerId === null) {
                 let cards = this.getGameBoard().getDeck().getCards();
@@ -71,8 +71,8 @@ class Game {
                 });
             }
         } else {
-            $('input[name="currentPlayer"]').val(1);
-            $('input[name=allPlayersReady]').val(1);
+            this.onlineGamePlay.setCurrentPlayer(1);
+            this.onlineGamePlay.setAllPlayersReady(true);
             this.onlineGamePlay.setGameLogCaughtUp(true);
         }
 

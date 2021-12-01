@@ -90,7 +90,6 @@ class GameConfigController {
     }
 
     loadGameForPlayer(gameDetail, playerId) {
-        $('input[name="currentPlayer"]').val(playerId);
         $('.numPlayers').val(gameDetail['numberOfPlayers']);
         $('.numPlayers').attr('disabled', true);
         $('input[name="playOnlineCheckboxName"]').prop('checked', true);
@@ -215,7 +214,7 @@ class GameConfigController {
                 return;
             }
             let cardClickId = $(e.target).parent().attr('id');
-            let currentPlayer = $('input[name=currentPlayer]').val();
+            let currentPlayer = self.onlineGamePlay.getCurrentPlayer();
             let turn = self.game.turnCounter;
 
             let url = new URL(window.location);
@@ -227,17 +226,7 @@ class GameConfigController {
                 alert('Sorry, it is not your turn yet');
             } else {
 
-                //localBrowserTurns
-                let existingTurns = $('input[name=localBrowserTurns]').val();
-                if (existingTurns === '') {
-                    existingTurns = turn;
-                } else {
-                    existingTurns += ',' + turn;
-                }
-                $('input[name=localBrowserTurns]').val(existingTurns);
-
-
-                let currentPlayer = $('input[name=currentPlayer]').val();
+                self.onlineGamePlay.addLocalBrowserTurn(turn);
                 self.handleCardClick(cardClickId, currentPlayer, true);
             }
         }));
@@ -301,11 +290,13 @@ class GameConfigController {
         let gameId = url.searchParams.get("gameId");
 
         if (gameId !== null) {
-            this.game.onlineGamePlay.resetGame(gameId, function() {
-                $('input[name=localBrowserTurns]').val('');
-                $('input[name=allPlayersReady]').val(0);
-                this.onlineGamePlay.setGameLogReadIndex(-1);
-                this.onlineGamePlay.setGameLogCaughtUp(false);
+            let self = this;
+            this.onlineGamePlay.resetGame(gameId, function() {
+                this.onlineGamePlay.resetLocalBrowserTurns();
+
+                self.onlineGamePlay.setAllPlayersReady(false);
+                self.onlineGamePlay.setGameLogReadIndex(-1);
+                self.onlineGamePlay.setGameLogCaughtUp(false);
                 $('.waiting').css('display', 'block');
                 $('.invitationClass').css('display', 'block');
 
@@ -313,8 +304,8 @@ class GameConfigController {
                     $('.waitingOn' + i).css('display', 'inline-block');
                 }
             });
-            let currentPlayer = $('input[name=currentPlayer]').val();
-            this.game.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer, this.loadGameForPlayer);
+            let currentPlayer = this.onlineGamePlay.getCurrentPlayer();
+            this.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer, this.loadGameForPlayer);
         }
 
         // TODO: remove the next two lines, I don't think they do anything.
@@ -339,9 +330,7 @@ class GameConfigController {
             return;
         }
 
-        let areAllPlayersReady = $('input[name=allPlayersReady]').val() === '1';
-
-        if (!areAllPlayersReady) {
+        if (!this.onlineGamePlay.getAllPlayersReady()) {
             alert('All players are not ready');
             return;
         }
@@ -432,7 +421,7 @@ class GameConfigController {
         if (currentPlayer !== '1') {
             $('.invitationClass').css('display', 'none');
         }
-        $('input[name=allPlayersReady]').val(1);
+        this.onlineGamePlay.setAllPlayersReady(true);
     }
 
     showWaitLongerButton() {

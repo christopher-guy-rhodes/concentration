@@ -3,6 +3,9 @@ class OnlineGamePlay extends Dao {
         super();
         this.gameLogReadIndex = -1;
         this.gameLogCaughtUp = false;
+        this.currentPlayer = undefined;
+        this.allPlayersReady = false;
+        this.localBrowserTurns = new Set();
     }
 
     /**
@@ -85,12 +88,14 @@ class OnlineGamePlay extends Dao {
      * @param callback the callback function to call with the game detail
      */
     loadGameForPlayer(gameId, playerId, callback) {
+        let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
                 alert('Error polling for players. See console log for details');
                 throw new Error(err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+                self.setCurrentPlayer(playerId);
                 callback(gameDetail, playerId);
             }
         })
@@ -147,7 +152,6 @@ class OnlineGamePlay extends Dao {
                 if (index === -1) {
                     index = 0;
                 }
-                let currentPlayer = $('input[name=currentPlayer]').val();
                 let playCatchUp = index === 0;
                 console.log('game log %o', gameLog);
                 if (index < gameLog.length) {
@@ -156,8 +160,7 @@ class OnlineGamePlay extends Dao {
                         let logEntry = gameLog[i];
 
                         // Don't handle the click from the game log if it was a local clieck
-                        let localTurns = $('input[name=localBrowserTurns]').val().split(',');
-                        if (localTurns.includes(index.toString())) {
+                        if (self.localBrowserTurns.has(index)) {
                             console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
                         } else {
 
@@ -354,4 +357,50 @@ class OnlineGamePlay extends Dao {
         this.gameLogCaughtUp = flag;
     }
 
+    /**
+     * Get the current player
+     * @returns {number|undefined} the current player id
+     */
+    getCurrentPlayer() {
+        return this.currentPlayer;
+    }
+
+    /**
+     * Set the current player
+     * @param playerId the current player id
+     */
+    setCurrentPlayer(playerId) {
+        this.currentPlayer = playerId;
+    }
+
+    /**
+     * Get whether or not all players are ready.
+     * @returns {boolean} true if all players are ready, false otherwise
+     */
+    getAllPlayersReady() {
+        return this.allPlayersReady;
+    }
+
+    /**
+     * Set whether all players are ready.
+     * @param flag true if all players are ready, false otherwise
+     */
+    setAllPlayersReady(flag) {
+        this.allPlayersReady = flag;
+    }
+
+    /**
+     * Add a turn to the local browser cache.
+     * @param turn to add to the cache
+     */
+    addLocalBrowserTurn(turn) {
+        this.localBrowserTurns.add(turn);
+    }
+
+    /**
+     * Reset the local turn cache.
+     */
+    resetLocalBrowserTurns() {
+        this.localBrowserTurns = new Set();
+    }
 }
