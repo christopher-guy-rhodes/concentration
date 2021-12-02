@@ -159,9 +159,9 @@ class OnlineGamePlay extends Dao {
                     index = 0;
                 }
                 let playCatchUp = index === 0;
-                console.log('game log %o', gameLog);
+                console.log('wait count %d game log %o',count, gameLog);
                 if (index < gameLog.length) {
-                    count = 0;
+                    count = -1;
                     self.gameLogCaughtUp = false;
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
