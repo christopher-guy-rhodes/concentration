@@ -22,6 +22,8 @@ class GameConfigController {
         this.playOnlineCheckboxName = 'playOnlineCheckboxName';
         this.waitLongerContainerClass = 'waitLongerContainer';
         this.waitLongerButtonClass = 'waitLonger';
+        this.waitLongerForTurnContainer = 'waitLongerForTurnContainer';
+        this.waitLongerForTurnButtonClass = 'waitLongerForTurn';
 
 
         this.onlineGamePlay = new OnlineGamePlay();
@@ -42,6 +44,8 @@ class GameConfigController {
             .withScoreBoardForm(this.scoreBoardForm)
             .withWaitLongerContainerClass(this.waitLongerContainerClass)
             .withWaitLongerButtonClass(this.waitLongerButtonClass)
+            .withWaitLongerForTurnContainer(this.waitLongerForTurnContainer)
+            .withWaitLongerForTurnButtonClass(this.waitLongerForTurnButtonClass)
             .withPlayOnlineCheckboxName(this.playOnlineCheckboxName)
             .build();
     }
@@ -76,7 +80,11 @@ class GameConfigController {
         // Handle the play online checkbox
         this.handlePlayOnlineEvent();
 
+        // Handle a button click to wait longer for players to join
         this.handlePlayerWaitRestart();
+
+        // Handle a button click to wait longer for players to take a turn
+        this.handleWaitTurnRestart();
 
     }
 
@@ -115,6 +123,16 @@ class GameConfigController {
         $('.' + this.waitLongerButtonClass).click(function (e) {
             self.waitForPlayers(getUrlParam('gameId'), getUrlParam('playerId'))
         });
+    }
+
+    handleWaitTurnRestart() {
+        let self = this;
+        $('.' + this.waitLongerForTurnButtonClass).click(function(e) {
+            // ==>
+            //self.onlineGamePlay.pollForGameLog()
+            $('.' + self.waitLongerForTurnContainer).css('display', 'none');
+            self.pollForGameLog(getUrlParam("gameId"));
+        })
     }
 
     waitForPlayers(gameId, playerId) {
@@ -394,15 +412,7 @@ class GameConfigController {
         this.game.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
             function(gameId, currentPlayer) {
                 self.handleAllPlayersReady(currentPlayer);
-                self.onlineGamePlay.pollForGameLog(gameId,
-                    function (logEntry, index) {
-                        console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
-                        //console.log('%o does not contain %o',localTurns, index);
-                        self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
-                    },
-                    function() {
-                        return self.game.isGameOver();
-                    });
+                self.pollForGameLog(gameId);
             },
             function () {
                 self.showWaitLongerButton();
@@ -412,6 +422,21 @@ class GameConfigController {
                 $('.name' + id).val(name);
                 self.game.players[id - 1]['playerName'] = name;
                 self.game.scoreBoard.updateStats(self.game.players[0]);
+            });
+    }
+
+    pollForGameLog(gameId) {
+        let self = this;
+        this.onlineGamePlay.pollForGameLog(gameId,
+            function (logEntry, index) {
+                console.log('replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId']);
+                //console.log('%o does not contain %o',localTurns, index);
+                self.handleCardClick(logEntry['cardId'], logEntry['player'], false);
+            },
+            function() {
+                return self.game.isGameOver();
+            }, function () {
+                $('.' + self.waitLongerForTurnContainer).css('display', 'block');
             });
     }
 

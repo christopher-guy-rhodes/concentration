@@ -133,12 +133,18 @@ class OnlineGamePlay extends Dao {
      * @param gameId the game id
      * @param fnReplayHandler the callback function that is called with a game log entry to process
      * @param fnTerminationCondition the callback function to determine when to terminate the polling
+     * @param fnTimeout the callback function to call when there was been a timeout waiting for a new log event
      * @returns {Promise<void>} a void promise that can be ignored
      */
-    async pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition) {
+    async pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition, fnTimeout, count = 0) {
         await sleep(5000);
 
         let self = this;
+
+        if (count >= MAX_GAME_LOG_POLL_ITERATIONS) {
+            fnTimeout();
+            return;
+        }
 
         this.get(gameId + '-log', async function (err, data) {
             if (err) {
@@ -155,6 +161,7 @@ class OnlineGamePlay extends Dao {
                 let playCatchUp = index === 0;
                 console.log('game log %o', gameLog);
                 if (index < gameLog.length) {
+                    count = 0;
                     self.gameLogCaughtUp = false;
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
@@ -165,7 +172,7 @@ class OnlineGamePlay extends Dao {
                         } else {
 
                             fnReplayHandler(logEntry, index);
-                            await sleep(2000);
+                            await sleep(GAME_LOG_POLL_SLEEP_MS);
                         }
                         index++
                     }
@@ -176,7 +183,7 @@ class OnlineGamePlay extends Dao {
                 }
 
                 if (!fnTerminationCondition()) {
-                    self.pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition);
+                    self.pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition, fnTimeout, ++count);
                 } else {
                     return;
                 }

@@ -2,12 +2,13 @@ class GameConfigView {
     constructor(gameOptionsFormClass, gameOptionsSubmitButtonClass, deckTypeSelectorClass,
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
                 scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm,
-                scoreBoardForm, playOnlineCheckboxName, waitLongerContainerClass, waitLongerButtonClass) {
+                scoreBoardForm, playOnlineCheckboxName, waitLongerContainerClass, waitLongerButtonClass,
+                waitLongerForTurnContainer, waitLongerForTurnButtonClass) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
             'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName', 'waitLongerContainerClass',
-            'waitLongerButtonClass');
+            'waitLongerButtonClass', 'waitLongerForTurnContainer', 'waitLongerForTurnButtonClass');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -23,6 +24,8 @@ class GameConfigView {
         this.playOnlineCheckboxName = playOnlineCheckboxName;
         this.waitLongerContainerClass = waitLongerContainerClass;
         this.waitLongerButtonClass = waitLongerButtonClass;
+        this.waitLongerForTurnContainer = waitLongerForTurnContainer;
+        this.waitLongerForTurnButtonClass = waitLongerForTurnButtonClass;
     }
 
     /**
@@ -74,7 +77,7 @@ class GameConfigView {
         let waitLongerDiv = new ElementBuilder(document).withTag(DIV_TAG)
             .withClass(this.waitLongerContainerClass)
             .withAttribute('style', 'display: none')
-            .withInnerText('Gave up waiting  ').build()
+            .withInnerText('Gave up waiting   ').build()
             .appendChild(new ElementBuilder(document)
                 .withTag(INPUT_TAG)
                 .withClass(this.waitLongerButtonClass)
@@ -82,6 +85,18 @@ class GameConfigView {
                 .withAttribute('value', 'Wait longer').build());
 
         div.appendChild(waitLongerDiv);
+
+        let waitLongerForTurnContainer = new ElementBuilder(document).withTag(DIV_TAG)
+            .withClass(this.waitLongerForTurnContainer)
+            .withAttribute('style', 'display: none')
+            .withInnerText('Gave up waiting for player a player to take a turn   ').build()
+            .appendChild(new ElementBuilder(document)
+                .withTag(INPUT_TAG)
+                .withClass(this.waitLongerForTurnButtonClass)
+                .withAttribute('type', 'button')
+                .withAttribute('value', 'Wait longer').build());
+
+        div.appendChild(waitLongerForTurnContainer);
 
         div.appendChild(new ElementBuilder(document)
             .withTag(DIV_TAG)
