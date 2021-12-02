@@ -89,7 +89,7 @@ class GameConfigView {
         let waitLongerForTurnContainer = new ElementBuilder(document).withTag(DIV_TAG)
             .withClass(this.waitLongerForTurnContainer)
             .withAttribute('style', 'display: none')
-            .withInnerText('Gave up waiting for player a player to take a turn   ').build()
+            .withInnerText('Gave up waiting for turn to be taken   ').build()
             .appendChild(new ElementBuilder(document)
                 .withTag(INPUT_TAG)
                 .withClass(this.waitLongerForTurnButtonClass)
