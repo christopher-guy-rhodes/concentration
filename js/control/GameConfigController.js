@@ -356,7 +356,8 @@ class GameConfigController {
         if (!card.getIsFaceUp()) {
             if (isCurrentPlayer && gameId !== null) {
                 // only log the card flip if the player is caught up
-                this.game.onlineGamePlay.logCardFlip(gameId, player, this.game.turnCounter, clickedCardId, this.getGame());
+                let turn = this.game.turnCounter;
+                this.game.onlineGamePlay.logCardFlip(gameId, player, turn, clickedCardId, this.getGame());
             }
             this.getGame().takePlayerTurn(card);
         }
