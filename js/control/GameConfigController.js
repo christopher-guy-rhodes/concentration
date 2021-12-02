@@ -492,6 +492,9 @@ class GameConfigController {
             let isOnline = $('input[name=' + this.playOnlineCheckboxName + ']').prop('checked');
             let numPlayersSelected = $('.' + this.numPlayersSelectorClass).val();
             if(isOnline && numPlayersSelected === '1') {
+                // Reset the online play checkbox. We need it to be checked again to generate the invitation links
+                // after selecting more than 2 players.
+                $('input[name=' + this.playOnlineCheckboxName + ']').prop('checked', false);
                 throw new Error('You must choose at least 2 players to play online');
             }
 
