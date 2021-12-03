@@ -277,6 +277,7 @@ class OnlineGamePlay extends Dao {
                     } else {
                         alert("logCardFlip error. See console log for details.")
                         throw new Error("logCardFlip: Log size is not the expected size after all retries");
+                        alert('continuing after throw')
                     }
                 }
 

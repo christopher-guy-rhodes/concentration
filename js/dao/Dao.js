@@ -6,7 +6,7 @@ class Dao {
         });
 
         const customBackoff = (retryCount) => {
-            console.log(`retry count: ${retryCount}, waiting: 1000ms`)
+            //alert('retry count: ' + retryCount + 'waiting: 1000ms)');
             return 1000
         }
 
