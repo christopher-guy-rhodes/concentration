@@ -34,6 +34,7 @@ class Dao {
     putObject(key, value) {
         this.put(key, JSON.stringify(value), function (err) {
             if (err) {
+                console.log('put object error');
                 // there could still be retries left
                 //alert('putObject: error see console log for details.');
                 //throw new Error(err);
@@ -49,14 +50,8 @@ class Dao {
             Key: key,
             ContentType: 'application/json; charset=utf-8',
             Body: value
-        }, async function(err) {
-            if (err) {
-                console.log('put failed with error ' + err + ' key:' + key + ' value: ' + value + ' waiting 10 seconds and retrying');
-                await sleep(10000);
-                return self.put(key, value, fn);
-            } else {
-                fn(err);
-            }
+        }, function(err) {
+            fn(err);
         });
 
     }
