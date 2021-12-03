@@ -357,7 +357,7 @@ class GameConfigController {
             if (isCurrentPlayer && gameId !== null) {
                 // only log the card flip if the player is caught up
                 let turn = this.game.turnCounter;
-                this.game.onlineGamePlay.logCardFlip(gameId, player, turn, clickedCardId, this.getGame());
+                this.game.onlineGamePlay.logCardFlip(gameId, player, turn, clickedCardId);
             }
             this.getGame().takePlayerTurn(card);
         }

@@ -260,7 +260,7 @@ class OnlineGamePlay extends Dao {
         });
     }
 
-    logCardFlip(gameId, currentPlayer, turn, cardId, game, count = 0) {
+    logCardFlip(gameId, currentPlayer, turn, cardId, count = 0) {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
             if  (err) {
@@ -269,11 +269,11 @@ class OnlineGamePlay extends Dao {
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 console.log('==> found game log: %o', gameLog);
-                if (gameLog.length < (game.turnCounter  - 1)) {
-                    console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (game.turnCounter - 1) + ' retrying for the ' + count + 'time');
+                if (gameLog.length < (turn  - 1)) {
+                    console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (turn - 1) + ' retrying for the ' + count + 'time');
                     await sleep(LOG_CARD_FLIP_RETRY_DELAY);
                     if (count < LOG_CARD_FLIP_RETRIES) {
-                        self.logCardFlip(gameId, currentPlayer, turn, cardId, game, ++count);
+                        self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
                     } else {
                         alert("logCardFlip error. See console log for details.")
                         throw new Error("logCardFlip: Log size is not the expected size after all retries");
