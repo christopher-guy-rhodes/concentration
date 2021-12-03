@@ -180,6 +180,8 @@ class OnlineGamePlay extends Dao {
                     // TODO: use class variables to store this instead of the DOM
                     self.gameLogReadIndex = index;
                     self.gameLogCaughtUp = true;
+                } else if (gameLog.length === 0) {
+                    self.gameLogCaughtUp = true;
                 }
 
                 if (!fnTerminationCondition()) {
@@ -275,9 +277,9 @@ class OnlineGamePlay extends Dao {
                     if (count < LOG_CARD_FLIP_RETRIES) {
                         self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
                     } else {
-                        alert("logCardFlip error. See console log for details.")
+                        //alert("logCardFlip error. See console log for details.")
                         throw new Error("logCardFlip: Log size is not the expected size after all retries");
-                        alert('continuing after throw')
+                        //alert('continuing after throw')
                     }
                 }
 
@@ -286,7 +288,7 @@ class OnlineGamePlay extends Dao {
 
                     while (!gameLog[turn - 1]) {
                         if (cnt >= 4) {
-                            alert('game up waiting on ' + (turn - 1));
+                            //alert('gave up waiting on ' + (turn - 1));
                             throw new Error('gave up waiting');
                         }
                         //alert('can not write out ' + turn + ' when ' + (turn - 1) + ' is null sleep and wait');
@@ -296,7 +298,8 @@ class OnlineGamePlay extends Dao {
                         await self.get(gameId + '-log', async function(err, data) {
 
                             if (err) {
-                                alert('retry failed');
+                                //alert('retry failed with error ' + err);
+                                await sleep(2000);
                             } else {
                                 gameLog = JSON.parse(data.Body.toString('utf-8'));
                             }
@@ -389,6 +392,7 @@ class OnlineGamePlay extends Dao {
      * @param flag true if the game log is caught up, false otherwise
      */
     setGameLogCaughtUp(flag) {
+        alert('setting game caught up to ' + flag);
         this.gameLogCaughtUp = flag;
     }
 

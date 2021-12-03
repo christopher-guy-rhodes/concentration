@@ -227,13 +227,14 @@ class GameConfigController {
     handleCardClickEvent() {
         let self = this;
         $(document).on('click', '.' + this.clickableClass, throttled(CARD_FLIP_ANIMATION_TIME_MS, function (e) {
-            if (!self.onlineGamePlay.getGameLogCaughtUp() && self.onlineGamePlay.getGameLogReadIndex() !== -1) {
+            let turn = self.game.turnCounter;
+            if (!self.onlineGamePlay.getGameLogCaughtUp()) {
                 alert('Game events are catching up, please try again in a moment');
                 return;
             }
             let cardClickId = $(e.target).parent().attr('id');
             let currentPlayer = self.onlineGamePlay.getCurrentPlayer();
-            let turn = self.game.turnCounter;
+
 
             let url = new URL(window.location);
             let gameId = url.searchParams.get("gameId");
