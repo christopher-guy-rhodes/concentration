@@ -38,7 +38,7 @@ class Game {
         let url = new URL(window.location);
         let gameId = url.searchParams.get("gameId");
         let playerId = url.searchParams.get("playerId");
-        //this.getGameBoard().getDeck().shuffleCards();
+        this.getGameBoard().getDeck().shuffleCards();
 
         if (gameId !== null) {
 
