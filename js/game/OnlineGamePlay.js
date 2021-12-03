@@ -270,44 +270,10 @@ class OnlineGamePlay extends Dao {
                 throw new Error(err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
-                console.log('==> found game log: %o', gameLog);
-                if (gameLog.length < (turn  - 1)) {
-                    console.log('==> game log has ' + gameLog.length + ' entries, should have ' + (turn - 1) + ' retrying for the ' + count + 'time');
-                    await sleep(LOG_CARD_FLIP_RETRY_DELAY);
-                    if (count < LOG_CARD_FLIP_RETRIES) {
-                        self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
-                    } else {
-                        //alert("logCardFlip error. See console log for details.")
-                        throw new Error("logCardFlip: Log size is not the expected size after all retries");
-                        //alert('continuing after throw')
-                    }
-                }
-
-                if (turn > 0) {
-                    let cnt = 0;
-
-                    while (!gameLog[turn - 1]) {
-                        if (cnt >= 4) {
-                            //alert('gave up waiting on ' + (turn - 1));
-                            throw new Error('gave up waiting');
-                        }
-                        //alert('can not write out ' + turn + ' when ' + (turn - 1) + ' is null sleep and wait');
-
-                        await sleep(2000);
-
-                        await self.get(gameId + '-log', async function(err, data) {
-
-                            if (err) {
-                                //alert('retry failed with error ' + err);
-                                await sleep(2000);
-                            } else {
-                                gameLog = JSON.parse(data.Body.toString('utf-8'));
-                            }
-                        })
-
-
-                        cnt++;
-                    }
+                if (turn > 0 && !gameLog[turn - 1]) {
+                    console.log('can not write out ' + turn + ' when ' + (turn -1) + ' is missing. Sleeping 10 seconds and trying again');
+                    await sleep(10000);
+                    return self.logCardFlip(gameId, currentPlayer, turn, cardId, count);
                 }
 
                 gameLog[turn] = {player : currentPlayer, cardId : cardId};

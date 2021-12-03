@@ -59,6 +59,8 @@ class GameConfigController {
         // Handle specific settings for online game play
         this.handleOnlineGamePlay();
 
+        this.handleNumberOfPlayersEvent();
+
         // Handle number of players, deck type and number of cards selections
         this.handleGameOptionsEvent();
 
@@ -128,8 +130,6 @@ class GameConfigController {
     handleWaitTurnRestart() {
         let self = this;
         $('.' + this.waitLongerForTurnButtonClass).click(function(e) {
-            // ==>
-            //self.onlineGamePlay.pollForGameLog()
             $('.' + self.waitLongerForTurnContainer).css('display', 'none');
             self.pollForGameLog(getUrlParam("gameId"));
         })
@@ -143,6 +143,16 @@ class GameConfigController {
         });
     }
 
+    handleNumberOfPlayersEvent() {
+        let self = this;
+        $('.' + this.numPlayersSelectorClass).change(function(e) {
+            let numberOfPlayers = $('.' + self.numPlayersSelectorClass).val();
+            if (numberOfPlayers === '1') {
+                $('input[name=' + self.playOnlineCheckboxName + ']').prop('checked', false);
+            }
+        });
+    }
+
     handlePlayOnlineEvent() {
         let self = this;
         let checkbox = $('input[name="' + this.playOnlineCheckboxName + '"]');
@@ -152,6 +162,16 @@ class GameConfigController {
 
         checkbox.click(function(e) {
             if (checkbox.prop("checked")) {
+
+                let numPlayers = $('.' + self.numPlayersSelectorClass).val();
+
+                if (numPlayers < 2) {
+                    alert('You need to select at least two players to play online');
+                    $('.' + self.playOnlineCheckboxName).prop('checked', false);
+                    checkbox.prop('checked', false);
+                    return;
+                }
+
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Your name');
 
                 let gameId = generateUuid();
@@ -163,8 +183,6 @@ class GameConfigController {
                     $('.' + self.playerNamePrefixClass + i).find('input').css('display', 'none');
                     span.css('display', 'none');
                 }
-
-                let numPlayers = $('.numPlayers').val();
 
                 let html = '<strong>Invitation Links:</strong><br/>';
                 for (let i = 2; i <= numPlayers; i++) {
@@ -489,15 +507,6 @@ class GameConfigController {
         try {
             // TODO: move this validation into a separate method
             this.game.getGameBoard().getDeck().validateNumberOfCards(this.game.getGameBoard().getNumberOfCards());
-
-            let isOnline = $('input[name=' + this.playOnlineCheckboxName + ']').prop('checked');
-            let numPlayersSelected = $('.' + this.numPlayersSelectorClass).val();
-            if(isOnline && numPlayersSelected === '1') {
-                // Reset the online play checkbox. We need it to be checked again to generate the invitation links
-                // after selecting more than 2 players.
-                $('input[name=' + this.playOnlineCheckboxName + ']').prop('checked', false);
-                throw new Error('You must choose at least 2 players to play online');
-            }
 
             this.setPlayerNamesVisibility(this.numberOfPlayers, true);
             this.setFormOptionsFormVisibility(false);

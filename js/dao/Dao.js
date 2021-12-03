@@ -7,12 +7,16 @@ class Dao {
 
         const customBackoff = (retryCount) => {
             //alert('retry count: ' + retryCount + 'waiting: 1000ms)');
+            if (retryCount > 0) {
+                console.log('got retry > 0');
+            }
             return 1000
         }
 
 
         this.s3 = new AWS.S3({apiVersion: '2006-03-01',
-            maxRetries: 2,
+            /*
+            maxRetries: 5,
             retryDelayOptions: { customBackoff },
             httpOptions: {
                 connectTimeout: 2 * 1000, // time succeed in starting the call
@@ -20,6 +24,8 @@ class Dao {
                 // the aws-sdk defaults to automatically retrying
                 // if one of these limits are met.
             },
+
+             */
         });
         this.bucket = 'concentrationgame';
         this.stateDir = 'state'
@@ -43,41 +49,22 @@ class Dao {
             Key: key,
             ContentType: 'application/json; charset=utf-8',
             Body: value
-        }, function(err) {
+        }, async function(err) {
             if (err) {
-                // there could still be retries left
-                //alert('error putting value ' + value);
+                console.log('put failed with error ' + err + ' key:' + key + ' value: ' + value + ' waiting 10 seconds and retrying');
+                await sleep(10000);
+                return self.put(key, value, fn);
+            } else {
+                fn(err);
             }
-            fn(err);
         });
 
     }
 
     get(key, fn, count = 0) {
         let self = this;
-        //console.log('get: bucket: %s key: %s', this.bucket + '/' + this.stateDir, key);
-        let retryFn = async function retry(err, data) {
-            if (err) {
-                if (count > 3) {
-                    fn(err);
-                } else {
-                    let backoff = Math.pow(2, count);
-                    //console.log('get error: key:%s retrying with backoff:%d count:%d', key, backoff, count);
-                    await sleep(backoff);
-                    self.get(key, retry, ++count);
-                }
-            } else {
-                //console.log('get successful: key: %s bucket: %s', key, self.bucket + '/' + self.stateDir);
-                fn(undefined, data);
-            }
-        };
-
-        /*
-        let rand = Math.floor(Math.random() * 10);
-        console.log('rand is ' + rand);
-        let simulateError = rand <= 4;
-        */
-        let simulateError = false;
-        this.s3.getObject({Bucket : this.bucket + '/' + this.stateDir, Key: simulateError ? undefined : key}, retryFn);
+        this.s3.getObject({Bucket : this.bucket + '/' + this.stateDir, Key: key}, function (err, data) {
+            fn(err, data);
+        });
     }
 }
