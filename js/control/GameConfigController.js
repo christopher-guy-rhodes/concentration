@@ -186,7 +186,7 @@ class GameConfigController {
 
     generateInvitationLink(playerNumber, baseUrl, uuid) {
         let url = baseUrl + '?gameId=' + uuid + '&playerId=' + playerNumber;
-        return url + ' (<a href="' + url  +'">link</a>)';
+        return url + ' (<a href="' + url  +'" target="_blank">link</a>)';
     }
 
     /**
