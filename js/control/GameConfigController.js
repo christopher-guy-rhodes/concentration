@@ -310,7 +310,7 @@ class GameConfigController {
         if (gameId !== null) {
             let self = this;
             this.onlineGamePlay.resetGame(gameId, function() {
-                this.onlineGamePlay.resetLocalBrowserTurns();
+                self.onlineGamePlay.resetLocalBrowserTurns();
 
                 self.onlineGamePlay.setAllPlayersReady(false);
                 self.onlineGamePlay.setGameLogReadIndex(-1);
