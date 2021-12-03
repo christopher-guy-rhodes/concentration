@@ -271,9 +271,9 @@ class OnlineGamePlay extends Dao {
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 if (turn > 0 && !gameLog[turn - 1]) {
-                    console.log('can not write out ' + turn + ' when ' + (turn -1) + ' is missing. Sleeping 10 seconds and trying again');
+                    console.log('can not write out ' + turn + ' when ' + (turn -1) + ' is missing. Sleeping 10 seconds and then checking again');
                     await sleep(10000);
-                    return self.logCardFlip(gameId, currentPlayer, turn, cardId, count);
+                    return self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
                 }
 
                 gameLog[turn] = {player : currentPlayer, cardId : cardId};
