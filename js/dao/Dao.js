@@ -5,7 +5,22 @@ class Dao {
             IdentityPoolId: 'us-east-1:5c67bf62-755c-41f2-8ddf-a0a0ceea6a18',
         });
 
-        this.s3 = new AWS.S3({apiVersion: '2006-03-01'});
+        const customBackoff = (retryCount) => {
+            console.log(`retry count: ${retryCount}, waiting: 1000ms`)
+            return 1000
+        }
+
+
+        this.s3 = new AWS.S3({apiVersion: '2006-03-01',
+            maxRetries: 2,
+            retryDelayOptions: { customBackoff },
+            httpOptions: {
+                connectTimeout: 2 * 1000, // time succeed in starting the call
+                timeout: 5 * 1000, // time to wait for a response
+                // the aws-sdk defaults to automatically retrying
+                // if one of these limits are met.
+            },
+        });
         this.bucket = 'concentrationgame';
         this.stateDir = 'state'
     }
@@ -13,46 +28,28 @@ class Dao {
     putObject(key, value) {
         this.put(key, JSON.stringify(value), function (err) {
             if (err) {
-                alert('putObject: error see console log for details.');
-                throw new Error(err);
+                // there could still be retries left
+                //alert('putObject: error see console log for details.');
+                //throw new Error(err);
             }
         });
     }
 
-    put(key, value, fn, count = 0) {
+    put(key, value, fn) {
         let self = this;
-        //console.log('put: value: %s bucket: %s key: %s', value, this.bucket + '/' + this.stateDir, key);
-        let retryFn = async function retry(err) {
-            if (err) {
-                if (count > 3) {
-                    fn(err);
-                } else {
-                    let backoff = Math.pow(2, count);
-                    //console.log('put error: key:%s value:%s, retrying with backoff:%d count:%d',
-                    //    key, value, backoff, count);
-                    await sleep(backoff);
-                    self.put(key, value, retry, ++count);
-                }
-            } else {
-                //console.log('put successful: key: %s bucket: %s value: %s',
-                //    key, self.bucket + '/' + self.stateDir, value);
-                fn();
-            }
-        };
-
-        /*
-        let rand = Math.floor(Math.random() * 10);
-        console.log('rand is ' + rand);
-        let simulateError = rand <= 4;
-        */
-        let simulateError = false;
 
         this.s3.putObject({
             Bucket: this.bucket + '/' + this.stateDir,
-            Key: simulateError ? undefined : key,
+            Key: key,
             ContentType: 'application/json; charset=utf-8',
             Body: value
-        }, retryFn);
+        }, function(err) {
+            if (err) {
+                // there could still be retries left
+                //alert('error putting value ' + value);
+            }
+            fn(err);
+        });
 
     }
 

@@ -279,6 +279,33 @@ class OnlineGamePlay extends Dao {
                         throw new Error("logCardFlip: Log size is not the expected size after all retries");
                     }
                 }
+
+                if (turn > 0) {
+                    let cnt = 0;
+
+                    while (!gameLog[turn - 1]) {
+                        if (cnt >= 4) {
+                            alert('game up waiting on ' + (turn - 1));
+                            throw new Error('gave up waiting');
+                        }
+                        //alert('can not write out ' + turn + ' when ' + (turn - 1) + ' is null sleep and wait');
+
+                        await sleep(2000);
+
+                        await self.get(gameId + '-log', async function(err, data) {
+
+                            if (err) {
+                                alert('retry failed');
+                            } else {
+                                gameLog = JSON.parse(data.Body.toString('utf-8'));
+                            }
+                        })
+
+
+                        cnt++;
+                    }
+                }
+
                 gameLog[turn] = {player : currentPlayer, cardId : cardId};
 
                 self.putObject(gameId + '-log', gameLog);
