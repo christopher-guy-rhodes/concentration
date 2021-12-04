@@ -150,9 +150,8 @@ class Game {
         this.pendingFlipOrRemovel = new Set();
         this.scoreBoard.displayWinners(this.getWinningPlayers());
 
-        let url = new URL(window.location);
-        let gameId = url.searchParams.get("gameId");
-        let playerId = url.searchParams.get("playerId");
+        let gameId = getUrlParam('gameId');
+        let playerId = parseInt(getUrlParam('playerId'));
 
         if (gameId !== null) {
             this.onlineGamePlay.markGameCompleteForPlayer(gameId, playerId);

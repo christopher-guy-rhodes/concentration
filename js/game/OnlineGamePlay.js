@@ -253,7 +253,7 @@ class OnlineGamePlay extends Dao {
             }
 
             if (allComplete) {
-                if (playerId == '1') {
+                if (playerId === 1) {
                     // If it is the game owner reset all the state
                     for (let playerId of Object.keys(gameDetail['players'])) {
                         gameDetail['players'][playerId]['complete'] = false;
