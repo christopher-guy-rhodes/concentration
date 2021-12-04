@@ -168,7 +168,8 @@ class OnlineGamePlay extends Dao {
 
                         // Don't handle the click from the game log if it was a local clieck
                         if (self.localBrowserTurns.has(index)) {
-                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
+                            console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] +
+                                ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
                         } else {
                             fnReplayHandler(logEntry, index);
                             await sleep(GAME_LOG_POLL_SLEEP_MS);
@@ -192,12 +193,17 @@ class OnlineGamePlay extends Dao {
         });
     }
 
+    /**
+     * Mark a game complete for a player.
+     * @param gameId the game the player is playing
+     * @param playerId the player to mark the game complete
+     */
     markGameCompleteForPlayer(gameId, playerId) {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                alert('markGameCompleteForPlayer: error "' + err.message + '", see console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("markGameCompleteForPlayer error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['complete'] = true;
@@ -212,7 +218,14 @@ class OnlineGamePlay extends Dao {
         });
     }
 
-    waitForGameWrapUp(gameId, playerId, fn, count = 0) {
+    /**
+     * Wait for the game to wrap up for all players so that it can be restarted if desired.
+     * @param gameId the game id that is being waited on
+     * @param playerId the player doing the waiting
+     * @param callback the callback function when the game is wrapped up
+     * @param count counter used to break out of the wait recursion
+     */
+    waitForGameWrapUp(gameId, playerId, callback, count = 0) {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
@@ -253,15 +266,23 @@ class OnlineGamePlay extends Dao {
                     // If it is not the owner give time for the owner to reset the state
                     await sleep(GAME_RESET_NON_OWNER_DELAY);
                 }
-                fn();
+                callback();
 
             } else {
-                self.waitForGameWrapUp(gameId, playerId, fn, ++count);
+                self.waitForGameWrapUp(gameId, playerId, callback, ++count);
             }
 
         });
     }
 
+    /**
+     * Record a card flip in the centralized store so that it can be replayed for each of the players.
+     * @param gameId the game id
+     * @param currentPlayer the player flipping the card
+     * @param turn which turn it is
+     * @param cardId the id of the card being flipped
+     * @param count counter used to break out of the polling once it reaches a certain threshold
+     */
     logCardFlip(gameId, currentPlayer, turn, cardId, count = 0) {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
@@ -272,8 +293,10 @@ class OnlineGamePlay extends Dao {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 if (turn > 0 && !gameLog[turn - 1]) {
                     let sleepFactor = Math.abs(parseInt(turn) - (gameLog.length -1));
-                    console.log('can not write out index ' + turn + ' when index ' + (turn -1) + ' is missing. There are ' + (gameLog.length - 1) + 'turns. Sleeping ' + sleepFactor + '*2 seconds and then checking again');
-                    await sleep(sleepFactor * 2000);
+                    console.log('can not write out index ' + turn + ' when index ' + (turn -1) +
+                        ' is missing. There are ' + (gameLog.length - 1) + 'turns. Sleeping ' + sleepFactor
+                        + '*2 seconds and then checking again');
+                    await sleep(sleepFactor * GAME_LOG_CATCH_UP_SLEEP_MS);
                     return self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
                 }
 
@@ -284,7 +307,24 @@ class OnlineGamePlay extends Dao {
         })
     }
 
-    async pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, count = 0, joinNotifications = {}) {
+    /**
+     * Poll for players to be ready to play the game.
+     * @param gameId the game id
+     * @param currentPlayer the current player
+     * @param fnSuccess the callback function called when all players are ready
+     * @param fnTimeout the callback function called if the polling has timed out
+     * @param fnPlayerReady the callback function called when an individual player is ready
+     * @param count count variable used to decide when to timeout
+     * @param joinNotifications hash that stores what players have been processed
+     * @returns {Promise<void>} nothing
+     */
+    async pollForPlayersReady(gameId,
+                              currentPlayer,
+                              fnSuccess,
+                              fnTimeout,
+                              fnPlayerReady,
+                              count = 0,
+                              joinNotifications = {}) {
         await sleep(POLL_PLAYERS_DELAY);
 
         let self = this;
