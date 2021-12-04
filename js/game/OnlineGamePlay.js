@@ -324,7 +324,7 @@ class OnlineGamePlay extends Dao {
             }
             console.log('==> players: %o', gameDetail.players);
             if (!allPlayersReady) {
-                return self.pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
+                await self.pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
             } else {
                 fnSuccess(gameId, currentPlayer);
             }

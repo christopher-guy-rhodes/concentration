@@ -1,43 +1,20 @@
 class Dao {
     constructor() {
-        AWS.config.region = 'us-east-1'; // Region
+        AWS.config.region = S3_REGION; // Region
         AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: 'us-east-1:5c67bf62-755c-41f2-8ddf-a0a0ceea6a18',
+            IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
         });
 
-        const customBackoff = (retryCount) => {
-            //alert('retry count: ' + retryCount + 'waiting: 1000ms)');
-            if (retryCount > 0) {
-                console.log('got retry > 0');
-            }
-            return 1000
-        }
 
-
-        this.s3 = new AWS.S3({apiVersion: '2006-03-01',
-            /*
-            maxRetries: 5,
-            retryDelayOptions: { customBackoff },
-            httpOptions: {
-                connectTimeout: 2 * 1000, // time succeed in starting the call
-                timeout: 5 * 1000, // time to wait for a response
-                // the aws-sdk defaults to automatically retrying
-                // if one of these limits are met.
-            },
-
-             */
-        });
-        this.bucket = 'concentrationgame';
-        this.stateDir = 'state'
+        this.s3 = new AWS.S3({apiVersion: AWS_SDK_API_VERSION});
+        this.bucket = S3_BUCKET_NAME;
+        this.stateDir = S3_ONLINE_GAMEPLAY_DIR;
     }
 
-    putObject(key, value) {
+    putObject(key, value, fn) {
         this.put(key, JSON.stringify(value), function (err) {
-            if (err) {
-                console.log('put object error');
-                // there could still be retries left
-                //alert('putObject: error see console log for details.');
-                //throw new Error(err);
+            if (fn !== undefined) {
+                fn(err);
             }
         });
     }
@@ -51,15 +28,19 @@ class Dao {
             ContentType: 'application/json; charset=utf-8',
             Body: value
         }, function(err) {
-            fn(err);
+            if (fn !== undefined) {
+                fn(err);
+            }
         });
 
     }
 
-    get(key, fn, count = 0) {
+    get(key, fn) {
         let self = this;
         this.s3.getObject({Bucket : this.bucket + '/' + this.stateDir, Key: key}, function (err, data) {
-            fn(err, data);
+            if (fn !== undefined) {
+                fn(err, data);
+            }
         });
     }
 }
