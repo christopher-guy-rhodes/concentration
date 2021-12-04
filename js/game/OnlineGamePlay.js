@@ -42,8 +42,8 @@ class OnlineGamePlay extends Dao {
     resetGame(gameId, callback) {
         this.put(gameId + '-log', JSON.stringify([]), function (err) {
             if (err) {
-                alert('createGameRecord: error. See console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("resetGame error: %o", err);
             }
             callback();
         });
@@ -61,8 +61,8 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                alert('markPlayerReady error. See console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("setupPlayerAndDealCards error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
@@ -91,8 +91,8 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                alert('Error polling for players. See console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("loadGameForPlayer error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 self.setCurrentPlayer(playerId);
@@ -111,15 +111,15 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function (err, data) {
             if (err) {
-                alert('setPlayerReady error . See console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("setPlayerReady error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['ready'] = true;
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        alert('setPlayerReady error . See console log for details');
-                        throw new Error(err);
+                        // Let retries play out and error if they get exhausted
+                        console.log("setPlayerReady error: %o", err);
                     }
                     callback();
                 });
@@ -148,8 +148,8 @@ class OnlineGamePlay extends Dao {
 
         this.get(gameId + '-log', async function (err, data) {
             if (err) {
-                alert('Error polling for players. see console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("pollForGameLog error: %o", err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 //console.log('polling for game log %o', gameLog);
@@ -170,7 +170,6 @@ class OnlineGamePlay extends Dao {
                         if (self.localBrowserTurns.has(index)) {
                             console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] + ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
                         } else {
-
                             fnReplayHandler(logEntry, index);
                             await sleep(GAME_LOG_POLL_SLEEP_MS);
                         }
@@ -185,7 +184,7 @@ class OnlineGamePlay extends Dao {
                 }
 
                 if (!fnTerminationCondition()) {
-                    self.pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition, fnTimeout, ++count);
+                    await self.pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition, fnTimeout, ++count);
                 } else {
                     return;
                 }
@@ -205,8 +204,8 @@ class OnlineGamePlay extends Dao {
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        alert('markGameCompleteForPlayer: error see console log for details');
-                        throw new Error(err);
+                        // Let retries play out and error if they get exhausted
+                        console.log("markGameCompleteForPlayer error: %o", err);
                     }
                 })
             }
@@ -217,8 +216,8 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                alert('waitForGameWrapUp: error "' + err.message + '", see console log for details');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("waitForGameWrapUp error: %o", err);
             }
 
 
@@ -267,8 +266,8 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
             if  (err) {
-                alert('logCardFlip error. See console log for details.');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("logCardFlip error: %o", err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 if (turn > 0 && !gameLog[turn - 1]) {
@@ -291,8 +290,8 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function(err, data) {
             if (err) {
-                alert('pollForPlayersReady: error see console log for details.');
-                throw new Error(err);
+                // Let retries play out and error if they get exhausted
+                console.log("pollForPlayersReady error: %o", err);
             }
             let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
