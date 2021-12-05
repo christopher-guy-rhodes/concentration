@@ -42,7 +42,6 @@ class OnlineGamePlay extends Dao {
     resetGame(gameId, callback) {
         this.put(gameId + '-log', JSON.stringify([]), function (err) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("resetGame error: %o", err);
             }
             callback();
@@ -61,7 +60,6 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("setupPlayerAndDealCards error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
@@ -91,7 +89,6 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("loadGameForPlayer error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
@@ -111,14 +108,12 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function (err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("setPlayerReady error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['ready'] = true;
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        // Let retries play out and error if they get exhausted
                         console.log("setPlayerReady error: %o", err);
                     }
                     callback();
@@ -148,7 +143,6 @@ class OnlineGamePlay extends Dao {
 
         this.get(gameId + '-log', async function (err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("pollForGameLog error: %o", err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
@@ -202,7 +196,6 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("markGameCompleteForPlayer error: %o", err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
@@ -210,7 +203,6 @@ class OnlineGamePlay extends Dao {
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        // Let retries play out and error if they get exhausted
                         console.log("markGameCompleteForPlayer error: %o", err);
                     }
                 })
@@ -229,7 +221,6 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("waitForGameWrapUp error: %o", err);
             }
 
@@ -287,7 +278,6 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
             if  (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("logCardFlip error: %o", err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
@@ -330,7 +320,6 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function(err, data) {
             if (err) {
-                // Let retries play out and error if they get exhausted
                 console.log("pollForPlayersReady error: %o", err);
             }
             let gameDetail = JSON.parse(data.Body.toString('utf-8'));
