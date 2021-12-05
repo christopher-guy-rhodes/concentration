@@ -68,8 +68,9 @@ class GameConfigView {
         invitationDiv.appendChild(new ElementBuilder(document).withTag(STRONG_TAG)
             .withInnerText('Invitation Links').build());
 
-        for (let i = 2; i < MAX_PLAYERS; i++) {
+        for (let i = 2; i <= MAX_PLAYERS; i++) {
             invitationDiv.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
+                .withAttribute('style', 'display: none')
                 .withClass(this.invitationLinkClass + i).build())
         }
 

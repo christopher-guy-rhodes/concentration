@@ -1,4 +1,4 @@
-// Set class names used in callbacks as constants since the class won't be available in the callback
+// Set class names used in callbacks as constants since the class (this pointer) won't be available in the callback
 const NUM_PLAYERS_SELECTOR_CLASS = 'numPlayers';
 const PLAY_ONLINE_CHECKBOX_NAME = 'playOnlineCheckboxName';
 const DECK_TYPE_SELECTOR_CLASS = 'deckType';
@@ -32,12 +32,12 @@ class GameConfigController {
         this.waitLongerForTurnButtonClass = 'waitLongerForTurn';
         this.waitingContainerClass = 'waiting';
         this.waitingOnClass = 'waitingOn';
-        this.invitationClass = 'invitationClass';
+        this.invitationClass = 'invitation';
         this.invitationLinkClass = 'invitationLink';
 
+        this.scalingDimension = undefined;
 
         this.onlineGamePlay = new OnlineGamePlay();
-        this.scalingDimension = undefined;
 
         this.view = new GameConfigViewBuilder()
             .withGameOptionsFormClass(this.gameOptionsFormClass)
@@ -60,8 +60,7 @@ class GameConfigController {
             .withWaitingContainerClass(this.waitingContainerClass)
             .withWaitingOnClass(this.waitingOnClass)
             .withInvitationClass(this.invitationClass)
-            .withInvitationLInkClass(this.invitationLinkClass)
-            .build();
+            .withInvitationLInkClass(this.invitationLinkClass).build();
     }
 
     /**
@@ -73,6 +72,7 @@ class GameConfigController {
         // Handle specific settings for online game play
         this.handleOnlineGamePlay();
 
+        // Handle changes to the number of players
         this.handleNumberOfPlayersEvent();
 
         // Handle number of players, deck type and number of cards selections
@@ -121,7 +121,6 @@ class GameConfigController {
         if (gameId && playerId) {
             this.onlineGamePlay.loadGameForPlayer(gameId, playerId, this.loadGameForPlayer);
         }
-
     }
 
     /* private */
@@ -133,11 +132,13 @@ class GameConfigController {
         $('.' + DECK_TYPE_SELECTOR_CLASS).val(gameDetail['deckType']);
         $('.' + DECK_TYPE_SELECTOR_CLASS).attr('disabled', true);
         let img = $('.' + GAME_OPTIONS_FORM_CLASS).find('img');
-        img.attr('src', gameDetail['deckType'] === 'picture' ? PictureCardDeck.getDeckImage() : PlayingCardDeck.getDeckImage());
+
+        let deckMetaData = GameConfigController.getDeckMetadata(gameDetail['deckType']);
+        img.attr('src', deckMetaData['image']);
+
         $('input[name="' + NUMBER_OF_CARDS_TO_USE_NAME + '"]').val(gameDetail['numberOfCards']);
         $('input[name="' + NUMBER_OF_CARDS_TO_USE_NAME + '"]').attr('disabled', true);
 
-        console.log('==> game detail is %o', gameDetail);
         for (let pid of Object.keys(gameDetail['players'])) {
             let name = gameDetail['players'][pid]['playerName'];
             if (playerId !== parseInt(pid)) {
@@ -151,7 +152,7 @@ class GameConfigController {
     handlePlayerWaitRestart() {
         let self = this;
         $('.' + this.waitLongerButtonClass).click(function (e) {
-            self.waitForPlayers(getUrlParam('gameId'), getUrlParam('playerId'))
+            self.waitForPlayers(getUrlParam('gameId'), parseInt(getUrlParam('playerId')))
         });
     }
 
@@ -160,7 +161,7 @@ class GameConfigController {
         let self = this;
         $('.' + this.waitLongerForTurnButtonClass).click(function(e) {
             $('.' + self.waitLongerForTurnContainer).css('display', 'none');
-            self.pollForGameLog(getUrlParam("gameId"));
+            self.pollForGameLog(getUrlParam('gameId'));
         })
     }
 
@@ -177,8 +178,7 @@ class GameConfigController {
     handleNumberOfPlayersEvent() {
         let self = this;
         $('.' + this.numPlayersSelectorClass).change(function(e) {
-            let numberOfPlayers = $('.' + self.numPlayersSelectorClass).val();
-            if (numberOfPlayers === '1') {
+            if (parseInt($('.' + self.numPlayersSelectorClass).val()) === 1) {
                 $('input[name=' + self.playOnlineCheckboxName + ']').prop('checked', false);
             }
         });
@@ -194,7 +194,7 @@ class GameConfigController {
         checkbox.click(function(e) {
             if (checkbox.prop("checked")) {
 
-                let numPlayers = $('.' + self.numPlayersSelectorClass).val();
+                let numPlayers = parseInt($('.' + self.numPlayersSelectorClass).val());
 
                 if (numPlayers < 2) {
                     alert('You need to select at least two players to play online');
@@ -218,8 +218,8 @@ class GameConfigController {
                 for (let i = 2; i <= numPlayers; i++) {
                     $('.' + self.invitationLinkClass + i).html('Player ' + i + ': '
                         + self.generateInvitationLink(i, baseUrl, gameId));
+                    $('.' + self.invitationLinkClass + i).css('display', 'block');
                 }
-
             } else {
                 window.history.replaceState( {} , '', baseUrl);
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Player 1 name:');
@@ -305,17 +305,17 @@ class GameConfigController {
         let img = $('.' + this.gameOptionsFormClass).find('img');
         let input = $('input[name="' + this.numberOfCardsToUseName + '"]');
 
-        let deckMetadata = this.getDeckMetadata();
+        let deckMetadata = GameConfigController.getDeckMetadata(this.getFormDeckType());
         input.val(deckMetadata['numberOfCards']);
         img.attr('src', deckMetadata['image']);
         img.attr('width', PREVIEW_IMG_WIDTH + 'px');
     }
 
     /* private */
-    getDeckMetadata() {
+    static getDeckMetadata(deckType) {
         let numberOfCards = undefined;
         let image = undefined;
-        switch(this.getFormDeckType()) {
+        switch(deckType) {
             case 'picture':
                 numberOfCards = PictureCardDeck.getNumberOfCardsInDeck();
                 image = PictureCardDeck.getDeckImage();
@@ -325,7 +325,7 @@ class GameConfigController {
                 image = PlayingCardDeck.getDeckImage();
                 break;
             default:
-                throw new Error(this.getFormDeckType() + ' is an unkonwn dec type');
+                throw new Error(deckType +  ' is an unknown deck type');
         }
 
         return {
@@ -483,7 +483,7 @@ class GameConfigController {
     handleAllPlayersReady(currentPlayer) {
         alert('All players are ready');
         $('.' + this.waitingContainerClass).css('display', 'none');
-        if (currentPlayer !== '1') {
+        if (currentPlayer !== 1) {
             console.log('handling all players ready class is ' + this.invitationClass);
             $('.' + this.invitationClass).css('display', 'none');
         }
