@@ -3,12 +3,14 @@ class GameConfigView {
                 playerNameSubmitButtonClass, gameResetClass, numPlayersSelectorClass, numberOfCardsToUseName,
                 scoreBoardPlayerPrefixClass, playerNamePrefixClass, nameInputPrefixClass, playerNameForm,
                 scoreBoardForm, playOnlineCheckboxName, waitLongerContainerClass, waitLongerButtonClass,
-                waitLongerForTurnContainer, waitLongerForTurnButtonClass) {
+                waitLongerForTurnContainer, waitLongerForTurnButtonClass, waitingContainerClass, waitingOnClass,
+                invitationClass, invitationLinkClass) {
         validateRequiredParams(this.constructor, arguments, 'gameOptionsFormClass', 'gameOptionsSubmitButtonClass',
             'deckTypeSelectorClass', 'playerNameSubmitButtonClass', 'gameResetClass', 'numPlayersSelectorClass',
             'numberOfCardsToUseName', 'scoreBoardPlayerPrefixClass', 'playerNamePrefixClass', 'nameInputPrefixClass',
             'playerNameForm', 'scoreBoardForm', 'playOnlineCheckboxName', 'waitLongerContainerClass',
-            'waitLongerButtonClass', 'waitLongerForTurnContainer', 'waitLongerForTurnButtonClass');
+            'waitLongerButtonClass', 'waitLongerForTurnContainer', 'waitLongerForTurnButtonClass',
+            'waitingContainerClass', 'waitingOnClass', 'invitationClass', 'invitationLinkClass');
         this.gameOptionsFormClass = gameOptionsFormClass;
         this.gameOptionsSubmitButtonClass = gameOptionsSubmitButtonClass;
         this.deckTypeSelectorClass = deckTypeSelectorClass;
@@ -26,6 +28,10 @@ class GameConfigView {
         this.waitLongerButtonClass = waitLongerButtonClass;
         this.waitLongerForTurnContainer = waitLongerForTurnContainer;
         this.waitLongerForTurnButtonClass = waitLongerForTurnButtonClass;
+        this.waitingContainerClass = waitingContainerClass;
+        this.waitingOnClass = waitingOnClass;
+        this.invitationClass = invitationClass;
+        this.invitationLinkClass = invitationLinkClass;
     }
 
     /**
@@ -55,13 +61,23 @@ class GameConfigView {
                 .withInnerText('Player ' + i + ': 0 matches').build());
         }
 
-        div.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
+        let invitationDiv = new ElementBuilder(document).withTag(DIV_TAG)
             .withAttribute('style', 'display: none')
-            .withClass('invitationClass').build());
+            .withClass(this.invitationClass).build();
+
+        invitationDiv.appendChild(new ElementBuilder(document).withTag(STRONG_TAG)
+            .withInnerText('Invitation Links').build());
+
+        for (let i = 2; i < MAX_PLAYERS; i++) {
+            invitationDiv.appendChild(new ElementBuilder(document).withTag(DIV_TAG)
+                .withClass(this.invitationLinkClass + i).build())
+        }
+
+        div.appendChild(invitationDiv);
 
         let waitingDiv = new ElementBuilder(document)
             .withTag(DIV_TAG)
-            .withClass('waiting')
+            .withClass(this.waitingContainerClass)
             .withAttribute('style', 'display: none').build()
             .appendChild(new ElementBuilder(document).withTag(STRONG_TAG)
                 .withInnerText('Waiting for:').build());
@@ -69,7 +85,7 @@ class GameConfigView {
         for (let i = 1; i <= MAX_PLAYERS; i++) {
             waitingDiv.appendChild(new ElementBuilder(document)
                 .withTag(SPAN_TAG)
-                .withClass('waitingOn' + i).build());
+                .withClass(this.waitingOnClass + i).build());
         }
 
         div.appendChild(waitingDiv);

@@ -1,4 +1,10 @@
-
+// Set class names used in callbacks as constants since the class won't be available in the callback
+const NUM_PLAYERS_SELECTOR_CLASS = 'numPlayers';
+const PLAY_ONLINE_CHECKBOX_NAME = 'playOnlineCheckboxName';
+const DECK_TYPE_SELECTOR_CLASS = 'deckType';
+const NUMBER_OF_CARDS_TO_USE_NAME = 'numberOfCardsToUse';
+const PLAYER_NAME_PREFIX_CLASS = 'playerName';
+const GAME_OPTIONS_FORM_CLASS = 'gameOptionsForm';
 
 class GameConfigController {
     constructor() {
@@ -6,24 +12,28 @@ class GameConfigController {
         this.deckType = undefined;
         this.game = undefined;
         this.gamOptionsSubmitClass = 'gameOptionsSubmit';
-        this.gameOptionsFormClass = 'gameOptionsForm';
-        this.deckTypeSelectorClass = 'deckType';
+        this.gameOptionsFormClass = GAME_OPTIONS_FORM_CLASS;
+        this.deckTypeSelectorClass = DECK_TYPE_SELECTOR_CLASS;
         this.playerNameSubmitButtonClass = 'playerNameSubmit';
         this.clickableClass = 'clickable';
         this.gameResetClass = 'gameOver';
-        this.numPlayersSelectorClass = 'numPlayers';
-        this.numberOfCardsToUseName = 'numberOfCardsToUse';
+        this.numPlayersSelectorClass = NUM_PLAYERS_SELECTOR_CLASS;
+        this.numberOfCardsToUseName = NUMBER_OF_CARDS_TO_USE_NAME;
         this.scoreBoardPlayerPrefixClass = 'player';
-        this.playerNamePrefixClass = 'playerName';
+        this.playerNamePrefixClass = PLAYER_NAME_PREFIX_CLASS;
         this.nameInputPrefixClass = 'name';
         this.playerNameForm = 'playerNameForm';
         this.scoreBoardForm = 'scoreBoardForm';
         this.gameBoardCss = 'gameBoard';
-        this.playOnlineCheckboxName = 'playOnlineCheckboxName';
+        this.playOnlineCheckboxName = PLAY_ONLINE_CHECKBOX_NAME;
         this.waitLongerContainerClass = 'waitLongerContainer';
         this.waitLongerButtonClass = 'waitLonger';
         this.waitLongerForTurnContainer = 'waitLongerForTurnContainer';
         this.waitLongerForTurnButtonClass = 'waitLongerForTurn';
+        this.waitingContainerClass = 'waiting';
+        this.waitingOnClass = 'waitingOn';
+        this.invitationClass = 'invitationClass';
+        this.invitationLinkClass = 'invitationLink';
 
 
         this.onlineGamePlay = new OnlineGamePlay();
@@ -47,6 +57,10 @@ class GameConfigController {
             .withWaitLongerForTurnContainer(this.waitLongerForTurnContainer)
             .withWaitLongerForTurnButtonClass(this.waitLongerForTurnButtonClass)
             .withPlayOnlineCheckboxName(this.playOnlineCheckboxName)
+            .withWaitingContainerClass(this.waitingContainerClass)
+            .withWaitingOnClass(this.waitingOnClass)
+            .withInvitationClass(this.invitationClass)
+            .withInvitationLInkClass(this.invitationLinkClass)
             .build();
     }
 
@@ -90,36 +104,50 @@ class GameConfigController {
 
     }
 
+    /**
+     * Render the forms used to control the game settings.
+     * @param document the DOM dodument
+     */
+    renderForms(document) {
+        this.view.buildGameControlForms(document);
+        this.scalingDimension = $(window).width();
+        this.setViewPort(PREVIEW_IMG_WIDTH + VIEW_PORT_SCALING_FUDGE_FACTOR);
+    }
+
+    /* private */
     handleOnlineGamePlay() {
         let gameId = getUrlParam('gameId');
-        let playerId = getUrlParam('playerId');
+        let playerId = parseInt(getUrlParam('playerId'));
         if (gameId && playerId) {
             this.onlineGamePlay.loadGameForPlayer(gameId, playerId, this.loadGameForPlayer);
         }
 
     }
 
+    /* private */
     loadGameForPlayer(gameDetail, playerId) {
-        $('.numPlayers').val(gameDetail['numberOfPlayers']);
-        $('.numPlayers').attr('disabled', true);
-        $('input[name="playOnlineCheckboxName"]').prop('checked', true);
-        $('input[name="playOnlineCheckboxName"]').attr('disabled', true);
-        $('.deckType').val(gameDetail['deckType']);
-        $('.deckType').attr('disabled', true);
-        let img = $('.gameOptionsForm').find('img');
+        $('.' + NUM_PLAYERS_SELECTOR_CLASS).val(gameDetail['numberOfPlayers']);
+        $('.' + NUM_PLAYERS_SELECTOR_CLASS).attr('disabled', true);
+        $('input[name="' + PLAY_ONLINE_CHECKBOX_NAME + '"]').prop('checked', true);
+        $('input[name="' + PLAY_ONLINE_CHECKBOX_NAME + '"]').attr('disabled', true);
+        $('.' + DECK_TYPE_SELECTOR_CLASS).val(gameDetail['deckType']);
+        $('.' + DECK_TYPE_SELECTOR_CLASS).attr('disabled', true);
+        let img = $('.' + GAME_OPTIONS_FORM_CLASS).find('img');
         img.attr('src', gameDetail['deckType'] === 'picture' ? PictureCardDeck.getDeckImage() : PlayingCardDeck.getDeckImage());
-        $('input[name="' + 'numberOfCardsToUse' + '"]').val(gameDetail['numberOfCards']);
-        $('input[name="' + 'numberOfCardsToUse' + '"]').attr('disabled', true);
+        $('input[name="' + NUMBER_OF_CARDS_TO_USE_NAME + '"]').val(gameDetail['numberOfCards']);
+        $('input[name="' + NUMBER_OF_CARDS_TO_USE_NAME + '"]').attr('disabled', true);
 
+        console.log('==> game detail is %o', gameDetail);
         for (let pid of Object.keys(gameDetail['players'])) {
             let name = gameDetail['players'][pid]['playerName'];
-            if (pid !== playerId) {
-                $('.playerName' + pid).find('input').val(name);
-                $('.playerName' + pid).find('input').attr('disabled', true);
+            if (playerId !== parseInt(pid)) {
+                $('.' + PLAYER_NAME_PREFIX_CLASS + pid).find('input').val(name);
+                $('.' + PLAYER_NAME_PREFIX_CLASS + pid).find('input').attr('disabled', true);
             }
         }
     }
 
+    /* private */
     handlePlayerWaitRestart() {
         let self = this;
         $('.' + this.waitLongerButtonClass).click(function (e) {
@@ -127,6 +155,7 @@ class GameConfigController {
         });
     }
 
+    /* private */
     handleWaitTurnRestart() {
         let self = this;
         $('.' + this.waitLongerForTurnButtonClass).click(function(e) {
@@ -135,6 +164,7 @@ class GameConfigController {
         })
     }
 
+    /* private */
     waitForPlayers(gameId, playerId) {
         let self = this;
         this.onlineGamePlay.setPlayerReady(gameId, playerId, function() {
@@ -143,6 +173,7 @@ class GameConfigController {
         });
     }
 
+    /* private */
     handleNumberOfPlayersEvent() {
         let self = this;
         $('.' + this.numPlayersSelectorClass).change(function(e) {
@@ -153,12 +184,12 @@ class GameConfigController {
         });
     }
 
+    /* private */
     handlePlayOnlineEvent() {
         let self = this;
         let checkbox = $('input[name="' + this.playOnlineCheckboxName + '"]');
         let getUrl = window.location;
         let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
-        let search = getUrl.search;
 
         checkbox.click(function(e) {
             if (checkbox.prop("checked")) {
@@ -184,12 +215,11 @@ class GameConfigController {
                     span.css('display', 'none');
                 }
 
-                let html = '<strong>Invitation Links:</strong><br/>';
                 for (let i = 2; i <= numPlayers; i++) {
-                    html += 'Player ' + i + ': ' + self.generateInvitationLink(i, baseUrl, gameId) + '<br/>';
+                    $('.' + self.invitationLinkClass + i).html('Player ' + i + ': '
+                        + self.generateInvitationLink(i, baseUrl, gameId));
                 }
 
-                $('.invitationClass').html(html);
             } else {
                 window.history.replaceState( {} , '', baseUrl);
                 $('.' + self.playerNamePrefixClass + '1').find('span').text('Player 1 name:');
@@ -202,19 +232,10 @@ class GameConfigController {
         });
     }
 
+    /* private */
     generateInvitationLink(playerNumber, baseUrl, uuid) {
         let url = baseUrl + '?gameId=' + uuid + '&playerId=' + playerNumber;
         return url + ' (<a href="' + url  +'" target="_blank">link</a>)';
-    }
-
-    /**
-     * Render the forms used to control the game settings.
-     * @param document the DOM dodument
-     */
-    renderForms(document) {
-        this.view.buildGameControlForms(document);
-        this.scalingDimension = $(window).width();
-        this.setViewPort(PREVIEW_IMG_WIDTH + 50);
     }
 
     /* private */
@@ -253,16 +274,13 @@ class GameConfigController {
             let cardClickId = $(e.target).parent().attr('id');
             let currentPlayer = self.onlineGamePlay.getCurrentPlayer();
 
-
-            let url = new URL(window.location);
-            let gameId = url.searchParams.get("gameId");
+            let gameId = getUrlParam('gameId');
 
             let playerTurn = self.game.playerTurnIndex + 1;
             console.log('playerTurn:' + playerTurn + ' currentPlayer:' + currentPlayer);
             if (gameId !== null && playerTurn !== parseInt(currentPlayer)) {
                 alert('Sorry, it is not your turn yet');
             } else {
-
                 self.onlineGamePlay.addLocalBrowserTurn(turn);
                 self.handleCardClick(cardClickId, currentPlayer, true);
             }
@@ -334,20 +352,17 @@ class GameConfigController {
                 self.onlineGamePlay.setAllPlayersReady(false);
                 self.onlineGamePlay.setGameLogReadIndex(-1);
                 self.onlineGamePlay.setGameLogCaughtUp(false);
-                $('.waiting').css('display', 'block');
-                $('.invitationClass').css('display', 'block');
+                $('.' + self.waitingContainerClass).css('display', 'block');
+                $('.' + self.invitationClass).css('display', 'block');
 
                 for (let i = 1; i <= MAX_PLAYERS; i++) {
-                    $('.waitingOn' + i).css('display', 'inline-block');
+                    $('.' + self.waitingOnClass + i).css('display', 'inline-block');
                 }
             });
             let currentPlayer = this.onlineGamePlay.getCurrentPlayer();
             this.onlineGamePlay.loadGameForPlayer(gameId, currentPlayer, this.loadGameForPlayer);
         }
 
-        // TODO: remove the next two lines, I don't think they do anything.
-        $('.' + this.deckTypeSelectorClass + ' options[value="' + this.getDeckType() + '"]');
-        $('.' + this.numPlayersSelectorClass + ' option[value="'+ this.getNumPlayers() + '"]').attr('selected','selected');
         this.setFormOptionsFormVisibility(true);
 
     }
@@ -401,25 +416,28 @@ class GameConfigController {
         // set the view port
         this.setViewPort(PREVIEW_IMG_WIDTH + 50);
 
-        let url = new URL(window.location);
-        let gameId = url.searchParams.get("gameId");
-        let playerId = url.searchParams.get("playerId");
-
+        let gameId = getUrlParam('gameId');
+        let playerId = getUrlParam('playerId');
+        if (playerId !== undefined) {
+            playerId = parseInt(playerId);
+        }
 
         if (gameId !== null) {
             let self = this;
 
             $('.waiting').css('display', 'block');
-            let currentPlayer = playerId === null ? '1' : playerId;
+            let currentPlayer = playerId === undefined ? 1 : playerId;
 
-            $('.invitationClass').css('display', 'block');
+            if (currentPlayer === 1) {
+                $('.' + self.invitationClass).css('display', 'block');
+            }
 
             for (let i = 1; i <= this.game.players.length; i++) {
-                if (parseInt(currentPlayer) === i) {
+                if (currentPlayer === i) {
                     continue;
                 }
                 let name = this.game.players[i -1]['playerName'];
-                $('.waitingOn' + i).text(name);
+                $('.' + self.waitingOnClass + i).text(name);
             }
 
             this.pollForPlayersReady(gameId, currentPlayer);
@@ -427,6 +445,7 @@ class GameConfigController {
         this.getGame().play(document);
     }
 
+    /* private */
     pollForPlayersReady(gameId, currentPlayer) {
         let self = this;
         this.game.onlineGamePlay.pollForPlayersReady(gameId, currentPlayer,
@@ -438,13 +457,13 @@ class GameConfigController {
                 self.showWaitLongerButton();
             },
             function (id, name) {
-                $('.waitingOn' + id).css('display', 'none');
-                $('.name' + id).val(name);
+                $('.' + self.waitingOnClass + id).css('display', 'none');
                 self.game.players[id - 1]['playerName'] = name;
                 self.game.scoreBoard.updateStats(self.game.players[0]);
             });
     }
 
+    /* private */
     pollForGameLog(gameId) {
         let self = this;
         this.onlineGamePlay.pollForGameLog(gameId,
@@ -460,19 +479,23 @@ class GameConfigController {
             });
     }
 
+    /* private */
     handleAllPlayersReady(currentPlayer) {
         alert('All players are ready');
-        $('.waiting').css('display', 'none');
+        $('.' + this.waitingContainerClass).css('display', 'none');
         if (currentPlayer !== '1') {
-            $('.invitationClass').css('display', 'none');
+            console.log('handling all players ready class is ' + this.invitationClass);
+            $('.' + this.invitationClass).css('display', 'none');
         }
         this.onlineGamePlay.setAllPlayersReady(true);
     }
 
+    /* private */
     showWaitLongerButton() {
         $('.' + this.waitLongerContainerClass).css('display', 'block');
     }
 
+    /* private */
     setViewPort(screenWidth) {
 
         let viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -487,11 +510,7 @@ class GameConfigController {
     /* private */
     handleGameOptions() {
         this.numberOfPlayers = this.getFormNumberOfPlayers();
-
-
         let numCards = this.getFormNumberOfCards();
-
-
 
         try {
             this.deckType = this.getFormDeckType();
@@ -505,7 +524,6 @@ class GameConfigController {
             this.setFormPlayerSubmitVisibility(false);
         }
         try {
-            // TODO: move this validation into a separate method
             this.game.getGameBoard().getDeck().validateNumberOfCards(this.game.getGameBoard().getNumberOfCards());
 
             this.setPlayerNamesVisibility(this.numberOfPlayers, true);

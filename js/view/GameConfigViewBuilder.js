@@ -18,6 +18,11 @@ class GameConfigViewBuilder {
         this.waitLongerButtonClass = undefined;
         this.waitLongerForTurnContainer = undefined;
         this.waitLongerForTurnButtonClass = undefined;
+        this.waitingContainerClass = undefined;
+        this.waitingOnClass = undefined;
+        this.invitationClass = undefined;
+        this.invitationLinkClass = undefined;
+
     }
 
     withPlayOnlineCheckboxName(playOnlineCheckboxName) {
@@ -105,12 +110,33 @@ class GameConfigViewBuilder {
         return this;
     }
 
+    withWaitingContainerClass(waitingContainerClass) {
+        this.waitingContainerClass = waitingContainerClass;
+        return this;
+    }
+
+    withWaitingOnClass(waitingOnClass) {
+        this.waitingOnClass = waitingOnClass;
+        return this;
+    }
+
+    withInvitationClass(invitationClass) {
+        this.invitationClass = invitationClass;
+        return this;
+    }
+
+    withInvitationLInkClass(invitationLinkClass) {
+        this.invitationLinkClass = invitationLinkClass;
+        return this;
+    }
+
     build() {
         return new GameConfigView(this.gameOptionsFormClass, this.gameOptionsSubmitButtonClass,
             this.deckTypeSelectorClass, this.playerNameSubmitClass, this.gameResetClass, this.numPlayersSelectorClass,
             this.numberOfCardsToUseName, this.scoreBoardPlayerPrefixClass, this.playerNamePrefixClass,
             this.nameInputPrefixClass, this.playerNameForm, this.scoreBoardForm, this.playOnlineCheckboxName,
             this.waitLongerContainerClass, this.waitLongerButtonClass, this.waitLongerForTurnContainer,
-            this.waitLongerForTurnButtonClass);
+            this.waitLongerForTurnButtonClass, this.waitingContainerClass, this.waitingOnClass, this.invitationClass,
+            this.invitationLinkClass);
     }
 }

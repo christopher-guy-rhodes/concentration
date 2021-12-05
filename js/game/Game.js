@@ -35,17 +35,16 @@ class Game {
         validateRequiredParams(this.play, arguments, 'document');
 
         let self = this;
-        let url = new URL(window.location);
-        let gameId = url.searchParams.get("gameId");
-        let playerId = url.searchParams.get("playerId");
+        let gameId = getUrlParam('gameId');
+        let playerId = getUrlParam('playerId');
         this.getGameBoard().getDeck().shuffleCards();
 
         if (gameId !== null) {
 
-            let currentPlayer = playerId === null ? '1' : playerId;
+            let currentPlayer = playerId === undefined ? 1 : playerId;
             this.onlineGamePlay.setCurrentPlayer(currentPlayer);
 
-            if (playerId === null) {
+            if (playerId === undefined) {
                 let cards = this.getGameBoard().getDeck().getCards();
 
                 let cardIds = [];
