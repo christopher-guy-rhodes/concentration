@@ -1,30 +1,31 @@
+// Online game S3 config
+const COGNITO_IDENTITY_POOL_ID = 'us-east-1:5c67bf62-755c-41f2-8ddf-a0a0ceea6a18';
+const S3_REGION = 'us-east-1';
+const S3_BUCKET_NAME = 'concentrationgame';
+const S3_ONLINE_GAMEPLAY_DIR = 'state';
+
+// Online game config
+const AWS_SDK_API_VERSION = '2006-03-01';
+const POLL_PLAYERS_DELAY = 5000;
+const POLL_PLAYERS_ITERATIONS = 60;
+const MAX_GAME_LOG_POLL_ITERATIONS = 30;
+const GAME_LOG_POLL_SLEEP_MS = 5000;
+const GAME_LOG_CARD_FLIP_SLEEP_MS = 2000;
+const GAME_LOG_CATCH_UP_SLEEP_MS = 2000;
+const LOG_CARD_FLIP_RETRIES = 20;
+const LOG_CARD_FLIP_RETRY_DELAY = 100;
+const GAME_WRAP_UP_DELAY_MS = 5000;
+const GAME_WRAP_UP_ITERATIONS = 100;
+const GAME_RESET_NON_OWNER_DELAY = 10000;
+
 // Game config
 const CARD_FLIP_DELAY_MS = 1500;
 const MAX_PLAYERS = 4;
 const PREVIEW_IMG_WIDTH = 1300;
 const PLAYER_FORM_WIDTH = 1000;
 const CARD_FLIP_ANIMATION_TIME_MS = 500;
-const GAME_WRAP_UP_DELAY_MS = 5000;
-const GAME_RESET_NON_OWNER_DELAY = 10000;
-const GAME_WRAP_UP_ITERATIONS = 100;
-const LOG_CARD_FLIP_RETRIES = 20;
-const LOG_CARD_FLIP_RETRY_DELAY = 100;
-const MAX_GAME_LOG_POLL_ITERATIONS = 30;
-const GAME_LOG_POLL_SLEEP_MS = 5000;
-const GAME_LOG_CARD_FLIP_SLEEP_MS = 2000;
-const COGNITO_IDENTITY_POOL_ID = 'us-east-1:5c67bf62-755c-41f2-8ddf-a0a0ceea6a18';
-const GAME_LOG_CATCH_UP_SLEEP_MS = 2000;
 const VIEW_PORT_SCALING_FUDGE_FACTOR = 50;
 
-// S3 config
-const S3_REGION = 'us-east-1';
-const S3_BUCKET_NAME = 'concentrationgame';
-const S3_ONLINE_GAMEPLAY_DIR = 'state';
-const AWS_SDK_API_VERSION = '2006-03-01';
-
-// Online game config
-const POLL_PLAYERS_DELAY = 5000;
-const POLL_PLAYERS_ITERATIONS = 60;
 
 // DOM constants
 const BODY_TAG = 'body';

@@ -9,51 +9,25 @@
     <script>
         $(document).ready(function(){
 
+            $.getScript('/js/compiled.js', function() {
 
-            // Classes
-            $.getScript('/js/util.js'                          , function() {
-            $.getScript('/js/dao/Dao.js'                       , function() {
-            $.getScript('/js/game/OnlineGamePlay.js'           , function() {
-            $.getScript('/js/dom/Element.js'                   , function() {
-            $.getScript('/js/dom/ElementBuilder.js'            , function() {
-            $.getScript('/js/constants.js'                     , function() {
-            $.getScript('/js/card/CardImage.js'                , function() {
-            $.getScript('/js/card/Card.js'                     , function() {
-            $.getScript('/js/card/PlayingCard.js'              , function() {
-            $.getScript('/js/card/PictureCard.js'              , function() {
-            $.getScript('/js/card/CardImageBuilder.js'         , function() {
-            $.getScript('/js/deck/Deck.js'                     , function() {
-            $.getScript('/js/deck/PlayingCardDeck.js'          , function() {
-            $.getScript('/js/deck/PictureCardDeck.js'          , function() {
-            $.getScript('/js/game/GameBoard.js'                , function() {
-            $.getScript('/js/game/GameBoardBuilder.js'         , function() {
-            $.getScript('/js/game/Player.js'                   , function() {
-            $.getScript('/js/game/Game.js'                     , function() {
-            $.getScript('/js/control/GameConfigController.js'  , function() {
-            $.getScript('/js/view/GameConfigView.js'           , function() {
-            $.getScript('/js/view/GameConfigViewBuilder.js'    , function() {
-            $.getScript('/js/game/ScoreBoard.js'               , function() {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const playerId = urlParams.get('playerId');
+                let getUrl = window.location;
+                let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
 
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            const playerId = urlParams.get('playerId');
-            let getUrl = window.location;
-            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+                if (playerId == null) {
+                    window.history.replaceState( {} , '', baseUrl);
+                }
 
-            if (playerId == null) {
-                window.history.replaceState( {} , '', baseUrl);
-            }
-            //window.history.replaceState( {} , '', baseUrl);
-            //window.location = baseUrl;
+                // Call the main event handler
+                let gameController = new GameConfigController();
+                gameController.renderForms(document);
+                gameController.handleEvents(document);
 
-            // Call the main event handler
-            let gameController = new GameConfigController();
-            gameController.renderForms(document);
-            gameController.handleEvents(document);
-
-            })})})})})})})})})})})})})})})})})})})})})})});
-
-
+            })
+        });
     </script>
     <!-- body will be rendered dynamically -->
 </html>
