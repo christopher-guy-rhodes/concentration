@@ -139,7 +139,7 @@ class OnlineGamePlay extends Dao {
      * @returns {Promise<void>} a void promise that can be ignored
      */
     async pollForGameLog(gameId, fnReplayHandler, fnTerminationCondition, fnTimeout, count = 0) {
-        await sleep(5000);
+        await sleep(GAME_LOG_POLL_SLEEP_MS);
 
         let self = this;
 
@@ -155,22 +155,19 @@ class OnlineGamePlay extends Dao {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 //console.log('polling for game log %o', gameLog);
 
-                let index = self.gameLogReadIndex;
-                if (index === -1) {
-                    index = 0;
-                }
+                let index = self.gameLogReadIndex === -1 ? 0 : self.gameLogReadIndex;
                 let playCatchUp = index === 0;
                 console.log('wait count %d game log %o',count, gameLog);
                 if (index < gameLog.length) {
-                    count = -1;
+                    count = -1; // new chunk of game log to read reset count
                     self.gameLogCaughtUp = false;
                     for (let i = index; i < gameLog.length; i++) {
                         let logEntry = gameLog[i];
 
-                        // Don't handle the click from the game log if it was a local clieck
+                        // Don't handle the click from the game log if it was a local click
                         if (self.localBrowserTurns.has(index)) {
                             console.log('not replaying history entry ' + index + ' from ' + logEntry['player'] +
-                                ' of ' + logEntry['cardId'] + ' because it was a local turn taken');
+                                ' of ' + logEntry['cardId'] + ' because it was a local click');
                         } else {
                             fnReplayHandler(logEntry, index);
                             await sleep(GAME_LOG_POLL_SLEEP_MS);
@@ -178,7 +175,6 @@ class OnlineGamePlay extends Dao {
                         index++
                     }
 
-                    // TODO: use class variables to store this instead of the DOM
                     self.gameLogReadIndex = index;
                     self.gameLogCaughtUp = true;
                 } else if (gameLog.length === 0) {
@@ -421,6 +417,9 @@ class OnlineGamePlay extends Dao {
      * @param playerId the current player id
      */
     setCurrentPlayer(playerId) {
+        if (playerId !== parseInt(playerId)) {
+            stdErrorHandler('setCurrentPlayer', 'playerId must be an integer');
+        }
         this.currentPlayer = playerId;
     }
 
