@@ -31,16 +31,11 @@ class OnlineGamePlay extends Dao {
             }, {}),
             cardIds: cardIds
         }, function (err) {
-            if (err) {
-                alert('createGameRecord error. See console log for details');
-                throw new Error('createGameRecord error:' + err);
-            }
+            stdErrorHandler('createGameRecord', err);
         });
+
         this.putObject(gameId + '-log', [], function(err) {
-            if (err) {
-                alert('createGameRecord error. See console log for details');
-                throw new Error('createGameRecord error:\n' + err);
-            }
+            stdErrorHandler('createGameRecord', err);
         });
     }
 
@@ -52,8 +47,7 @@ class OnlineGamePlay extends Dao {
     resetGame(gameId, callback) {
         this.put(gameId + '-log', JSON.stringify([]), function (err) {
             if (err) {
-                alert('resetGame error. See console log for details');
-                throw new Error('resetGame error:\n' + err);
+                stdErrorHandler('resetGame', err);
             } else {
                 callback();
             }
@@ -72,7 +66,7 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                console.log("setupPlayerAndDealCards error: %o", err);
+                stdErrorHandler('setupPlayerAndDealCards', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 
@@ -82,8 +76,7 @@ class OnlineGamePlay extends Dao {
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
                     if (err) {
-                        alert('setupPlayerAndDealCards error. See console log for details');
-                        throw new Error('setupPlayerAndDealCards error:\n' + err);
+                        stdErrorHandler('setupPlayerAndDealCards', err);
                     } else {
                         callback(gameDetail['cardIds'].map(cid => fnGetCardById(cid)));
                     }
@@ -102,8 +95,7 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                alert('loadGameForPlayer error. See console log for details');
-                throw new Error('loadGameForPlayer error:\n' + err);
+                stdErrorHandler('loadGameForPlayer', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 self.setCurrentPlayer(playerId);
@@ -122,15 +114,13 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function (err, data) {
             if (err) {
-                alert('setPlayerReady error. See console log for details');
-                throw new Error('setPlayerReady error:\n' + err);
+                stdErrorHandler('setPlayerReady', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['ready'] = true;
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        alert('setPlayerReady error. See console log for details');
-                        throw new Error('setPlayerReady error:\n' + err);
+                        stdErrorHandler('setPlayerReady', err);
                     } else {
                         callback();
                     }
@@ -160,8 +150,7 @@ class OnlineGamePlay extends Dao {
 
         this.get(gameId + '-log', async function (err, data) {
             if (err) {
-                alert('pollForGameLog error. See console log for details');
-                throw new Error('pollForGameLog error:\n' + err);
+                stdErrorHandler('pollForGameLog', err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 //console.log('polling for game log %o', gameLog);
@@ -214,8 +203,7 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                alert('markGameCompleteForPlayer error. See console log for details');
-                throw new Error('markGameCompleteForPlayer error:\n' + err);
+                stdErrorHandler('markGameCompleteForPlayer', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['complete'] = true;
@@ -241,8 +229,7 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                alert('waitForGameWrapUp error. See console log for details');
-                throw new Error('waitForGameWrapUp error:\n' + err);
+                stdErrorHandler('waitForGameWrapUp', err);
             }
 
             if (count >= GAME_WRAP_UP_ITERATIONS) {
@@ -349,8 +336,7 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function(err, data) {
             if (err) {
-                alert('pollForPlayersReady error. See console log for details');
-                throw new Error('pollForPlayersReady error:\n' + err);
+                stdErrorHandler('pollForPlayersReady', err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
 

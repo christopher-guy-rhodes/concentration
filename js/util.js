@@ -58,3 +58,10 @@ function throttled(delay, fn) {
         return fn(...args);
     }
 }
+
+function stdErrorHandler(fnName, err) {
+    if (err) {
+        alert(fnName + ' error. See console log for details');
+        throw new Error(fnName + ' error:\n' + err);
+    }
+}

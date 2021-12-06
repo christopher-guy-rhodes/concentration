@@ -41,7 +41,7 @@ class Game {
 
         if (gameId !== null) {
 
-            let currentPlayer = playerId === undefined ? 1 : playerId;
+            let currentPlayer = playerId === undefined ? 1 : parseInt(playerId);
             this.onlineGamePlay.setCurrentPlayer(currentPlayer);
 
             if (playerId === undefined) {
