@@ -170,7 +170,7 @@ class OnlineGamePlay extends Dao {
                                 ' of ' + logEntry['cardId'] + ' because it was a local click');
                         } else {
                             fnReplayHandler(logEntry, index);
-                            await sleep(GAME_LOG_POLL_SLEEP_MS);
+                            await sleep(GAME_LOG_CARD_FLIP_SLEEP_MS);
                         }
                         index++
                     }
@@ -296,8 +296,8 @@ class OnlineGamePlay extends Dao {
                 if (turn > 0 && !gameLog[turn - 1]) {
                     let sleepFactor = Math.abs(parseInt(turn) - (gameLog.length -1));
                     console.log('can not write out index ' + turn + ' when index ' + (turn -1) +
-                        ' is missing. There are ' + (gameLog.length - 1) + 'turns. Sleeping ' + sleepFactor
-                        + '*2 seconds and then checking again');
+                        ' is missing. Sleeping ' + sleepFactor + '*' + GAME_LOG_CATCH_UP_SLEEP_MS +
+                        ' seconds and then checking again');
                     await sleep(sleepFactor * GAME_LOG_CATCH_UP_SLEEP_MS);
                     return self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
                 }
