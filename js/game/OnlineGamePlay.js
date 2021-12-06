@@ -30,8 +30,18 @@ class OnlineGamePlay extends Dao {
                     } };
             }, {}),
             cardIds: cardIds
+        }, function (err) {
+            if (err) {
+                alert('createGameRecord error. See console log for details');
+                throw new Error('createGameRecord error:' + err);
+            }
         });
-        this.putObject(gameId + '-log', []);
+        this.putObject(gameId + '-log', [], function(err) {
+            if (err) {
+                alert('createGameRecord error. See console log for details');
+                throw new Error('createGameRecord error:\n' + err);
+            }
+        });
     }
 
     /**
@@ -42,9 +52,11 @@ class OnlineGamePlay extends Dao {
     resetGame(gameId, callback) {
         this.put(gameId + '-log', JSON.stringify([]), function (err) {
             if (err) {
-                console.log("resetGame error: %o", err);
+                alert('resetGame error. See console log for details');
+                throw new Error('resetGame error:\n' + err);
+            } else {
+                callback();
             }
-            callback();
         });
     }
 
@@ -70,10 +82,11 @@ class OnlineGamePlay extends Dao {
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err, data) {
                     if (err) {
-                        alert('markPlayerReady error. See console log for details.');
-                        throw new Error(err);
+                        alert('setupPlayerAndDealCards error. See console log for details');
+                        throw new Error('setupPlayerAndDealCards error:\n' + err);
+                    } else {
+                        callback(gameDetail['cardIds'].map(cid => fnGetCardById(cid)));
                     }
-                    callback(gameDetail['cardIds'].map(cid => fnGetCardById(cid)));
                 });
             }
         })
@@ -89,7 +102,8 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, function(err, data) {
             if (err) {
-                console.log("loadGameForPlayer error: %o", err);
+                alert('loadGameForPlayer error. See console log for details');
+                throw new Error('loadGameForPlayer error:\n' + err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 self.setCurrentPlayer(playerId);
@@ -102,21 +116,24 @@ class OnlineGamePlay extends Dao {
      * Set an online player state to ready.
      * @param gameId the game id
      * @param playerId the player to load the game for
-     * @param callback the callback function to call with the game detail
+     * @param callback the callback function to call with the game detail upon success
      */
     setPlayerReady(gameId, playerId, callback) {
         let self = this;
         this.get(gameId, function (err, data) {
             if (err) {
-                console.log("setPlayerReady error: %o", err);
+                alert('setPlayerReady error. See console log for details');
+                throw new Error('setPlayerReady error:\n' + err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['ready'] = true;
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        console.log("setPlayerReady error: %o", err);
+                        alert('setPlayerReady error. See console log for details');
+                        throw new Error('setPlayerReady error:\n' + err);
+                    } else {
+                        callback();
                     }
-                    callback();
                 });
             }
         })
@@ -143,7 +160,8 @@ class OnlineGamePlay extends Dao {
 
         this.get(gameId + '-log', async function (err, data) {
             if (err) {
-                console.log("pollForGameLog error: %o", err);
+                alert('pollForGameLog error. See console log for details');
+                throw new Error('pollForGameLog error:\n' + err);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 //console.log('polling for game log %o', gameLog);
@@ -196,14 +214,16 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                console.log("markGameCompleteForPlayer error: %o", err);
+                alert('markGameCompleteForPlayer error. See console log for details');
+                throw new Error('markGameCompleteForPlayer error:\n' + err);
             } else {
                 let gameDetail = JSON.parse(data.Body.toString('utf-8'));
                 gameDetail['players'][playerId]['complete'] = true;
 
                 self.put(gameId, JSON.stringify(gameDetail), function (err) {
                     if (err) {
-                        console.log("markGameCompleteForPlayer error: %o", err);
+                        alert('markGameCompleteForPlayer error. See console log for details');
+                        throw new Error('markGameCompleteForPlayer error:\n' + err);
                     }
                 })
             }
@@ -221,13 +241,13 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function (err, data) {
             if (err) {
-                console.log("waitForGameWrapUp error: %o", err);
+                alert('waitForGameWrapUp error. See console log for details');
+                throw new Error('waitForGameWrapUp error:\n' + err);
             }
-
 
             if (count >= GAME_WRAP_UP_ITERATIONS) {
                 let msg = "waitForGameWrapUp error. See console log for details.";
-                alert(msg)
+                alert(msg);
                 throw new Error(msg);
             }
 
@@ -277,8 +297,17 @@ class OnlineGamePlay extends Dao {
     logCardFlip(gameId, currentPlayer, turn, cardId, count = 0) {
         let self = this;
         this.get(gameId + '-log', async function (err, data) {
-            if  (err) {
-                console.log("logCardFlip error: %o", err);
+            if (count >= LOG_CARD_FLIP_RETRIES) {
+                let msg = 'logCardFlip error: Gave up after ' + LOG_CARD_FLIP_RETRIES + ' retries';
+                alert(msg);
+                throw new Error(msg);
+                return;
+            }
+            if (err) {
+                console.log('logCardFlip error. Get of gamelog failed retrying with count ' + count);
+                let sleepFactor = Math.abs(parseInt(turn) - (gameLog.length -1));
+                await sleep(sleepFactor * GAME_LOG_CATCH_UP_SLEEP_MS);
+                return self.logCardFlip(gameId, currentPlayer, turn, cardId, ++count);
             } else {
                 let gameLog = JSON.parse(data.Body.toString('utf-8'));
                 if (turn > 0 && !gameLog[turn - 1]) {
@@ -320,41 +349,43 @@ class OnlineGamePlay extends Dao {
         let self = this;
         this.get(gameId, async function(err, data) {
             if (err) {
-                console.log("pollForPlayersReady error: %o", err);
-            }
-            let gameDetail = JSON.parse(data.Body.toString('utf-8'));
-
-            if (count >= POLL_PLAYERS_ITERATIONS) {
-
-                // Giving up waiting on other players. Mark this player not ready and surface try again button.
-
-                fnTimeout();
-                gameDetail['players'][currentPlayer]['ready'] = false;
-                self.putObject(gameId, gameDetail);
-                return;
-            }
-
-            console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
-            let allPlayersReady = true;
-            for (let id of Object.keys(gameDetail.players)) {
-                if (gameDetail.players[id]['ready'] === false) {
-                    allPlayersReady = false;
-                    break;
-                } else {
-
-                    let nameInDetail = gameDetail.players[id]['playerName'];
-                    if (!joinNotifications[id]) {
-                        fnPlayerReady(id, nameInDetail);
-                        joinNotifications[id] = true;
-                    }
-
-                }
-            }
-            console.log('==> players: %o', gameDetail.players);
-            if (!allPlayersReady) {
-                await self.pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
+                alert('pollForPlayersReady error. See console log for details');
+                throw new Error('pollForPlayersReady error:\n' + err);
             } else {
-                fnSuccess(gameId, currentPlayer);
+                let gameDetail = JSON.parse(data.Body.toString('utf-8'));
+
+                if (count >= POLL_PLAYERS_ITERATIONS) {
+
+                    // Giving up waiting on other players. Mark this player not ready and surface try again button.
+
+                    fnTimeout();
+                    gameDetail['players'][currentPlayer]['ready'] = false;
+                    self.putObject(gameId, gameDetail);
+                    return;
+                }
+
+                console.log('pollForPlayersReady: gameId: %s gameDetail %o', gameId, gameDetail);
+                let allPlayersReady = true;
+                for (let id of Object.keys(gameDetail.players)) {
+                    if (gameDetail.players[id]['ready'] === false) {
+                        allPlayersReady = false;
+                        break;
+                    } else {
+
+                        let nameInDetail = gameDetail.players[id]['playerName'];
+                        if (!joinNotifications[id]) {
+                            fnPlayerReady(id, nameInDetail);
+                            joinNotifications[id] = true;
+                        }
+
+                    }
+                }
+                console.log('==> players: %o', gameDetail.players);
+                if (!allPlayersReady) {
+                    await self.pollForPlayersReady(gameId, currentPlayer, fnSuccess, fnTimeout, fnPlayerReady, ++count, joinNotifications);
+                } else {
+                    fnSuccess(gameId, currentPlayer);
+                }
             }
         });
     }

@@ -5,7 +5,6 @@ class Dao {
             IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
         });
 
-
         this.s3 = new AWS.S3({apiVersion: AWS_SDK_API_VERSION});
         this.bucket = S3_BUCKET_NAME;
         this.stateDir = S3_ONLINE_GAMEPLAY_DIR;
