@@ -1734,7 +1734,7 @@ class Game {
         let gameId = getUrlParam('gameId');
         let playerId = parseInt(getUrlParam('playerId'));
 
-        if (gameId !== null) {
+        if (gameId !== undefined) {
             this.onlineGamePlay.markGameCompleteForPlayer(gameId, playerId);
 
             $('.' + this.gameResetClass).find('input').prop('disabled', true);
