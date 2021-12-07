@@ -278,7 +278,7 @@ class GameConfigController {
 
             let playerTurn = self.game.playerTurnIndex + 1;
             console.log('playerTurn:' + playerTurn + ' currentPlayer:' + currentPlayer);
-            if (gameId !== null && playerTurn !== parseInt(currentPlayer)) {
+            if (gameId !== undefined && playerTurn !== parseInt(currentPlayer)) {
                 alert('Sorry, it is not your turn yet');
             } else {
                 self.onlineGamePlay.addLocalBrowserTurn(turn);
