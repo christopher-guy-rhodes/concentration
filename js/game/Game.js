@@ -152,12 +152,12 @@ class Game {
         let gameId = getUrlParam('gameId');
         let playerId = parseInt(getUrlParam('playerId'));
 
+        $('.' + this.gameResetClass).css('display', 'inline-block');
         if (gameId !== undefined) {
             this.onlineGamePlay.markGameCompleteForPlayer(gameId, playerId);
 
             $('.' + this.gameResetClass).find('input').prop('disabled', true);
             $('.' + this.gameResetClass).find('input').val('Waiting for game to wrap up for other players');
-            $('.' + this.gameResetClass).css('display', 'inline-block');
 
             this.onlineGamePlay.waitForGameWrapUp(gameId, playerId, function() {
                 $('.gameOver').find('input').prop('disabled', false);
