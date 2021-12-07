@@ -1621,7 +1621,7 @@ class Game {
         let playerId = getUrlParam('playerId');
         this.getGameBoard().getDeck().shuffleCards();
 
-        if (gameId !== null) {
+        if (gameId !== undefined) {
 
             let currentPlayer = playerId === undefined ? 1 : parseInt(playerId);
             this.onlineGamePlay.setCurrentPlayer(currentPlayer);
@@ -2232,7 +2232,7 @@ class GameConfigController {
             playerId = parseInt(playerId);
         }
 
-        if (gameId !== null) {
+        if (gameId !== undefined) {
             let self = this;
 
             $('.waiting').css('display', 'block');

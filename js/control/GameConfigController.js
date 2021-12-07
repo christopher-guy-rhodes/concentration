@@ -422,7 +422,7 @@ class GameConfigController {
             playerId = parseInt(playerId);
         }
 
-        if (gameId !== null) {
+        if (gameId !== undefined) {
             let self = this;
 
             $('.waiting').css('display', 'block');
