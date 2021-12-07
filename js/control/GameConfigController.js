@@ -341,10 +341,9 @@ class GameConfigController {
         $('.' + this.gameResetClass).css('display', 'none');
         $('.' + this.scoreBoardForm).css('display', 'none');
 
-        let url = new URL(window.location);
-        let gameId = url.searchParams.get("gameId");
+        let gameId = getUrlParam('gameId');
 
-        if (gameId !== null) {
+        if (gameId !== undefined) {
             let self = this;
             this.onlineGamePlay.resetGame(gameId, function() {
                 self.onlineGamePlay.resetLocalBrowserTurns();
@@ -369,15 +368,12 @@ class GameConfigController {
 
     /* private */
     handleCardClick(clickedCardId, player, isCurrentPlayer) {
-
-
-        let url = new URL(window.location);
-        let gameId = url.searchParams.get("gameId");
+        let gameId = getUrlParam('gameId');
 
         let card = this.getGame().getGameBoard().getDeck().getCardById(clickedCardId);
 
 
-        if (gameId !== null && this.game.matchPending) {
+        if (gameId !== undefined && this.game.matchPending) {
             // wait for the match to complete before starting another to thottle in online mode
             return;
         }
