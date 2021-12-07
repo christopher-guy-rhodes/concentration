@@ -20,7 +20,8 @@ The game will run on any web server. Just export the files to the root directory
 
 ### Serving the content form s3
 
-A simple and fast way to setup a site that will serve the content is to use Amazon S3 static website hosting. See ![Website Endpoints](/documentation/s3-userguide.pdf#WebsiteEndpoints) documentation.
+A simple and fast way to setup a site that will serve the content is to use Amazon S3 static website hosting. See ![Website Endpoints](/documentation/s3-userguide.pdf#WebsiteEndpoints) 
+documentation (Website endpoints section on page 1118).
 
 ### Setting up online game play support
 
@@ -60,7 +61,7 @@ You must grant permission of other domains to access the state directory via a C
 
 #### Setup the Cognito identity pool for unauthenticated users
 
-See ![Javascript SDK getting started documentation](/documentation/js-sdk-dg.pdf#getting-started-browser)
+See ![Javascript SDK getting started documentation](/documentation/js-sdk-dg.pdf#getting-started-browser) documentation (Getting started in a browser script on page 8).
 
 Set the COGNITO_IDENTITY_POOL_ID in js/constants.js to your identity pool id. Please do not use the existing one that belongs to me.
 
